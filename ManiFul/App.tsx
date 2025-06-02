@@ -1,11 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+//App.tsx
 import React from 'react';
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RootStackParamList } from "./src/types/navigation";
+
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 import {
   Button,
@@ -19,6 +18,7 @@ import {
   Colors,
 
 } from 'react-native/Libraries/NewAppScreen';
+import { NavigationContainer } from '@react-navigation/native';
 
 
 
@@ -29,21 +29,13 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Hello</Text>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='landingPage' screenOptions={{headerTitle: "", headerShown: false}}>
+        <Stack.Screen name="landingPage" component={}/>
+        <Stack.Screen name="login" component={}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
