@@ -5,7 +5,7 @@ import styles from './styles';
 import {useState, useEffect} from 'react';
 
 //env
-import {API_URL} from '@env';
+import {API_URL, API_KEY} from '@env';
 
 const LoginPage = () => {
   const [user, setUser] = useState(null);
@@ -14,8 +14,15 @@ const LoginPage = () => {
     try {
       const response = await fetch(`${API_URL}/users?id=1`, {
         method: 'GET',
+        headers: {
+          'BACKEND-API-KEY': `${API_KEY}`,
+        },
       });
-      if (!response.ok) throw new Error('User not found');
+      if (response.status === 401) {
+        throw new Error('Unauthorized: Missing or invalid API key');
+      }
+      if (!response.ok)
+        throw new Error(`Error fetching user: ` + response.status);
       const data = await response.json();
       setUser(data);
     } catch (error) {
