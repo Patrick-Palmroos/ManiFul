@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export type RootStackParamList = {
   landingPage: undefined;
   login: undefined;
+  home: undefined;
   // Add other screens here
 };
 
@@ -11,4 +12,9 @@ export type RootStackParamList = {
 export type LandingPageNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'landingPage'
+>;
+
+export type LoginPageNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'login'
 >;
