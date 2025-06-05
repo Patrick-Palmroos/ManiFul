@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoginPageNavigationProp } from '../../types/navigation';
 import * as Keychain from 'react-native-keychain';
+import { useAuth } from '../../context/AuthContext';
 
 //env
 import { API_URL, API_KEY } from '@env';
@@ -16,21 +17,11 @@ const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigation = useNavigation<LoginPageNavigationProp>();
+  const { login, isAuthenticated } = useAuth();
 
   const handleLogin = async () => {
-    try {
-      const response = await axios.post(`${API_URL}/login`, {
-        email,
-        password,
-        headers: {
-          BACKEND_API_KEY: `${API_KEY}`,
-        },
-      });
-      await Keychain.setGenericPassword(email, response.data.token);
-      navigation.navigate('home');
-    } catch (error) {
-      console.log('Login failed');
-    }
+    await login({ email, password });
+    navigation.navigate('home');
   };
 
   return (
