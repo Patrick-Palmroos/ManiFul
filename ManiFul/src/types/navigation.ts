@@ -18,3 +18,8 @@ export type LoginPageNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'login'
 >;
+
+export type HomePageNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'home'
+>;
