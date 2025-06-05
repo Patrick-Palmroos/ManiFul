@@ -5,6 +5,7 @@ spring.datasource.password=<PASSWORD>
 spring.jpa.hibernate.ddl-auto=<create | create-drop | update | validate | none>
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgresSQLDialect
 app.api.key=<key>
+jwt.secret=<jwt-secret>
 
 # --- Connection Pool Settings ---
 spring.datasource.hikari.maximum-pool-size=10
