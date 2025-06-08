@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12);
     }
 
     @SuppressWarnings("deprecation")
@@ -53,13 +53,6 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(encoder);
         return new ProviderManager(authProvider);
-    }
-
-    @Bean
-    public UserDetailsService user(PasswordEncoder encoder) {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("test").password(encoder.encode("test")).authorities("read").build()
-        );
     }
 
     @Bean
