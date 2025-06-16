@@ -89,6 +89,7 @@ const LandingPage = () => {
                 onBlur={handleBlur}
                 placeholder="password"
                 value={input?.password}
+                secureTextEntry={true}
                 onChangeText={text => setInput({ ...input, password: text })}
                 style={[
                   generalStyles.textField,
