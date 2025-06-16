@@ -3,16 +3,25 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
-    flex: 1,
-    //justifyContent: 'center',
+    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   box: {
     //backgroundColor: 'white',
     aspectRatio: 1,
-    marginTop: '15%',
+    marginTop: '10%',
     width: '80%',
     display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  loginField: {
+    position: 'relative',
+    marginTop: 40,
+    display: 'flex',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },

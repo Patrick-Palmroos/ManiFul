@@ -69,33 +69,40 @@ const LandingPage = () => {
             }}>
             Knowing where your money goes made easy!
           </Text>
-          <TextInput
-            onFocus={() => handleFocusing('email')}
-            onBlur={handleBlur}
-            placeholder="Email"
-            value={input?.email}
-            onChangeText={text => setInput({ ...input, email: text })}
-            style={[
-              generalStyles.textField,
-              focusedInput === 'email' && generalStyles.textFieldFocused,
-            ]}
-          />
-          <TextInput
-            onFocus={() => handleFocusing('password')}
-            onBlur={handleBlur}
-            placeholder="password"
-            value={input?.password}
-            onChangeText={text => setInput({ ...input, password: text })}
-            style={[
-              generalStyles.textField,
-              focusedInput === 'password' && generalStyles.textFieldFocused,
-            ]}
-          />
-          <GradientButton
-            text="Login"
-            onClick={() => console.log(input)}
-            width={'80%'}
-          />
+          <View style={styles.loginField}>
+            <View style={{ marginBottom: 10, width: '100%' }}>
+              <TextInput
+                onFocus={() => handleFocusing('email')}
+                onBlur={handleBlur}
+                placeholder="Email"
+                value={input?.email}
+                onChangeText={text => setInput({ ...input, email: text })}
+                style={[
+                  generalStyles.textField,
+                  focusedInput === 'email' && generalStyles.textFieldFocused,
+                ]}
+              />
+            </View>
+            <View style={{ marginBottom: 10, width: '100%' }}>
+              <TextInput
+                onFocus={() => handleFocusing('password')}
+                onBlur={handleBlur}
+                placeholder="password"
+                value={input?.password}
+                onChangeText={text => setInput({ ...input, password: text })}
+                style={[
+                  generalStyles.textField,
+                  focusedInput === 'password' && generalStyles.textFieldFocused,
+                ]}
+              />
+            </View>
+            <GradientButton
+              text="Login"
+              onClick={() => console.log(input)}
+              marginTop={20}
+              width={'80%'}
+            />
+          </View>
         </View>
       </LinearGradient>
     </TouchableWithoutFeedback>
