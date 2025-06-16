@@ -7,4 +7,12 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  box: {
+    backgroundColor: 'white',
+    aspectRatio: 1,
+    width: '80%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
