@@ -17,15 +17,23 @@ import colors from '../../styles/colors';
 import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
 import { useState } from 'react';
+import { validateEmail, validatePassword } from '../../utils/validation';
+import { validationType } from '../../types/validation';
 
 type inputProps = {
   email: string;
   password: string;
 };
 
+type errorProp = {
+  type: 'email' | 'password';
+  message: string;
+};
+
 const LandingPage = () => {
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [input, setInput] = useState<inputProps>({ email: '', password: '' });
+  const [error, setError] = useState<errorProp[] | null>(null);
   const navigation = useNavigation<LandingPageNavigationProp>();
   const { width } = useWindowDimensions();
 
@@ -34,6 +42,34 @@ const LandingPage = () => {
 
   //unfocusing the fields
   const handleBlur = () => setFocusedInput(null);
+
+  const onLogin = async (): Promise<boolean> => {
+    try {
+      const validations = [
+        { field: 'email', result: validateEmail(input.email) },
+        { field: 'password', result: validatePassword(input.password) },
+      ];
+
+      const newErrors: errorProp[] = validations
+        .filter(({ result }) => !result.status)
+        .map(({ field, result }) => ({
+          type: field as 'email' | 'password',
+          message: result.message,
+        }));
+
+      setError(newErrors);
+
+      if (newErrors.length === 0) {
+        //if (error) setError(null);
+        // proceed with login
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -71,6 +107,9 @@ const LandingPage = () => {
           </Text>
           <View style={styles.loginField}>
             <View style={{ marginBottom: 10, width: '100%' }}>
+              <Text style={generalStyles.errorCode}>
+                {error?.find(e => e.type === 'email')?.message}
+              </Text>
               <TextInput
                 onFocus={() => handleFocusing('email')}
                 onBlur={handleBlur}
@@ -80,10 +119,15 @@ const LandingPage = () => {
                 style={[
                   generalStyles.textField,
                   focusedInput === 'email' && generalStyles.textFieldFocused,
+                  error?.some(e => e.type === 'email') &&
+                    generalStyles.textFieldError,
                 ]}
               />
             </View>
             <View style={{ marginBottom: 10, width: '100%' }}>
+              <Text style={generalStyles.errorCode}>
+                {error?.find(e => e.type === 'password')?.message}
+              </Text>
               <TextInput
                 onFocus={() => handleFocusing('password')}
                 onBlur={handleBlur}
@@ -94,12 +138,14 @@ const LandingPage = () => {
                 style={[
                   generalStyles.textField,
                   focusedInput === 'password' && generalStyles.textFieldFocused,
+                  error?.some(e => e.type === 'password') &&
+                    generalStyles.textFieldError,
                 ]}
               />
             </View>
             <GradientButton
               text="Login"
-              onClick={() => console.log(input)}
+              onClick={onLogin}
               marginTop={20}
               width={'80%'}
             />

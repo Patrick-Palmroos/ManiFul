@@ -14,6 +14,13 @@ const styles = StyleSheet.create({
   textFieldFocused: {
     borderWidth: 2.4,
   },
+  textFieldError: {
+    borderColor: '#CD0003',
+  },
+  errorCode: {
+    fontFamily: 'Rubik-Bold',
+    color: '#CD0003',
+  },
 });
 
 export default styles;
