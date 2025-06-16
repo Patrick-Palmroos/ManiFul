@@ -9,6 +9,22 @@ import LinearGradient from 'react-native-linear-gradient';
 import styles from './styles';
 import colors from '../../styles/colors';
 
+/**
+ * GradientButton component renders a custom button with gradient background.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.text - Button text
+ * @param {() => void} props.onClick - Function for handling click event
+ * @param {boolean} [props.loading=false] - Loading state disables button and shows loading text
+ * @param {string} [props.width='100%'] - Button width value
+ * @param {number} [props.marginTop] - Margin top
+ * @param {number} [props.marginBottom] - Margin bottom
+ * @param {number} [props.marginLeft] - Margin left
+ * @param {number} [props.marginRight] - Margin right
+ * @param {number} [props.margin=8] - Default margin applied if no specific margins are set
+ *
+ * @returns {JSX.Element} The rendered button component
+ */
 export default function GradientButton({
   text,
   onClick,
