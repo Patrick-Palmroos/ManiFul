@@ -46,10 +46,6 @@ const LandingPage = () => {
           }}>
           Making it easy to know where your money goes!
         </Text>
-        <Button
-          title="go to login"
-          onPress={() => navigation.navigate('login')}
-        />
         <GradientButton
           text="Login"
           onClick={() => console.log('hello world!')}
