@@ -15,11 +15,11 @@ const styles = StyleSheet.create({
     borderWidth: 2.4,
   },
   textFieldError: {
-    borderColor: '#CD0003',
+    borderColor: '#A30003',
   },
   errorCode: {
     fontFamily: 'Rubik-Bold',
-    color: '#CD0003',
+    color: '#A30003',
   },
 });
 
