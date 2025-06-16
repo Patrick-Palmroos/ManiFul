@@ -6,6 +6,11 @@ export type AuthCredentials = {
 export type AuthContextType = {
   user: string | null;
   isAuthenticated: boolean;
-  login: (credentials: AuthCredentials) => Promise<void>;
+  login: (credentials: AuthCredentials) => Promise<authRes>;
   logout: () => Promise<void>;
+};
+
+export type authRes = {
+  status: number;
+  message: string;
 };

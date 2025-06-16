@@ -18,7 +18,8 @@ import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
 import { useState } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validation';
-import { validationType } from '../../types/validation';
+import { useAuth } from '../../context/AuthContext';
+import { authRes } from '../../types/auth';
 
 type inputProps = {
   email: string;
@@ -31,6 +32,7 @@ type errorProp = {
 };
 
 const LandingPage = () => {
+  const { login, isAuthenticated } = useAuth();
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [input, setInput] = useState<inputProps>({ email: '', password: '' });
   const [error, setError] = useState<errorProp[] | null>(null);
@@ -60,8 +62,14 @@ const LandingPage = () => {
       setError(newErrors);
 
       if (newErrors.length === 0) {
-        //if (error) setError(null);
-        // proceed with login
+        const res: authRes = await login({
+          email: input.email,
+          password: input.password,
+        });
+        console.log(res);
+        if (res.status === 200) {
+          navigation.navigate('home');
+        }
         return true;
       }
 
