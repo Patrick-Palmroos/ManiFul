@@ -18,16 +18,33 @@ const LandingPage = () => {
       start={{ x: 0, y: 1 }}
       end={{ x: 1, y: 0 }}
       style={styles.container}>
-      <View style={styles.box}>
+      <View style={{ ...styles.box }}>
         <Image
           source={require('../../assets/images/maniful-logo.png')}
           style={{
-            width: '80%',
-            height: '80%',
+            width: '70%',
+            height: '50%',
             resizeMode: 'contain',
           }}
         />
-        <Text style={text.regular}>Landing Page</Text>
+        <Text
+          style={{
+            fontFamily: 'Rubik-Bold',
+            fontSize: 32,
+            color: '#5C0037',
+          }}>
+          ManiFul
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Rubik-SemiBold',
+            fontSize: 16,
+            color: '#68485B',
+            textAlign: 'center',
+            width: '85%',
+          }}>
+          Making it easy to know where your money goes!
+        </Text>
         <Button
           title="go to login"
           onPress={() => navigation.navigate('login')}
