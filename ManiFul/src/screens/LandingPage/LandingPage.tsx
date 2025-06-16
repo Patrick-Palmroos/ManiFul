@@ -27,7 +27,7 @@ type inputProps = {
 };
 
 type errorProp = {
-  type: 'email' | 'password';
+  type: 'email' | 'password' | 'other';
   message: string;
 };
 
@@ -69,6 +69,8 @@ const LandingPage = () => {
         console.log(res);
         if (res.status === 200) {
           navigation.navigate('home');
+        } else if (res.status === 401) {
+          setError([{ type: 'other', message: 'Incorrect credentials' }]);
         }
         return true;
       }
@@ -151,10 +153,18 @@ const LandingPage = () => {
                 ]}
               />
             </View>
+            <Text
+              style={{
+                ...generalStyles.errorCode,
+                textAlign: 'center',
+                fontSize: 16,
+              }}>
+              {error?.find(e => e.type === 'other')?.message}
+            </Text>
             <GradientButton
               text="Login"
               onClick={onLogin}
-              marginTop={20}
+              marginTop={10}
               width={'80%'}
             />
           </View>

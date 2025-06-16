@@ -45,15 +45,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           // Server responded with a status code (e.g. 401, 500)
           const status = error.response.status;
           const message = error.response.data?.message ?? error.message;
-          console.error('API error:', status, message);
+
           return { status, message };
         } else if (error.request) {
           // Request was made but no response received
-          console.error('No response from server:', error.message);
+
           return { status: 0, message: 'No response from server' };
         } else {
           // Something else happened setting up the request
-          console.error('Axios error:', error.message);
+
           return { status: 0, message: error.message };
         }
       } else {
