@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../styles/colors';
 import text from '../../styles/text';
+import GradientButton from '../../components/GradientButton/GradientButton';
 
 const LandingPage = () => {
   const navigation = useNavigation<LandingPageNavigationProp>();
@@ -48,6 +49,11 @@ const LandingPage = () => {
         <Button
           title="go to login"
           onPress={() => navigation.navigate('login')}
+        />
+        <GradientButton
+          text="Login"
+          onClick={() => console.log('hello world!')}
+          width={'80%'}
         />
       </View>
     </LinearGradient>
