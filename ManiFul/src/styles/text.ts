@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native';
 
 const text = StyleSheet.create({
   regular: {
-    fontFamily: 'Rubik-Light',
+    fontFamily: 'Rubik-Regular',
+    color: '#640039',
     fontSize: 16,
   },
 });

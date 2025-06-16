@@ -55,6 +55,15 @@
 		<string>Rubik-Medium.ttf</string>
 		<string>Rubik-Regular.ttf</string>
 		<string>Rubik-SemiBold.ttf</string>
+		<string>Rubik-VariableFont_wght.ttf</string>
+		<string>Rubik-Black.ttf</string>
+		<string>Rubik-BlackItalic.ttf</string>
+		<string>Rubik-BoldItalic.ttf</string>
+		<string>Rubik-ExtraBoldItalic.ttf</string>
+		<string>Rubik-Italic.ttf</string>
+		<string>Rubik-LightItalic.ttf</string>
+		<string>Rubik-MediumItalic.ttf</string>
+		<string>Rubik-SemiBoldItalic.ttf</string>
 	</array>
 </dict>
 </plist>
