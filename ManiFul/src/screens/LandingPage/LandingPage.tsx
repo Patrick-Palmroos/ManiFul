@@ -1,58 +1,104 @@
 //LandingPage.tsx
 import React from 'react';
-import { View, Text, Button, Image, useWindowDimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  useWindowDimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import styles from './styles';
 import { LandingPageNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../styles/colors';
-import text from '../../styles/text';
+import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
+import { useState } from 'react';
+
+type inputProps = {
+  email: string;
+  password: string;
+};
 
 const LandingPage = () => {
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const [input, setInput] = useState<inputProps>({ email: '', password: '' });
   const navigation = useNavigation<LandingPageNavigationProp>();
   const { width } = useWindowDimensions();
 
+  //handles setting focused field for reactive styling.
+  const handleFocusing = (field: string) => setFocusedInput(field);
+
+  //unfocusing the fields
+  const handleBlur = () => setFocusedInput(null);
+
   return (
-    <LinearGradient
-      colors={[colors.background, colors.backgroundWarm]}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.container}>
-      <View style={{ ...styles.box }}>
-        <Image
-          source={require('../../assets/images/maniful-logo.png')}
-          style={{
-            width: '70%',
-            height: '50%',
-            resizeMode: 'contain',
-          }}
-        />
-        <Text
-          style={{
-            fontFamily: 'Rubik-Bold',
-            fontSize: 32,
-            color: '#5C0037',
-          }}>
-          ManiFul
-        </Text>
-        <Text
-          style={{
-            fontFamily: 'Rubik-SemiBold',
-            fontSize: 16,
-            color: '#68485B',
-            textAlign: 'center',
-            width: '85%',
-          }}>
-          Making it easy to know where your money goes!
-        </Text>
-        <GradientButton
-          text="Login"
-          onClick={() => console.log('hello world!')}
-          width={'80%'}
-        />
-      </View>
-    </LinearGradient>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <LinearGradient
+        colors={[colors.background, colors.backgroundWarm]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.container}>
+        <View style={{ ...styles.box }}>
+          <Image
+            source={require('../../assets/images/maniful-logo.png')}
+            style={{
+              width: '70%',
+              height: '50%',
+              resizeMode: 'contain',
+            }}
+          />
+          <Text
+            style={{
+              fontFamily: 'Rubik-Bold',
+              fontSize: 32,
+              color: '#5C0037',
+            }}>
+            ManiFul
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Rubik-SemiBold',
+              fontSize: 16,
+              color: '#68485B',
+              textAlign: 'center',
+              width: '85%',
+            }}>
+            Knowing where your money goes made easy!
+          </Text>
+          <TextInput
+            onFocus={() => handleFocusing('email')}
+            onBlur={handleBlur}
+            placeholder="Email"
+            value={input?.email}
+            onChangeText={text => setInput({ ...input, email: text })}
+            style={[
+              generalStyles.textField,
+              focusedInput === 'email' && generalStyles.textFieldFocused,
+            ]}
+          />
+          <TextInput
+            onFocus={() => handleFocusing('password')}
+            onBlur={handleBlur}
+            placeholder="password"
+            value={input?.password}
+            onChangeText={text => setInput({ ...input, password: text })}
+            style={[
+              generalStyles.textField,
+              focusedInput === 'password' && generalStyles.textFieldFocused,
+            ]}
+          />
+          <GradientButton
+            text="Login"
+            onClick={() => console.log(input)}
+            width={'80%'}
+          />
+        </View>
+      </LinearGradient>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -10,7 +10,7 @@ export default StyleSheet.create({
   box: {
     //backgroundColor: 'white',
     aspectRatio: 1,
-    marginTop: '10%',
+    marginTop: '15%',
     width: '80%',
     display: 'flex',
     justifyContent: 'center',
