@@ -36,6 +36,7 @@ const LandingPage = () => {
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [input, setInput] = useState<inputProps>({ email: '', password: '' });
   const [error, setError] = useState<errorProp[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation<LandingPageNavigationProp>();
   const { width } = useWindowDimensions();
 
@@ -45,8 +46,10 @@ const LandingPage = () => {
   //unfocusing the fields
   const handleBlur = () => setFocusedInput(null);
 
-  const onLogin = async (): Promise<boolean> => {
+  const onLogin = async () => {
     try {
+      setLoading(true);
+
       const validations = [
         { field: 'email', result: validateEmail(input.email) },
         { field: 'password', result: validatePassword(input.password) },
@@ -71,13 +74,14 @@ const LandingPage = () => {
           navigation.navigate('home');
         } else if (res.status === 401) {
           setError([{ type: 'other', message: 'Incorrect credentials' }]);
+        } else {
+          setError([{ type: 'other', message: res.message }]);
         }
-        return true;
       }
-
-      return false;
     } catch (e) {
-      return false;
+      setError([{ type: 'other', message: `Local login error.` }]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -164,6 +168,7 @@ const LandingPage = () => {
             <GradientButton
               text="Login"
               onClick={onLogin}
+              loading={loading}
               marginTop={10}
               width={'80%'}
             />
