@@ -121,6 +121,14 @@ const Loginpage = () => {
             Knowing where your money goes made easy!
           </Text>
           <View style={styles.loginField}>
+            <Text
+              style={{
+                ...generalStyles.errorCode,
+                textAlign: 'center',
+                fontSize: 16,
+              }}>
+              {error?.find(e => e.type === 'other')?.message}
+            </Text>
             <View style={{ marginBottom: 10, width: '100%' }}>
               <Text style={generalStyles.errorCode}>
                 {error?.find(e => e.type === 'email')?.message}
@@ -158,14 +166,6 @@ const Loginpage = () => {
                 ]}
               />
             </View>
-            <Text
-              style={{
-                ...generalStyles.errorCode,
-                textAlign: 'center',
-                fontSize: 16,
-              }}>
-              {error?.find(e => e.type === 'other')?.message}
-            </Text>
             <GradientButton
               text="Login"
               onClick={onLogin}
@@ -174,7 +174,12 @@ const Loginpage = () => {
               width={'80%'}
             />
             <Text
-              style={{ ...text.subtext, maxWidth: '70%', textAlign: 'center' }}>
+              style={{
+                ...text.subtext,
+                maxWidth: '70%',
+                textAlign: 'center',
+                marginTop: 10,
+              }}>
               Dont't have an account yet?{' '}
               <Text
                 style={{
