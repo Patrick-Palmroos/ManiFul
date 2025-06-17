@@ -1,7 +1,6 @@
 //App.tsx
 import React from 'react';
 
-import LandingPage from './src/screens/LandingPage';
 import LoginPage from './src/screens/LoginPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './src/types/navigation';
@@ -35,9 +34,8 @@ function App(): React.JSX.Element {
     <AuthProvider>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="landingPage"
+          initialRouteName="login"
           screenOptions={{ headerTitle: '', headerShown: false }}>
-          <Stack.Screen name="landingPage" component={LandingPage} />
           <Stack.Screen name="login" component={LoginPage} />
           <Stack.Screen name="home" component={HomePage} />
         </Stack.Navigator>
