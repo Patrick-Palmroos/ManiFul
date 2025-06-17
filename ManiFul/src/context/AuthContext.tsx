@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import * as Keychain from 'react-native-keychain';
 import { AuthContextType, AuthCredentials } from '../types/auth';
+import { authRes } from '../types/auth';
 import axios from 'axios';
 
 import { API_URL, API_KEY } from '@env';
@@ -14,7 +15,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  const login = async ({ email, password }: AuthCredentials): Promise<void> => {
+  const login = async ({
+    email,
+    password,
+  }: AuthCredentials): Promise<authRes> => {
     try {
       console.log('API:', API_KEY);
       const response = await axios.post(
@@ -28,15 +32,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             'Content-Type': 'application/json',
             'BACKEND-API-KEY': API_KEY,
           },
+          timeout: 20000,
         },
       );
-
-      await Keychain.setGenericPassword(email, response.data);
+      console.log(response);
+      await Keychain.setGenericPassword(email, response.data?.token);
       setUser(email);
       setIsAuthenticated(true);
+      return { status: response.status, message: response.statusText };
     } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // Server responded with a status code (e.g. 401, 500)
+          const status = error.response.status;
+          const message = error.response.data?.message ?? error.message;
+
+          return { status, message };
+        } else if (error.request) {
+          // Request was made but no response received
+
+          return { status: 0, message: 'No response from server' };
+        } else {
+          // Something else happened setting up the request
+
+          return { status: 0, message: error.message };
+        }
+      } else {
+        // Non-Axios error
+        console.error('Unexpected error:', error);
+        return { status: 0, message: 'Unexpected error' };
+      }
     }
   };
 

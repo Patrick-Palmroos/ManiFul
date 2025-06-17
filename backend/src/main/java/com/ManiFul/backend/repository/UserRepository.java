@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     // You can define custom methods here if needed
-
+    Optional<User> findByEmail(String email);
     @Query("SELECT u FROM User u WHERE u.email LIKE %:domain")
     List<User> findByEmailDomain(@Param("domain") String domain);
 }
