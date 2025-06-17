@@ -14,6 +14,7 @@ import { LoginPageNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../styles/colors';
+import text from '../../styles/text';
 import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
 import { useState } from 'react';
@@ -172,6 +173,18 @@ const Loginpage = () => {
               marginTop={10}
               width={'80%'}
             />
+            <Text
+              style={{ ...text.subtext, maxWidth: '70%', textAlign: 'center' }}>
+              Dont't have an account yet?{' '}
+              <Text
+                style={{
+                  ...text.subtext,
+                  color: '#0047A3',
+                  cursor: 'pointer',
+                }}>
+                Register here.
+              </Text>
+            </Text>
           </View>
         </View>
       </LinearGradient>
