@@ -17,5 +17,8 @@ export default StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Rubik-Regular',
     color: 'white',
+    textShadowColor: 'rgba(0, 0, 0, 0.15)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 8,
   },
 });
