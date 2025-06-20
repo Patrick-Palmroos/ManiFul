@@ -4,12 +4,16 @@ import styles from './styles';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../styles/colors';
+import ActionModal from '../../screens/ActionModal';
+import { useModalContext } from '../../context/ModalContext';
 
 const CustomTabBar = ({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) => {
+  const { openModal } = useModalContext();
+
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
@@ -23,13 +27,17 @@ const CustomTabBar = ({
             : route.name;
 
         const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+          if (isMiddle) {
+            openModal(<ActionModal />);
+          } else {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
           }
         };
 
@@ -40,7 +48,7 @@ const CustomTabBar = ({
           <TouchableOpacity
             key={route.key}
             activeOpacity={100}
-            onPress={isMiddle ? () => null : onPress}
+            onPress={onPress}
             style={[styles.tab, isMiddle && styles.middleTab]}>
             <View>
               {isMiddle ? (
