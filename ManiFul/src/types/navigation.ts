@@ -15,7 +15,7 @@ export type AuthStackParamList = {
 };
 
 export type MainStackParamList = {
-  home: undefined;
+  TabNav: undefined;
   // Add other screens here
 };
 
