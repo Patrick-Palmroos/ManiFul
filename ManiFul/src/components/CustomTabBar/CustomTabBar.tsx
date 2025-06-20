@@ -8,7 +8,10 @@ import ActionModal from '../../screens/ActionModal';
 import { useModalContext } from '../../context/ModalContext';
 import { useRef } from 'react';
 import { Animated } from 'react-native';
-import { runMiddleButtonPressAnimation } from './animations';
+import {
+  runMiddleButtonPressAnimation,
+  useTabIconAnimations,
+} from './animations';
 
 const CustomTabBar = ({
   state,
@@ -16,6 +19,7 @@ const CustomTabBar = ({
   navigation,
 }: BottomTabBarProps) => {
   const { openModal } = useModalContext();
+  const { animations, animateTab } = useTabIconAnimations(state.routes.length);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -35,6 +39,7 @@ const CustomTabBar = ({
             : typeof options.title === 'string'
             ? options.title
             : route.name;
+        animateTab(index, isFocused);
 
         const onPress = () => {
           const event = navigation.emit({
@@ -77,19 +82,22 @@ const CustomTabBar = ({
                   </Animated.View>
                 </View>
               ) : (
-                <MaterialIcons
-                  name={
-                    route.name === 'home'
-                      ? 'home'
-                      : route.name === 'history'
-                      ? 'history'
-                      : route.name === 'budgets'
-                      ? 'calendar-today'
-                      : 'bar-chart'
-                  }
-                  size={isFocused ? 35 : 30}
-                  color={isFocused ? '#A8FFFE' : 'white'}
-                />
+                <Animated.View
+                  style={{ transform: [{ scale: animations[index] }] }}>
+                  <MaterialIcons
+                    name={
+                      route.name === 'home'
+                        ? 'home'
+                        : route.name === 'history'
+                        ? 'history'
+                        : route.name === 'budgets'
+                        ? 'calendar-today'
+                        : 'bar-chart'
+                    }
+                    size={isFocused ? 35 : 30}
+                    color={isFocused ? '#A8FFFE' : 'white'}
+                  />
+                </Animated.View>
               )}
             </View>
             {!isMiddle && (
