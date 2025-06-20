@@ -16,7 +16,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ navigation }) => {
         style={styles.image}
         resizeMode="contain"
       />
-      <TouchableOpacity onPress={() => null} style={styles.iconContainer}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('profile')}
+        style={styles.iconContainer}>
         <MaterialIcons name="account-circle" size={45} color={'black'} />
       </TouchableOpacity>
     </View>

@@ -9,6 +9,7 @@ import ActionModal from '../screens/ActionModal';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import CustomTabBar from '../components/CustomTabBar/CustomTabBar';
 import CustomHeader from '../components/CustomHeader/CustomHeader';
+import ProfilePage from '../screens/ProfilePage';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -63,6 +64,11 @@ const MainStack = () => {
           headerShown: true,
           header: () => <CustomHeader navigation={navigation} />,
         })}
+      />
+      <Stack.Screen
+        name="profile"
+        component={ProfilePage}
+        options={{ headerShown: true, headerTitle: '' }}
       />
     </>
   );

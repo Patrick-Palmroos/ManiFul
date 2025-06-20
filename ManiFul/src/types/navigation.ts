@@ -5,6 +5,7 @@ export type RootStackParamList = {
   login: undefined;
   signup: undefined;
   home: undefined;
+  profile: undefined;
   // Add other screens here
 };
 
@@ -16,6 +17,7 @@ export type AuthStackParamList = {
 
 export type MainStackParamList = {
   TabNav: undefined;
+  profile: undefined;
   // Add other screens here
 };
 
