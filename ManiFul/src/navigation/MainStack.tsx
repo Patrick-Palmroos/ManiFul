@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../types/navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomePage from '../screens/HomePage';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -14,7 +15,12 @@ const TabNav = () => {
       <Tab.Screen
         name="home"
         component={HomePage}
-        options={{ title: 'home' }}
+        options={{
+          title: 'home',
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons name="home" color={color} size={size} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
