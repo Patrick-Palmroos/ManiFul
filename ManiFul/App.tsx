@@ -3,6 +3,7 @@ import React from 'react';
 
 import { AuthProvider } from './src/context/AuthContext';
 import RootNavigation from './src/navigation/RootNavigation';
+import { ModalProvider } from './src/context/ModalContext';
 
 import {
   Button,
@@ -23,7 +24,9 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <RootNavigation />
+      <ModalProvider>
+        <RootNavigation />
+      </ModalProvider>
     </AuthProvider>
   );
 }
