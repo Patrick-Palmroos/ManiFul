@@ -8,6 +8,7 @@ import BudgetsPage from '../screens/BudgetsPage';
 import ActionModal from '../screens/ActionModal';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import CustomTabBar from '../components/CustomTabBar/CustomTabBar';
+import CustomHeader from '../components/CustomHeader/CustomHeader';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -55,7 +56,14 @@ const TabNav = () => {
 const MainStack = () => {
   return (
     <>
-      <Stack.Screen name="TabNav" component={TabNav} />
+      <Stack.Screen
+        name="TabNav"
+        component={TabNav}
+        options={({ navigation }) => ({
+          headerShown: true,
+          header: () => <CustomHeader navigation={navigation} />,
+        })}
+      />
     </>
   );
 };
