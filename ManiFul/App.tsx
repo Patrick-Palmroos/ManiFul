@@ -7,6 +7,7 @@ import { RootStackParamList } from './src/types/navigation';
 import { enableScreens } from 'react-native-screens';
 import HomePage from './src/screens/HomePage';
 import { AuthProvider } from './src/context/AuthContext';
+import RootNavigation from './src/navigation/RootNavigation';
 
 enableScreens();
 
@@ -32,16 +33,7 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="login"
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="login" component={LoginPage} />
-          <Stack.Screen name="home" component={HomePage} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <RootNavigation />
     </AuthProvider>
   );
 }
