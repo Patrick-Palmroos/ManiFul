@@ -3,15 +3,22 @@ import colors from '../../styles/colors';
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
-    backgroundColor: colors.background,
+    height: 90,
+    backgroundColor: colors.backgroundWarm,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 20,
+    paddingLeft: 10,
+    paddingTop: 10,
   },
   image: {
-    width: 40,
-    height: 40,
+    marginTop: 10,
+    width: 70,
+    height: 70,
+  },
+  iconContainer: {
+    paddingTop: 10,
   },
 });
 
