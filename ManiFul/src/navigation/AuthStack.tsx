@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { AuthStackParamList } from '../types/navigation';
 import LoginPage from '../screens/LoginPage';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack = () => {
   return (
@@ -12,4 +12,4 @@ const AuthStack = () => {
   );
 };
 
-export default { AuthStack };
+export default AuthStack;

@@ -1,15 +1,15 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
-import LoginPage from '../screens/LoginPage';
+import { MainStackParamList } from '../types/navigation';
+import HomePage from '../screens/HomePage';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<MainStackParamList>();
 
 const MainStack = () => {
   return (
     <>
-      <Stack.Screen name="login" component={LoginPage} />
+      <Stack.Screen name="home" component={HomePage} />
     </>
   );
 };
 
-export default { MainStack };
+export default MainStack;
