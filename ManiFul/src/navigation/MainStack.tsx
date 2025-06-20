@@ -5,7 +5,9 @@ import HomePage from '../screens/HomePage';
 import HistoryPage from '../screens/HistoryPage';
 import ChartsPage from '../screens/ChartsPage';
 import BudgetsPage from '../screens/BudgetsPage';
+import ActionModal from '../screens/ActionModal';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
+import CustomTabBar from '../components/CustomTabBar/CustomTabBar';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -14,11 +16,27 @@ const TabNav = () => {
   return (
     <Tab.Navigator
       initialRouteName="home"
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{ headerShown: false }}
+      tabBar={props => <CustomTabBar {...props} />}>
+      <Tab.Screen
+        name="home"
+        component={HomePage}
+        options={{
+          title: 'home',
+          tabBarIcon: ({ size, color }) => (
+            <MaterialIcons name="home" color={color} size={size} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="history"
         component={HistoryPage}
         options={{ title: 'history' }}
+      />
+      <Tab.Screen
+        name="action"
+        component={ActionModal}
+        options={{ title: 'action' }}
       />
       <Tab.Screen
         name="budgets"
@@ -29,16 +47,6 @@ const TabNav = () => {
         name="charts"
         component={ChartsPage}
         options={{ title: 'charts' }}
-      />
-      <Tab.Screen
-        name="home"
-        component={HomePage}
-        options={{
-          title: 'home',
-          tabBarIcon: ({ size, color }) => (
-            <MaterialIcons name="home" color={color} size={size} />
-          ),
-        }}
       />
     </Tab.Navigator>
   );
