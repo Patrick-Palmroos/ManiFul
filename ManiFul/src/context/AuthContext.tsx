@@ -1,8 +1,10 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as Keychain from 'react-native-keychain';
 import { AuthContextType, AuthCredentials } from '../types/auth';
 import { authRes } from '../types/auth';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { User } from '../types/auth';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -11,9 +13,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadToken = async () => {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {
+        try {
+          const decoded = jwtDecode(credentials.password);
+          setUser(decoded as User);
+          console.log('user being set..:', decoded);
+        } catch (err) {
+          console.log('Token error: ', err);
+        }
+      }
+      setLoading(false);
+    };
+
+    if (!user) {
+      console.log('no user');
+      loadToken();
+    } else {
+      console.log('user found');
+      setLoading(false);
+    }
+  }, []);
 
   const login = async ({
     email,
@@ -37,8 +63,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       console.log(response);
       await Keychain.setGenericPassword(email, response.data?.token);
-      setUser(email);
       setIsAuthenticated(true);
+      const decoded = jwtDecode(response.data?.token);
+      setUser(decoded as User);
+      setLoading(false);
       return { status: response.status, message: response.statusText };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -77,7 +105,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

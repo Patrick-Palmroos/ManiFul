@@ -1,16 +1,8 @@
 //App.tsx
 import React from 'react';
 
-import LoginPage from './src/screens/LoginPage';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from './src/types/navigation';
-import { enableScreens } from 'react-native-screens';
-import HomePage from './src/screens/HomePage';
 import { AuthProvider } from './src/context/AuthContext';
-
-enableScreens();
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import RootNavigation from './src/navigation/RootNavigation';
 
 import {
   Button,
@@ -21,7 +13,6 @@ import {
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { NavigationContainer } from '@react-navigation/native';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -32,14 +23,7 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="login"
-          screenOptions={{ headerTitle: '', headerShown: false }}>
-          <Stack.Screen name="login" component={LoginPage} />
-          <Stack.Screen name="home" component={HomePage} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <RootNavigation />
     </AuthProvider>
   );
 }

@@ -4,13 +4,20 @@ export type AuthCredentials = {
 };
 
 export type AuthContextType = {
-  user: string | null;
+  user: User | null;
   isAuthenticated: boolean;
   login: (credentials: AuthCredentials) => Promise<authRes>;
   logout: () => Promise<void>;
+  loading: boolean;
 };
 
 export type authRes = {
   status: number;
   message: string;
+};
+
+export type User = {
+  email: string;
+  id: number;
+  username: string;
 };

@@ -17,10 +17,12 @@ import colors from '../../styles/colors';
 import text from '../../styles/text';
 import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validation';
 import { useAuth } from '../../context/AuthContext';
 import { authRes } from '../../types/auth';
+import * as Keychain from 'react-native-keychain';
+import { UserCredentials } from 'react-native-keychain';
 
 type inputProps = {
   email: string;
@@ -33,13 +35,24 @@ type errorProp = {
 };
 
 const Loginpage = () => {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [input, setInput] = useState<inputProps>({ email: '', password: '' });
   const [error, setError] = useState<errorProp[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation<LoginPageNavigationProp>();
   const { width } = useWindowDimensions();
+
+  const [test, setTest] = useState<UserCredentials>();
+
+  useEffect(() => {
+    const test = async () => {
+      const res = await Keychain.getGenericPassword();
+      if (res) setTest(res);
+    };
+
+    test();
+  }, []);
 
   //handles setting focused field for reactive styling.
   const handleFocusing = (field: string) => setFocusedInput(field);
@@ -71,12 +84,12 @@ const Loginpage = () => {
           password: input.password,
         });
         console.log(res);
-        if (res.status === 200) {
-          navigation.navigate('home');
-        } else if (res.status === 401) {
-          setError([{ type: 'other', message: 'Incorrect credentials' }]);
-        } else {
-          setError([{ type: 'other', message: res.message }]);
+        if (res.status !== 200) {
+          if (res.status === 401) {
+            setError([{ type: 'other', message: 'Incorrect credentials' }]);
+          } else {
+            setError([{ type: 'other', message: res.message }]);
+          }
         }
       }
     } catch (e) {
