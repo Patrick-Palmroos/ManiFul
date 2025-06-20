@@ -2,6 +2,8 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { View, TouchableOpacity, Text, Platform } from 'react-native';
 import styles from './styles';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
+import LinearGradient from 'react-native-linear-gradient';
+import colors from '../../styles/colors';
 
 const CustomTabBar = ({
   state,
@@ -37,24 +39,42 @@ const CustomTabBar = ({
         return (
           <TouchableOpacity
             key={route.key}
-            onPress={onPress}
+            activeOpacity={100}
+            onPress={isMiddle ? () => null : onPress}
             style={[styles.tab, isMiddle && styles.middleTab]}>
-            <View style={isMiddle ? styles.middleButton : undefined}>
-              <MaterialIcons
-                name={
-                  route.name === 'home'
-                    ? 'home'
-                    : route.name === 'history'
-                    ? 'history'
-                    : route.name === 'budgets'
-                    ? 'calendar-today'
-                    : route.name === 'action'
-                    ? 'add'
-                    : 'bar-chart'
-                }
-                size={isMiddle ? 40 : 24}
-                color={isFocused ? '#000' : '#999'}
-              />
+            <View>
+              {isMiddle ? (
+                <View style={styles.middleView}>
+                  <View style={styles.middleButtonBgWrapper}>
+                    <View style={styles.middleButtonBg} />
+                  </View>
+                  <LinearGradient
+                    colors={[colors.highlight, colors.gradient]}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.middleButton}>
+                    <MaterialIcons
+                      name={'add'}
+                      size={70}
+                      color={isFocused ? '#A8FFFE' : 'white'}
+                    />
+                  </LinearGradient>
+                </View>
+              ) : (
+                <MaterialIcons
+                  name={
+                    route.name === 'home'
+                      ? 'home'
+                      : route.name === 'history'
+                      ? 'history'
+                      : route.name === 'budgets'
+                      ? 'calendar-today'
+                      : 'bar-chart'
+                  }
+                  size={isFocused ? 35 : 30}
+                  color={isFocused ? '#A8FFFE' : 'white'}
+                />
+              )}
             </View>
             {!isMiddle && (
               <Text style={isFocused ? styles.labelActive : styles.label}>
