@@ -5,6 +5,7 @@ import axios from 'axios';
 import { HomePageNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
+import { UserCredentials } from 'react-native-keychain';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -17,7 +18,18 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const navigation = useNavigation<HomePageNavigationProp>();
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated, loading } = useAuth();
+
+  const [test, setTest] = useState<UserCredentials>();
+
+  useEffect(() => {
+    const test = async () => {
+      const res = await Keychain.getGenericPassword();
+      if (res) setTest(res);
+    };
+
+    test();
+  }, []);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -71,7 +83,6 @@ const HomePage = () => {
     try {
       setIsLoading(true);
       await logout();
-      navigation.navigate('landingPage'); // Assuming your login screen is named 'Login'
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -79,7 +90,7 @@ const HomePage = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -91,20 +102,24 @@ const HomePage = () => {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {user ? (
         <View style={{ gap: 16 }}>
-          <Text>Welcome {user}!</Text>
+          <Text>Welcome {user.email}!</Text>
           {userData && <Text>User ID: {userData.id}</Text>}
           <Button
             title="Refresh User Data"
             onPress={() => user && fetchUserData()}
           />
           <Button title="Logout" onPress={handleLogout} />
+          <Button
+            title="login page"
+            onPress={() => navigation.navigate('login')}
+          />
         </View>
       ) : (
         <View style={{ gap: 16 }}>
           <Text>Please log in to continue BROTHERRR</Text>
           <Button
             title="Go to Login"
-            onPress={() => navigation.navigate('landingPage')}
+            onPress={() => navigation.navigate('login')}
           />
         </View>
       )}

@@ -4,13 +4,15 @@ import { RootStackParamList } from '../types/navigation';
 import { enableScreens } from 'react-native-screens';
 import MainStack from './MainStack';
 import AuthStack from './AuthStack';
+import { useAuth } from '../context/AuthContext';
 
 enableScreens();
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigation = () => {
-  const isAuthenticated = true;
+  const { isAuthenticated } = useAuth();
+
   return (
     <NavigationContainer>
       <Stack.Navigator
