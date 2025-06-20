@@ -4,13 +4,18 @@ import colors from '../../styles/colors';
 const styles = StyleSheet.create({
   container: {
     height: 90,
-    backgroundColor: colors.backgroundWarm,
+    backgroundColor: colors.background,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingRight: 20,
     paddingLeft: 10,
     paddingTop: 10,
+    shadowColor: 'black',
+    shadowOffset: { width: 1, height: 4 },
+    shadowRadius: 20,
+    shadowOpacity: 0.15,
+    elevation: 8,
   },
   image: {
     marginTop: 10,

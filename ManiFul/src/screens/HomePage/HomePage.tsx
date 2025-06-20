@@ -6,6 +6,7 @@ import { HomePageNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { UserCredentials } from 'react-native-keychain';
+import colors from '../../styles/colors';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -99,7 +100,13 @@ const HomePage = () => {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.background,
+      }}>
       {user ? (
         <View style={{ gap: 16 }}>
           <Text>Welcome {user.email}!</Text>
