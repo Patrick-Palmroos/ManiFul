@@ -3,6 +3,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   login: undefined;
+  signup: undefined;
+  home: undefined;
+  // Add other screens here
+};
+
+export type AuthStackParamList = {
+  login: undefined;
+  signup: undefined;
+  // Add other screens here
+};
+
+export type MainStackParamList = {
   home: undefined;
   // Add other screens here
 };
