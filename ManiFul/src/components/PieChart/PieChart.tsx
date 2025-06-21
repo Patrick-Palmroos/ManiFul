@@ -6,7 +6,20 @@ const gap_angle = 0.04;
 
 const colors = ['#BECFCD', '#4D4D50', '#B8B8B6', '#E0CFB0', '#A67C52'];
 
+/**
+ * Renders a pie chart using `react-native-svg` and `d3-shape`.
+ *
+ * @component
+ * @param {Object} props - Props for the PieChart component.
+ * @param {number} props.pie_rad - The radius of the pie chart.
+ * @param {number[]} props.data - Array of numbers for the chart slices.
+ * @returns {JSX.Element} The rendered pie chart.
+ *
+ * @example
+ * <PieChart pie_rad={100} data={[30, 20, 50]} />
+ */
 const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
+  // Create pie layout with custom padding and sorting
   const pieGenerator = d3Shape
     .pie<number>()
     .value(d => d)
@@ -15,6 +28,7 @@ const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
 
   const arcs = pieGenerator(data);
 
+  // Create arc generator for path drawing
   const arcGenerator = d3Shape
     .arc<d3Shape.PieArcDatum<number>>()
     .outerRadius(pie_rad)
