@@ -8,47 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { UserCredentials } from 'react-native-keychain';
 import colors from '../../styles/colors';
 
-import { API_URL, API_KEY } from '@env';
-
-type UserData = {
-  id: number;
-  // Add other user properties as needed
-};
-
 const HomePage = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const navigation = useNavigation<HomePageNavigationProp>();
-
-  const fetchUserData = async () => {
-    const creds = await Keychain.getGenericPassword();
-    if (creds) {
-      const { password: token } = creds;
-      console.log('fetch user data token:', token);
-      try {
-        console.log('token: ', token);
-        setIsLoading(true);
-        const response = await axios.get(`${API_URL}/users`, {
-          params: { id: 1 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'BACKEND-API-KEY': API_KEY,
-            Accept: 'application/json',
-          },
-        });
-        console.log('user data: ', response.data);
-        setUserData(response.data);
-      } catch (error) {
-        console.log('User fetch error:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          // Token might be expired, force logout
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
   return (
     <View
       style={{
@@ -57,12 +17,7 @@ const HomePage = () => {
         alignItems: 'center',
         backgroundColor: colors.background,
       }}>
-      <View style={{ gap: 16 }}>
-        <Button
-          title="Refresh User Data"
-          onPress={() => user && fetchUserData()}
-        />
-      </View>
+      <View style={{ gap: 16 }}></View>
     </View>
   );
 };
