@@ -21,35 +21,6 @@ const HomePage = () => {
   const navigation = useNavigation<HomePageNavigationProp>();
   const { user, logout, isAuthenticated, loading } = useAuth();
 
-  const [test, setTest] = useState<UserCredentials>();
-
-  useEffect(() => {
-    const test = async () => {
-      const res = await Keychain.getGenericPassword();
-      if (res) setTest(res);
-    };
-
-    test();
-  }, []);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const creds = await Keychain.getGenericPassword();
-        if (creds) {
-          // You might want to verify the token is still valid here
-          await fetchUserData();
-        }
-      } catch (error) {
-        console.error('Keychain access error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
-
   const fetchUserData = async () => {
     const creds = await Keychain.getGenericPassword();
     if (creds) {
@@ -91,14 +62,6 @@ const HomePage = () => {
     }
   };
 
-  if (isLoading || loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
     <View
       style={{
@@ -107,29 +70,19 @@ const HomePage = () => {
         alignItems: 'center',
         backgroundColor: colors.background,
       }}>
-      {user ? (
-        <View style={{ gap: 16 }}>
-          <Text>Welcome {user.email}!</Text>
-          {userData && <Text>User ID: {userData.id}</Text>}
-          <Button
-            title="Refresh User Data"
-            onPress={() => user && fetchUserData()}
-          />
-          <Button title="Logout" onPress={handleLogout} />
-          <Button
-            title="login page"
-            onPress={() => navigation.navigate('login')}
-          />
-        </View>
-      ) : (
-        <View style={{ gap: 16 }}>
-          <Text>Please log in to continue BROTHERRR</Text>
-          <Button
-            title="Go to Login"
-            onPress={() => navigation.navigate('login')}
-          />
-        </View>
-      )}
+      <View style={{ gap: 16 }}>
+        <Text>Welcome {user?.email}!</Text>
+        {userData && <Text>User ID: {userData.id}</Text>}
+        <Button
+          title="Refresh User Data"
+          onPress={() => user && fetchUserData()}
+        />
+        <Button title="Logout" onPress={handleLogout} />
+        <Button
+          title="login page"
+          onPress={() => navigation.navigate('login')}
+        />
+      </View>
     </View>
   );
 };
