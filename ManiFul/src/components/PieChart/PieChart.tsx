@@ -42,7 +42,7 @@ const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
             <Path
               key={`arc-${index}`}
               d={arcGenerator(arc) as string}
-              fill={colors[index]}
+              fill={colors[index % colors.length]}
             />
           ))}
         </G>
