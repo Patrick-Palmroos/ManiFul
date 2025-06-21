@@ -19,7 +19,6 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const navigation = useNavigation<HomePageNavigationProp>();
-  const { user, logout, isAuthenticated, loading } = useAuth();
 
   const fetchUserData = async () => {
     const creds = await Keychain.getGenericPassword();
@@ -43,22 +42,10 @@ const HomePage = () => {
         console.log('User fetch error:', error);
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           // Token might be expired, force logout
-          await handleLogout();
         }
       } finally {
         setIsLoading(false);
       }
-    }
-  };
-
-  const handleLogout = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -71,16 +58,9 @@ const HomePage = () => {
         backgroundColor: colors.background,
       }}>
       <View style={{ gap: 16 }}>
-        <Text>Welcome {user?.email}!</Text>
-        {userData && <Text>User ID: {userData.id}</Text>}
         <Button
           title="Refresh User Data"
           onPress={() => user && fetchUserData()}
-        />
-        <Button title="Logout" onPress={handleLogout} />
-        <Button
-          title="login page"
-          onPress={() => navigation.navigate('login')}
         />
       </View>
     </View>
