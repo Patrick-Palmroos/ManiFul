@@ -10,6 +10,7 @@ import { UserCredentials } from 'react-native-keychain';
 import colors from '../../styles/colors';
 import styles from '../HomePage/styles';
 import text from '../../styles/text';
+import PieChart from '../../components/PieChart/PieChart';
 
 const HomePage = () => {
   return (
@@ -36,6 +37,15 @@ const HomePage = () => {
       {/* View for the data */}
       <View style={styles.contentView}>
         <Text style={{ color: 'black' }}>DATA DATA DATA!</Text>
+        <View
+          style={{
+            backgroundColor: 'white',
+            height: 280,
+            width: '100%',
+            justifyContent: 'center',
+          }}>
+          <PieChart pie_rad={100} data={[1, 2, 3, 4, 5]} />
+        </View>
       </View>
     </View>
   );
