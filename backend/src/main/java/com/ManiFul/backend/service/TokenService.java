@@ -32,7 +32,7 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .expiresAt(now.plus(7, ChronoUnit.DAYS))
                 .subject(user.getEmail())
                 .claim("id", user.getId())
                 .claim("email", user.getEmail())
