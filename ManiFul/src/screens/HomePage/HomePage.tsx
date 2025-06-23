@@ -55,7 +55,6 @@ const HomePage = () => {
       </LinearGradient>
       {/* View for the data */}
       <View style={styles.contentView}>
-        <Text style={{ color: 'black' }}>DATA DATA DATA!</Text>
         {/* View for the data items */}
         <View
           style={{
