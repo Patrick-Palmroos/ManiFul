@@ -1,3 +1,11 @@
+/**
+ * Converts HSL (Hue, Saturation, Lightness) values to a HEX colors.
+ *
+ * @param {number} h - The hue (0–360).
+ * @param {number} s - The saturation (0–100).
+ * @param {number} l - The lightness (0–100).
+ * @returns {string} A HEX color string ("#fffff").
+ */
 export const hslToHex = (h: number, s: number, l: number): string => {
   //normalizing the values.
   s /= 100;
@@ -19,6 +27,17 @@ export const hslToHex = (h: number, s: number, l: number): string => {
   return `#${hex}`;
 };
 
+/**
+ * Generates an array of descending HEX color values by manipulating lightness.
+ *
+ * @param {Object} params - Configuration object.
+ * @param {number} params.count - Number of colors to generate.
+ * @param {number} [params.baseHue=360] - Base hue (0–360).
+ * @param {number} [params.baseSaturation=100] - Base saturation (0–100).
+ * @param {number} [params.startLightness=70] - Starting lightness (0–100).
+ * @param {number} [params.step=5] - Amount to decrease lightness per step.
+ * @returns {string[]} An array of HEX colors.
+ */
 export const generateDescendingColors = ({
   count,
   baseHue = 360,
