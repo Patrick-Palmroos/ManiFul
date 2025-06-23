@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import Svg, { G, Path } from 'react-native-svg';
 import * as d3Shape from 'd3-shape';
+import { PieData } from '../../types/data';
 
 const gap_angle = 0.04;
 
@@ -18,7 +19,7 @@ const colors = ['#BECFCD', '#4D4D50', '#B8B8B6', '#E0CFB0', '#A67C52'];
  * @example
  * <PieChart pie_rad={100} data={[30, 20, 50]} />
  */
-const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
+const PieChart = ({ pie_rad, data }: { pie_rad: number; data: PieData[] }) => {
   // Create pie layout with custom padding and sorting
   const pieGenerator = d3Shape
     .pie<number>()
@@ -26,7 +27,7 @@ const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
     .padAngle(gap_angle)
     .sort((a, b) => b - a);
 
-  const arcs = pieGenerator(data);
+  const arcs = pieGenerator(data.map(d => d.value));
 
   // Create arc generator for path drawing
   const arcGenerator = d3Shape
@@ -42,7 +43,11 @@ const PieChart = ({ pie_rad, data }: { pie_rad: number; data: number[] }) => {
             <Path
               key={`arc-${index}`}
               d={arcGenerator(arc) as string}
-              fill={colors[index % colors.length]}
+              fill={
+                data[index]?.color
+                  ? data[index].color
+                  : colors[index % colors.length]
+              }
             />
           ))}
         </G>
