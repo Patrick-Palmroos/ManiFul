@@ -12,6 +12,24 @@ import styles from '../HomePage/styles';
 import text from '../../styles/text';
 import PieChart from '../../components/PieChart/PieChart';
 
+const data = {
+  test1: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' }
+  ],
+  test2: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' }
+  ],
+  test3: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' }
+  ]
+};
+
 const HomePage = () => {
   return (
     <View style={styles.container}>
@@ -46,7 +64,9 @@ const HomePage = () => {
           }}>
           <PieChart
             pie_rad={100}
-            data={[
+            data={data.map((x) => {x.value})
+              
+              [
               { value: 1, color: '#BFFF71' },
               { value: 1, color: '#FF9898' },
               { value: 1, color: '#85C2FF' },
