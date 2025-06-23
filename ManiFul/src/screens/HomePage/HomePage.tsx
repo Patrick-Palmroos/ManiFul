@@ -1,135 +1,122 @@
 import { Text, View, Button, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import * as Keychain from 'react-native-keychain';
+import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { HomePageNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { UserCredentials } from 'react-native-keychain';
 import colors from '../../styles/colors';
+import styles from '../HomePage/styles';
+import text from '../../styles/text';
+import PieChart from '../../components/PieChart/PieChart';
+import ChartPointList from '../../components/ChartPointList';
 
-import { API_URL, API_KEY } from '@env';
-
-type UserData = {
-  id: number;
-  // Add other user properties as needed
+const data = {
+  test1: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' },
+  ],
+  test2: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' },
+  ],
+  test3: [
+    { value: 4, title: 'groceries' },
+    { value: 2, title: 'Bills' },
+    { value: 2, title: 'Snacks' },
+  ],
 };
 
 const HomePage = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const navigation = useNavigation<HomePageNavigationProp>();
-  const { user, logout, isAuthenticated, loading } = useAuth();
-
-  const [test, setTest] = useState<UserCredentials>();
-
-  useEffect(() => {
-    const test = async () => {
-      const res = await Keychain.getGenericPassword();
-      if (res) setTest(res);
-    };
-
-    test();
-  }, []);
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const creds = await Keychain.getGenericPassword();
-        if (creds) {
-          // You might want to verify the token is still valid here
-          await fetchUserData();
-        }
-      } catch (error) {
-        console.error('Keychain access error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
-
-  const fetchUserData = async () => {
-    const creds = await Keychain.getGenericPassword();
-    if (creds) {
-      const { password: token } = creds;
-      console.log('fetch user data token:', token);
-      try {
-        console.log('token: ', token);
-        setIsLoading(true);
-        const response = await axios.get(`${API_URL}/users`, {
-          params: { id: 1 },
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'BACKEND-API-KEY': API_KEY,
-            Accept: 'application/json',
-          },
-        });
-        console.log('user data: ', response.data);
-        setUserData(response.data);
-      } catch (error) {
-        console.log('User fetch error:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          // Token might be expired, force logout
-          await handleLogout();
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const handleLogout = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading || loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.background,
-      }}>
-      {user ? (
-        <View style={{ gap: 16 }}>
-          <Text>Welcome {user.email}!</Text>
-          {userData && <Text>User ID: {userData.id}</Text>}
-          <Button
-            title="Refresh User Data"
-            onPress={() => user && fetchUserData()}
-          />
-          <Button title="Logout" onPress={handleLogout} />
-          <Button
-            title="login page"
-            onPress={() => navigation.navigate('login')}
-          />
+    <View style={styles.container}>
+      {/* Displays the money left for the month */}
+      <LinearGradient
+        colors={[colors.highlight, colors.gradient]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.topView}>
+        <Text style={{ ...text.regularLight, lineHeight: 20 }}>
+          Left for the month:
+        </Text>
+        <Text style={{ ...text.moneyLight, fontSize: 36, lineHeight: 50 }}>
+          600,37€
+        </Text>
+        <Text style={{ ...text.regularLight, fontSize: 14, lineHeight: 20 }}>
+          <Text style={{ ...text.moneyLight, fontSize: 14, lineHeight: 20 }}>
+            47%
+          </Text>{' '}
+          of the monthly budget spent.
+        </Text>
+      </LinearGradient>
+      {/* View for the data */}
+      <View style={styles.contentView}>
+        {/* View for the data items */}
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: 20,
+            flexWrap: 'wrap',
+          }}>
+          {/* View for the data blocks ontop of each other */}
+          <View
+            style={{
+              width: '45%',
+              height: 300,
+              justifyContent: 'space-between',
+            }}>
+            {/* Item 1 */}
+            <View
+              style={{
+                backgroundColor: 'white',
+                //width: '45%',
+                height: 100,
+              }}></View>
+            {/* Item 2 */}
+            <View
+              style={{
+                backgroundColor: 'white',
+                //width: '45%',
+                height: 150,
+              }}></View>
+          </View>
+          {/* PieChart View */}
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              //display: 'flex',
+
+              height: 300,
+              width: '45%',
+              //justifyContent: 'center',
+            }}>
+            <PieChart
+              pie_rad={80}
+              data={[
+                { value: 3, color: '#BFFF71', name: '' },
+                { value: 1, color: '#FF9898', name: '' },
+                { value: 1, color: '#85C2FF', name: '' },
+              ]}
+            />
+            <View style={{ marginLeft: 20, marginTop: 20 }}>
+              <ChartPointList
+                data={[
+                  { value: 1, color: '#BFFF71', name: 'Test1' },
+                  { value: 1, color: '#FF9898', name: 'Test2' },
+                  { value: 1, color: '#85C2FF', name: 'Test3' },
+                ]}
+              />
+            </View>
+          </View>
         </View>
-      ) : (
-        <View style={{ gap: 16 }}>
-          <Text>Please log in to continue BROTHERRR</Text>
-          <Button
-            title="Go to Login"
-            onPress={() => navigation.navigate('login')}
-          />
-        </View>
-      )}
+      </View>
     </View>
   );
 };
