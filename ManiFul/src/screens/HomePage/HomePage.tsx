@@ -11,23 +11,24 @@ import colors from '../../styles/colors';
 import styles from '../HomePage/styles';
 import text from '../../styles/text';
 import PieChart from '../../components/PieChart/PieChart';
+import ChartPointList from '../../components/ChartPointList';
 
 const data = {
   test1: [
     { value: 4, title: 'groceries' },
     { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' }
+    { value: 2, title: 'Snacks' },
   ],
   test2: [
     { value: 4, title: 'groceries' },
     { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' }
+    { value: 2, title: 'Snacks' },
   ],
   test3: [
     { value: 4, title: 'groceries' },
     { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' }
-  ]
+    { value: 2, title: 'Snacks' },
+  ],
 };
 
 const HomePage = () => {
@@ -58,18 +59,25 @@ const HomePage = () => {
         <View
           style={{
             backgroundColor: 'white',
+            display: 'flex',
+
             height: 280,
             width: '100%',
             justifyContent: 'center',
           }}>
           <PieChart
-            pie_rad={100}
-            data={data.map((x) => {x.value})
-              
-              [
-              { value: 1, color: '#BFFF71' },
-              { value: 1, color: '#FF9898' },
-              { value: 1, color: '#85C2FF' },
+            pie_rad={80}
+            data={[
+              { value: 3, color: '#BFFF71', name: '' },
+              { value: 1, color: '#FF9898', name: '' },
+              { value: 1, color: '#85C2FF', name: '' },
+            ]}
+          />
+          <ChartPointList
+            data={[
+              { value: 1, color: '#BFFF71', name: 'Test1' },
+              { value: 1, color: '#FF9898', name: 'Test2' },
+              { value: 1, color: '#85C2FF', name: 'Test3' },
             ]}
           />
         </View>

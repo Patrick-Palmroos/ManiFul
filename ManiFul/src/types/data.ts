@@ -1,8 +1,9 @@
 import { ColorValue } from 'react-native';
 
 export type PieData = {
+  name: String;
   value: number;
-  color: ColorValue | null;
+  color: ColorValue;
 };
 
 export type TransactionData = {
