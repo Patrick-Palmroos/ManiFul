@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TransactionService {
 
@@ -18,6 +20,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    @Transactional
     public Transaction getTransactionWithItems(Long transactionId) {
         Optional<Transaction> transactionOpt = transactionRepository.findByIdWithItems(transactionId);
         return transactionOpt.orElseThrow(() -> new RuntimeException(("Transaction not found with id " + transactionId)));
