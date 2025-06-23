@@ -44,7 +44,14 @@ const HomePage = () => {
             width: '100%',
             justifyContent: 'center',
           }}>
-          <PieChart pie_rad={100} data={[1, 2, 3, 4, 5, 6, 7]} />
+          <PieChart
+            pie_rad={100}
+            data={[
+              { value: 1, color: '#BFFF71' },
+              { value: 1, color: '#FF9898' },
+              { value: 1, color: '#85C2FF' },
+            ]}
+          />
         </View>
       </View>
     </View>
