@@ -18,3 +18,27 @@ export const hslToHex = (h: number, s: number, l: number): string => {
 
   return `#${hex}`;
 };
+
+export const generateDescendingColors = ({
+  count,
+  baseHue = 360,
+  baseSaturation = 100,
+  startLightness = 70,
+  step = 5,
+}: {
+  count: number;
+  baseHue: number;
+  baseSaturation: number;
+  startLightness: number;
+  step: number;
+}): string[] => {
+  const colors: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const lightness = Math.max(0, startLightness - i * step);
+    const hexColor = hslToHex(baseHue, baseSaturation, lightness);
+    colors.push(hexColor);
+  }
+
+  return colors;
+};
