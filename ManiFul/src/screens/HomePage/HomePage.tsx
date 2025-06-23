@@ -56,30 +56,66 @@ const HomePage = () => {
       {/* View for the data */}
       <View style={styles.contentView}>
         <Text style={{ color: 'black' }}>DATA DATA DATA!</Text>
+        {/* View for the data items */}
         <View
           style={{
-            backgroundColor: 'white',
             display: 'flex',
-
-            height: 280,
-            width: '100%',
+            flexDirection: 'row',
             justifyContent: 'center',
+            gap: 20,
+            flexWrap: 'wrap',
           }}>
-          <PieChart
-            pie_rad={80}
-            data={[
-              { value: 3, color: '#BFFF71', name: '' },
-              { value: 1, color: '#FF9898', name: '' },
-              { value: 1, color: '#85C2FF', name: '' },
-            ]}
-          />
-          <ChartPointList
-            data={[
-              { value: 1, color: '#BFFF71', name: 'Test1' },
-              { value: 1, color: '#FF9898', name: 'Test2' },
-              { value: 1, color: '#85C2FF', name: 'Test3' },
-            ]}
-          />
+          {/* View for the data blocks ontop of each other */}
+          <View
+            style={{
+              width: '45%',
+              height: 300,
+              justifyContent: 'space-between',
+            }}>
+            {/* Item 1 */}
+            <View
+              style={{
+                backgroundColor: 'white',
+                //width: '45%',
+                height: 100,
+              }}></View>
+            {/* Item 2 */}
+            <View
+              style={{
+                backgroundColor: 'white',
+                //width: '45%',
+                height: 150,
+              }}></View>
+          </View>
+          {/* PieChart View */}
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              //display: 'flex',
+
+              height: 300,
+              width: '45%',
+              //justifyContent: 'center',
+            }}>
+            <PieChart
+              pie_rad={80}
+              data={[
+                { value: 3, color: '#BFFF71', name: '' },
+                { value: 1, color: '#FF9898', name: '' },
+                { value: 1, color: '#85C2FF', name: '' },
+              ]}
+            />
+            <View style={{ marginLeft: 20, marginTop: 20 }}>
+              <ChartPointList
+                data={[
+                  { value: 1, color: '#BFFF71', name: 'Test1' },
+                  { value: 1, color: '#FF9898', name: 'Test2' },
+                  { value: 1, color: '#85C2FF', name: 'Test3' },
+                ]}
+              />
+            </View>
+          </View>
         </View>
       </View>
     </View>
