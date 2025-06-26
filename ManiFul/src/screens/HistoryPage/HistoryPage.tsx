@@ -1,15 +1,18 @@
 import { View, Text } from 'react-native';
 import { useEffect, useState } from 'react';
-import { fetchTransactionWithid } from '../../api/userApi/transactionApi';
+import {
+  fetchTransactionWithid,
+  fetchAllUserTransactions,
+} from '../../api/userApi/transactionApi';
 
 const HistoryPage = () => {
   const [test, setTest] = useState(null);
 
   useEffect(() => {
     const t = async () => {
-      const res = await fetchTransactionWithid({ id: 1 });
+      const res = await fetchAllUserTransactions();
       if (res) {
-        setTest(res);
+        //setTest(res);
       } else {
         console.error('ERRROR FETCHING: ', res);
       }
