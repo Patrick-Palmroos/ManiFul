@@ -9,9 +9,15 @@ export type PieData = {
 export type TransactionData = {
   id: number;
   title: String;
-  data: {
-    id: number;
-    name: String;
-    total: number;
-  };
+  userId: number;
+  total: number;
+  date: string;
+  items: [
+    {
+      id: number;
+      typeId: number;
+      name: String;
+      total: number;
+    },
+  ];
 };
