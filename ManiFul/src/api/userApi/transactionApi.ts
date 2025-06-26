@@ -2,8 +2,13 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 
 import { API_URL, API_KEY } from '@env';
+import { TransactionData } from '../../types/data';
 
-export const fetchTransactionWithid = async ({ id }: { id: number }) => {
+export const fetchTransactionWithid = async ({
+  id,
+}: {
+  id: number;
+}): Promise<TransactionData | null> => {
   const creds = await Keychain.getGenericPassword();
   if (creds) {
     const { password: token } = creds;
@@ -18,14 +23,16 @@ export const fetchTransactionWithid = async ({ id }: { id: number }) => {
         },
       });
       console.log('fetch data: ', JSON.stringify(response.data, null, 2));
-      return response.data;
+
+      return response.data as TransactionData;
     } catch (error) {
       console.log('Data fetch error:', error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         // Token might be expired, force logout
       }
-    } finally {
-      // setIsLoading(false);
+      return null;
     }
+  } else {
+    return null;
   }
 };
