@@ -4,6 +4,7 @@ import {
   fetchTransactionWithid,
   fetchAllUserTransactions,
 } from '../../api/userApi/transactionApi';
+import colors from '../../styles/colors';
 
 const HistoryPage = () => {
   const [test, setTest] = useState(null);
@@ -21,22 +22,8 @@ const HistoryPage = () => {
     t();
   }, []);
 
-  if (!test) {
-    return (
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 50,
-        }}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
   return (
-    <View>
+    <View style={{ backgroundColor: colors.background, flex: 1 }}>
       <Text>History</Text>
     </View>
   );
