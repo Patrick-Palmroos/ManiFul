@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useEffect, useState } from 'react';
 import {
   fetchTransactionWithid,
@@ -37,11 +37,14 @@ const HistoryPage = () => {
   }
 
   return (
-    <View style={{ backgroundColor: colors.background, flex: 1 }}>
+    <ScrollView
+      style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       {transactionData.map((x, i) => (
-        <HistoryItem item={x} key={i} />
+        <View style={{ marginBottom: 15 }}>
+          <HistoryItem item={x} key={i} />
+        </View>
       ))}
-    </View>
+    </ScrollView>
   );
 };
 
