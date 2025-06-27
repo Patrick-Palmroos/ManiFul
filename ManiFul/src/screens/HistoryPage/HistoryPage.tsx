@@ -7,7 +7,9 @@ import {
 import colors from '../../styles/colors';
 import HistoryItem from './components/HistoryItem';
 import { TransactionData } from '../../types/data';
+import { TransactionItem } from '../../types/data';
 
+//TODO: save user data into a context for easy access across app without multiple fetches.
 const HistoryPage = () => {
   const [transactionData, setTransactionData] = useState<
     TransactionData[] | null
@@ -26,9 +28,19 @@ const HistoryPage = () => {
     t();
   }, []);
 
+  if (!transactionData) {
+    return (
+      <View style={{ backgroundColor: colors.background, flex: 1 }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
-      <Text>History</Text>
+      {transactionData.map((x, i) => (
+        <HistoryItem item={x} key={i} />
+      ))}
     </View>
   );
 };
