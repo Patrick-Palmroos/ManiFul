@@ -12,12 +12,12 @@ export type TransactionData = {
   userId: number;
   total: number;
   date: string;
-  items:
-    | {
-        id: number;
-        typeId: number;
-        name: String;
-        total: number;
-      }[]
-    | null;
+  items: TransactionItem[] | null;
+};
+
+export type TransactionItem = {
+  id: number;
+  typeId: number;
+  name: String;
+  total: number;
 };
