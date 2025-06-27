@@ -5,15 +5,19 @@ import {
   fetchAllUserTransactions,
 } from '../../api/userApi/transactionApi';
 import colors from '../../styles/colors';
+import HistoryItem from './components/HistoryItem';
+import { TransactionData } from '../../types/data';
 
 const HistoryPage = () => {
-  const [test, setTest] = useState(null);
+  const [transactionData, setTransactionData] = useState<
+    TransactionData[] | null
+  >(null);
 
   useEffect(() => {
     const t = async () => {
       const res = await fetchAllUserTransactions();
       if (res) {
-        //setTest(res);
+        setTransactionData(res);
       } else {
         console.error('ERRROR FETCHING: ', res);
       }
