@@ -40,8 +40,8 @@ const HistoryPage = () => {
     <ScrollView
       style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       {transactionData.map((x, i) => (
-        <View style={{ marginBottom: 15 }}>
-          <HistoryItem item={x} key={i} />
+        <View style={{ marginBottom: 15 }} key={i}>
+          <HistoryItem item={x} />
         </View>
       ))}
     </ScrollView>
