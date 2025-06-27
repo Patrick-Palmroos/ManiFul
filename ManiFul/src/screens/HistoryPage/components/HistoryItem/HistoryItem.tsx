@@ -3,6 +3,7 @@ import { TransactionData, TransactionItem } from '../../../../types/data';
 import styles from './styles';
 import { Shadow } from 'react-native-shadow-2';
 import { formatDateToDDMMYYYY } from '../../helper';
+import text from '../../../../styles/text';
 
 const HistoryItem = ({ item }: { item: TransactionData }) => {
   return (
@@ -12,8 +13,10 @@ const HistoryItem = ({ item }: { item: TransactionData }) => {
       offset={[0, 2]}
       stretch={true}>
       <View style={styles.container}>
-        <Text>{item.total}</Text>
-        <Text>{formatDateToDDMMYYYY(item.date)}</Text>
+        <Text style={text.moneyDark}>{item.total}€</Text>
+        <Text style={{ ...text.subtext, fontSize: 16 }}>
+          {formatDateToDDMMYYYY(item.date)}
+        </Text>
       </View>
     </Shadow>
   );
