@@ -5,7 +5,7 @@ import {
   fetchAllUserTransactions,
 } from '../../api/userApi/transactionApi';
 import colors from '../../styles/colors';
-import HistoryItem from './components/HistoryItem';
+import HistoryItem from './components/HistoryItem/HistoryItem';
 import { TransactionData } from '../../types/data';
 import { TransactionItem } from '../../types/data';
 

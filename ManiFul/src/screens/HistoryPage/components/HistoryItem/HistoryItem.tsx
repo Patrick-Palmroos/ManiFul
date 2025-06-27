@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
-import { TransactionItem } from '../../../types/data';
+import { TransactionData, TransactionItem } from '../../../../types/data';
 
-const HistoryItem = ({ item }: { item: TransactionItem }) => {
+const HistoryItem = ({ item }: { item: TransactionData }) => {
   return (
     <View>
       <Text>{item.total}</Text>
