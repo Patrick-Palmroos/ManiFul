@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   fetchTransactionWithid,
   fetchAllUserTransactions,
-} from '../../api/userApi/transactionApi';
+} from '../../api/transactionApi';
 import colors from '../../styles/colors';
 import HistoryItem from './components/HistoryItem/HistoryItem';
 import { TransactionData } from '../../types/data';
