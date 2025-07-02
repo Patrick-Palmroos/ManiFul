@@ -36,4 +36,15 @@ public class TransactionService {
 
         return transactions;
     }
+
+    @Transactional
+    public Transaction createTransaction(Transaction transaction, Long userId) {
+        transaction.setUserId(userId);
+
+        if (transaction.getItems() != null) {
+            transaction.getItems().forEach(item -> item.setTransaction((transaction)));
+        }
+
+        return transactionRepository.save(transaction);
+    }
 }
