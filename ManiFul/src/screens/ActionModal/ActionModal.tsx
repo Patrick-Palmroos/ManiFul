@@ -7,6 +7,7 @@ import {
 } from 'react-native-image-picker';
 import { useState } from 'react';
 import React from 'react';
+import { receiptToJson } from '../../api/raspberryApi';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -41,6 +42,12 @@ const ActionModal = () => {
     launchImageLibrary(options, handleResponse);
   };
 
+  const getResults = () => {
+    if (imageUri) {
+      receiptToJson({ imageUri: imageUri });
+    }
+  };
+
   return (
     <View>
       <Text>ActionModal</Text>
@@ -52,6 +59,7 @@ const ActionModal = () => {
       )}
       <Button title="camera" onPress={openCamera} />
       <Button title="gallery" onPress={openGallery} />
+      <Button title="results" onPress={getResults} />
     </View>
   );
 };
