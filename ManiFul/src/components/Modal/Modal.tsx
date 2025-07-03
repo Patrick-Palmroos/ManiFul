@@ -3,6 +3,7 @@ import {
   Text,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  TouchableOpacity,
   Platform,
 } from 'react-native';
 import styles from './styles';
@@ -22,7 +23,17 @@ const Modal = ({ children, onClose }: Props) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalWrapper}>
-        <View style={styles.modalContent}>{children}</View>
+        <View style={styles.modalContent}>
+          {/* Close Button */}
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            {/* You can use a text fallback or an icon */}
+            {/* <Text style={styles.closeText}>×</Text> */}
+            <Text>Close</Text>
+          </TouchableOpacity>
+
+          {/* Modal Content */}
+          {children}
+        </View>
       </KeyboardAvoidingView>
     </View>
   );

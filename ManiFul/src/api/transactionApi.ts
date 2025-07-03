@@ -2,7 +2,7 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 
 import { API_URL, API_KEY } from '@env';
-import { TransactionData } from '../../types/data';
+import { TransactionData } from '../types/data';
 
 export const fetchAllUserTransactions = async (): Promise<
   TransactionData[] | null

@@ -5,6 +5,8 @@ application.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+hs_err_pid*.log
+replay_pid*.log
 
 ### STS ###
 .apt_generated

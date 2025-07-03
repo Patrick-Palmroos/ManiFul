@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +36,11 @@ public class TransactionController {
     public List<Transaction> getAllTransactions(@AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("id");
         return transactionService.getAllTransactions(userId);
+    }
+
+    @PostMapping("/create")
+    public Transaction createTransaction(@RequestBody Transaction transaction, @AuthenticationPrincipal Jwt jwt) {
+        Long userId = jwt.getClaim("id");
+        return transactionService.createTransaction(transaction, userId);
     }
 }
