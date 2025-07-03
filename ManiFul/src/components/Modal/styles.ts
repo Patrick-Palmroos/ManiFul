@@ -28,4 +28,5 @@ export default StyleSheet.create({
     padding: 20,
     elevation: 10,
   },
+  closeButton: {},
 });
