@@ -35,9 +35,8 @@ export const parseReceipt = async (imageUri: string) => {
       },
     );
 
-    console.log('res: ', response);
-    console.log('Done.');
-    return response.data;
+    console.log('res: ', response.data.data);
+    return response.data.data as ImageScanType;
   } catch (error) {
     console.error('Upload error:', error);
     return null;
