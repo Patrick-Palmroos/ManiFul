@@ -4,7 +4,7 @@ import {
   PermissionsAndroid,
   Button,
   Image,
-  Platform,
+  Alert,
 } from 'react-native';
 import {
   launchCamera,
@@ -15,6 +15,8 @@ import {
 import { useState } from 'react';
 import React from 'react';
 import { parseReceipt, pingRasp } from '../../api/raspberryApi';
+import { useModalContext } from '../../context/ModalContext';
+import OptionPicker from './components/OptionPicker';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -24,6 +26,7 @@ const options: CameraOptions = {
 };
 
 const ActionModal = () => {
+  const { openModal } = useModalContext();
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleResponse = (response: ImagePickerResponse) => {
@@ -61,6 +64,10 @@ const ActionModal = () => {
     console.log(res);
   };
 
+  const openAndroidStyleChooser = () => {
+    openModal(<OptionPicker callback={openGallery} />);
+  };
+
   return (
     <View>
       <Text>ActionModal</Text>
@@ -74,6 +81,7 @@ const ActionModal = () => {
       <Button title="gallery" onPress={openGallery} />
       <Button title="results" onPress={getResults} />
       <Button title="ping" onPress={pingRasperry} />
+      <Button title="Selector" onPress={openAndroidStyleChooser} />
     </View>
   );
 };
