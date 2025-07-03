@@ -15,39 +15,12 @@ import {
 import { useState } from 'react';
 import React from 'react';
 import { parseReceipt, pingRasp } from '../../api/raspberryApi';
-import RNFS from 'react-native-fs';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
   maxWidth: 1024,
   maxHeight: 1024,
   quality: 0.5,
-};
-
-const getProcessedUri = async (uri: string): Promise<string> => {
-  //handle content
-  if (uri.startsWith('content://')) {
-    const destPath = `${RNFS.TemporaryDirectoryPath}/${Date.now()}.png`;
-    await RNFS.copyFile(uri, destPath);
-    return `file://${destPath}`;
-  }
-
-  // Android specific
-  if (Platform.OS === 'android') {
-    // Normalize file URI (file://path -> file:///path)
-    const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
-    const filePath = normalizedUri.replace('file://', '');
-
-    // Verify file exists
-    if (!(await RNFS.exists(filePath))) {
-      throw new Error('File not found at path: ' + filePath);
-    }
-
-    return normalizedUri;
-  }
-
-  // IOS etc here.
-  return uri;
 };
 
 const ActionModal = () => {
