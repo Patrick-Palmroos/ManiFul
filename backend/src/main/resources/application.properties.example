@@ -6,6 +6,8 @@ spring.jpa.hibernate.ddl-auto=<create | create-drop | update | validate | none>
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgresSQLDialect
 app.api.key=<key>
 jwt.secret=<jwt-secret>
+raspberry.api.key=
+raspberry.pi.url=
 
 # --- Connection Pool Settings ---
 spring.datasource.hikari.maximum-pool-size=10
