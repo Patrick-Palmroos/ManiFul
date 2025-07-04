@@ -26,7 +26,7 @@ const options: CameraOptions = {
 };
 
 const ActionModal = () => {
-  const { openModal } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleResponse = (response: ImagePickerResponse) => {
@@ -36,6 +36,7 @@ const ActionModal = () => {
       console.warn('Error ', response.errorMessage || 'Unknown error');
     } else if (response.assets && response.assets.length > 0) {
       setImageUri(response.assets[0].uri || null);
+      closeModal('optionPicker');
     }
   };
 
@@ -65,7 +66,7 @@ const ActionModal = () => {
   };
 
   const openAndroidStyleChooser = () => {
-    openModal(<OptionPicker callback={openGallery} />);
+    openModal(<OptionPicker callback={openGallery} />, 'optionPicker');
   };
 
   return (
