@@ -4,8 +4,6 @@ import com.ManiFul.backend.model.Transaction;
 import com.ManiFul.backend.service.TransactionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,16 +39,8 @@ public class TransactionController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction, @AuthenticationPrincipal Jwt jwt) {
-        try {
-            Long userId = jwt.getClaim("id");
-            Transaction saved = transactionService.createTransaction(transaction, userId);
-            return ResponseEntity.ok(saved);
-        } catch (Exception e) {
-            // Log the error and return a 500 with message
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating transaction: " + e.getMessage());
-        }
+    public Transaction createTransaction(@RequestBody Transaction transaction, @AuthenticationPrincipal Jwt jwt) {
+        Long userId = jwt.getClaim("id");
+        return transactionService.createTransaction(transaction, userId);
     }
 }
