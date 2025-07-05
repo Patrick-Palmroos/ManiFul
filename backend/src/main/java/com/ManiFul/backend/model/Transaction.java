@@ -1,5 +1,7 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -35,6 +37,7 @@ public class Transaction {
 
     private String vendor;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private Instant date;
 
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
