@@ -1,12 +1,12 @@
 export type ImageItemType = {
-  name: String;
+  name: string;
   price: number;
-  category: String;
+  category: string;
 };
 
 export type ImageScanType = {
-  vendor: String;
-  date: String;
+  vendor: string;
+  date: string;
   items: ImageItemType[];
   total: number;
   unrecognized_items: { name: String; price: number }[] | null;
