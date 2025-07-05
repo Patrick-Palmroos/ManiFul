@@ -33,6 +33,8 @@ public class Transaction {
 
     private BigDecimal total;
 
+    private String vendor;
+
     private Instant date;
 
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
