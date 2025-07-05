@@ -20,6 +20,7 @@ const HistoryPage = () => {
       const res = await fetchAllUserTransactions();
       if (res) {
         setTransactionData(res);
+        console.log('transaction data: ', res);
       } else {
         console.error('ERRROR FETCHING: ', res);
       }

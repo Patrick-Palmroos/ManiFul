@@ -18,6 +18,12 @@ import { parseReceipt, pingRasp } from '../../api/raspberryApi';
 import { useModalContext } from '../../context/ModalContext';
 import OptionPicker from './components/OptionPicker';
 import { ImageScanType } from '../../types/raspberry';
+import { saveTransaction } from '../../api/transactionApi';
+import {
+  TransactionData,
+  transactionPost,
+  TransactionPostItem,
+} from '../../types/data';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -75,6 +81,26 @@ const ActionModal = () => {
     );
   };
 
+  const save = async () => {
+    if (res) {
+      const [day, month, year] = res.date.split('-');
+      const data: transactionPost = {
+        total: res.total,
+        vendor: res.vendor,
+        date: new Date(`${year}-${month}-${day}`).toISOString(),
+        items: res.items.map(i => {
+          return {
+            typeId: 7,
+            name: i.name,
+            total: i.price,
+          } as TransactionPostItem;
+        }),
+      };
+      const response = await saveTransaction({ data: data });
+      console.log('result is: ', response);
+    }
+  };
+
   return (
     <View>
       <Text>ActionModal</Text>
@@ -87,7 +113,7 @@ const ActionModal = () => {
       <Button title="results" onPress={getResults} />
       <Button title="ping" onPress={pingRasperry} />
       <Button title="Selector" onPress={openAndroidStyleChooser} />
-      {res && <Button title="Save receipt" onPress={() => null} />}
+      {res && <Button title="Save receipt" onPress={save} />}
     </View>
   );
 };
