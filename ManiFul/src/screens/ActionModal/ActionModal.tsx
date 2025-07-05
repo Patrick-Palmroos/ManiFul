@@ -66,7 +66,10 @@ const ActionModal = () => {
   };
 
   const openAndroidStyleChooser = () => {
-    openModal(<OptionPicker callback={openGallery} />, 'optionPicker');
+    openModal(
+      <OptionPicker camera={openCamera} gallery={openGallery} />,
+      'optionPicker',
+    );
   };
 
   return (
@@ -78,8 +81,6 @@ const ActionModal = () => {
           style={{ width: 200, height: 200, marginTop: 20, borderRadius: 10 }}
         />
       )}
-      <Button title="camera" onPress={openCamera} />
-      <Button title="gallery" onPress={openGallery} />
       <Button title="results" onPress={getResults} />
       <Button title="ping" onPress={pingRasperry} />
       <Button title="Selector" onPress={openAndroidStyleChooser} />

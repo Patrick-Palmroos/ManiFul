@@ -1,10 +1,17 @@
 import { View, Text, Button } from 'react-native';
 
-const OptionPicker = ({ callback }: { callback: () => void }) => {
+const OptionPicker = ({
+  camera,
+  gallery,
+}: {
+  camera: () => void;
+  gallery: () => void;
+}) => {
   return (
     <View>
       <Text>Lol</Text>
-      <Button title="gallery" onPress={callback} />
+      <Button title="gallery" onPress={gallery} />
+      <Button title="camera" onPress={camera} />
     </View>
   );
 };
