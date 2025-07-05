@@ -1,4 +1,6 @@
 import { StyleSheet } from 'react-native';
+import colors from '../../styles/colors';
+import text from '../../styles/text';
 
 export default StyleSheet.create({
   backdropContainer: {
@@ -16,17 +18,25 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalWrapper: {
-    width: '90%',
+    width: '94%',
     maxHeight: '80%',
-    backgroundColor: 'white',
+    backgroundColor: colors.background,
     borderRadius: 8,
     overflow: 'hidden',
-    padding: 20,
+    padding: 10,
     elevation: 10,
   },
   modalContent: {
-    padding: 20,
-    elevation: 10,
+    padding: 10,
   },
-  closeButton: {},
+  closeButton: {
+    alignItems: 'flex-end',
+  },
+  closeIcon: {
+    backgroundColor: '#ff5c5c',
+    borderRadius: 35,
+    padding: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

@@ -7,6 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import styles from './styles';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 interface Props {
   children: React.ReactNode;
@@ -23,16 +24,21 @@ const Modal = ({ children, onClose }: Props) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalWrapper}>
-        <View style={styles.modalContent}>
+        <View>
           {/* Close Button */}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             {/* You can use a text fallback or an icon */}
             {/* <Text style={styles.closeText}>×</Text> */}
-            <Text>Close</Text>
+            <MaterialIcons
+              name={'close'}
+              size={30}
+              color={'white'}
+              style={styles.closeIcon}
+            />
           </TouchableOpacity>
 
           {/* Modal Content */}
-          {children}
+          <View style={styles.modalContent}>{children}</View>
         </View>
       </KeyboardAvoidingView>
     </View>
