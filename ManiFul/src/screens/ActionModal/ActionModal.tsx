@@ -112,16 +112,29 @@ const ActionModal = () => {
         field2="Income"
         width={'70%'}
       />
-      {imageUri && (
-        <Image
-          source={{ uri: imageUri }}
-          style={{ width: 200, height: 200, marginTop: 20, borderRadius: 10 }}
-        />
+      {!toggle ? (
+        <View style={{ width: '100%' }}>
+          {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={{
+                width: 200,
+                height: 200,
+                marginTop: 20,
+                borderRadius: 10,
+              }}
+            />
+          )}
+          <Button title="results" onPress={getResults} />
+          <Button title="ping" onPress={pingRasperry} />
+          <Button title="Selector" onPress={openAndroidStyleChooser} />
+          {res && <Button title="Save receipt" onPress={save} />}
+        </View>
+      ) : (
+        <View>
+          <Text>INCOME</Text>
+        </View>
       )}
-      <Button title="results" onPress={getResults} />
-      <Button title="ping" onPress={pingRasperry} />
-      <Button title="Selector" onPress={openAndroidStyleChooser} />
-      {res && <Button title="Save receipt" onPress={save} />}
     </View>
   );
 };
