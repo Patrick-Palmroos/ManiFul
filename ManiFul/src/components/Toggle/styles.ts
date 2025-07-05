@@ -4,7 +4,7 @@ import text from '../../styles/text';
 
 const styles = StyleSheet.create({
   container: {
-    height: 40,
+    height: 45,
     padding: 4,
     flexDirection: 'row',
     justifyContent: 'center',
