@@ -24,6 +24,7 @@ import {
   transactionPost,
   TransactionPostItem,
 } from '../../types/data';
+import Toggle from '../../components/Toggle';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -35,6 +36,7 @@ const options: CameraOptions = {
 const ActionModal = () => {
   const { openModal, closeModal } = useModalContext();
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [toggle, setToggle] = useState<boolean>(false);
   const [res, setRes] = useState<ImageScanType | null>(null);
 
   const handleResponse = (response: ImagePickerResponse) => {
@@ -103,7 +105,7 @@ const ActionModal = () => {
 
   return (
     <View>
-      <Text>ActionModal</Text>
+      <Toggle value={toggle} onValueChange={value => setToggle(value)} />
       {imageUri && (
         <Image
           source={{ uri: imageUri }}
