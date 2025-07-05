@@ -21,7 +21,7 @@ export default StyleSheet.create({
     width: '94%',
     maxHeight: '80%',
     backgroundColor: colors.background,
-    borderRadius: 8,
+    borderRadius: 11,
     overflow: 'hidden',
     padding: 10,
     elevation: 10,
