@@ -104,8 +104,14 @@ const ActionModal = () => {
   };
 
   return (
-    <View>
-      <Toggle value={toggle} onValueChange={value => setToggle(value)} />
+    <View style={{ alignItems: 'center' }}>
+      <Toggle
+        value={toggle}
+        onValueChange={value => setToggle(value)}
+        field1="Expense"
+        field2="Income"
+        width={'70%'}
+      />
       {imageUri && (
         <Image
           source={{ uri: imageUri }}
