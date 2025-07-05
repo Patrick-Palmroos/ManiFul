@@ -8,6 +8,7 @@ app.api.key=<key>
 jwt.secret=<jwt-secret>
 raspberry.api.key=
 raspberry.pi.url=
+spring.jackson.serialization.write-dates-as-timestamps=false
 
 # --- Connection Pool Settings ---
 spring.datasource.hikari.maximum-pool-size=10
