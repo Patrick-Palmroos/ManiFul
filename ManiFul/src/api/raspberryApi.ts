@@ -6,11 +6,13 @@ import { TransactionData } from '../types/data';
 import { ImageScanType } from '../types/raspberry';
 import { convertToPngIfNeeded } from '../utils/imageProcessing';
 
-export const parseReceipt = async (imageUri: string) => {
+export const parseReceipt = async (
+  imageUri: string,
+): Promise<ImageScanType | null> => {
   const creds = await Keychain.getGenericPassword();
   if (!creds) {
     console.log('No credentials found in Keychain');
-    return false;
+    return null;
   }
   const { uri: processedUri, mimeType } = await convertToPngIfNeeded(imageUri);
   const formData = new FormData();
