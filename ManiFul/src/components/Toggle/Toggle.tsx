@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, DimensionValue } from 'react-native';
 import styles from './styles';
 import colors from '../../styles/colors';
 import text from '../../styles/text';
@@ -11,12 +11,14 @@ import text from '../../styles/text';
  * @property {(value: boolean) => void} onValueChange - Callback when the toggle is changed.
  * @property {string} [field1] - Optional label for the first option. Default is "Option 1".
  * @property {string} [field2] - Optional label for the second option. Default is "Option 2".
+ * @property {DimensionValue} [width] - Optional value to set the components width. Default is '100%'.
  */
 interface ToggleProps {
   onValueChange: (value: boolean) => void;
   value: boolean;
   field1?: string;
   field2?: string;
+  width?: DimensionValue;
 }
 
 /**
@@ -28,7 +30,11 @@ interface ToggleProps {
  */
 const Toggle = (options: ToggleProps) => {
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        width: options.width ? options.width : '100%',
+      }}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => options.onValueChange(false)}
