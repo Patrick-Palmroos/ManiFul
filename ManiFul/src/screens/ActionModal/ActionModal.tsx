@@ -17,6 +17,7 @@ import React from 'react';
 import { parseReceipt, pingRasp } from '../../api/raspberryApi';
 import { useModalContext } from '../../context/ModalContext';
 import OptionPicker from './components/OptionPicker';
+import { ImageScanType } from '../../types/raspberry';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -28,6 +29,7 @@ const options: CameraOptions = {
 const ActionModal = () => {
   const { openModal, closeModal } = useModalContext();
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [res, setRes] = useState<ImageScanType | null>(null);
 
   const handleResponse = (response: ImagePickerResponse) => {
     if (response.didCancel) {
@@ -57,12 +59,13 @@ const ActionModal = () => {
     if (imageUri) {
       const res = await parseReceipt(imageUri);
       console.log(res);
+      setRes(res);
     }
   };
 
   const pingRasperry = async () => {
-    const res = await pingRasp();
-    console.log(res);
+    const resp = await pingRasp();
+    console.log(resp);
   };
 
   const openAndroidStyleChooser = () => {
@@ -84,6 +87,7 @@ const ActionModal = () => {
       <Button title="results" onPress={getResults} />
       <Button title="ping" onPress={pingRasperry} />
       <Button title="Selector" onPress={openAndroidStyleChooser} />
+      {res && <Button title="Save receipt" onPress={() => null} />}
     </View>
   );
 };
