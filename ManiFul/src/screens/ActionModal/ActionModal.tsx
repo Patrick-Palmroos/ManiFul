@@ -17,7 +17,7 @@ import { useState } from 'react';
 import React from 'react';
 import { parseReceipt, pingRasp } from '../../api/raspberryApi';
 import { useModalContext } from '../../context/ModalContext';
-import OptionPicker from './components/OptionPicker';
+import OptionPicker from './components/OptionPicker/OptionPicker';
 import { ImageScanType } from '../../types/raspberry';
 import { saveTransaction } from '../../api/transactionApi';
 import {
@@ -31,6 +31,7 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 import styles from './styles';
 import colors from '../../styles/colors';
 import text from '../../styles/text';
+import ReceiptLoading from './components/ReceiptLoading';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -73,12 +74,18 @@ const ActionModal = () => {
   const getResults = async () => {
     if (imageUri) {
       setLoading(true);
+
+      openModal(<ReceiptLoading />, 'loading', {
+        disableClosing: true,
+      });
+
       const response = await parseReceipt(imageUri);
       if (!response) {
         console.log('Couldnt scan receipt');
       }
       setResData(response);
       setLoading(false);
+      closeModal('loading');
     }
   };
 
