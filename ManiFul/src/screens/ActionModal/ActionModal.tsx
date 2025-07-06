@@ -182,6 +182,7 @@ const ActionModal = () => {
             text={resData ? 'Receipt details' : 'Scan receipt'}
             onClick={resData ? () => null : getResults}
             loading={loading}
+            disabled={imageUri ? false : true}
             width={'60%'}
             marginTop={30}
           />
