@@ -3,11 +3,20 @@ import { useState } from 'react';
 interface ModalItem {
   id: string;
   content: React.ReactNode;
+  disableClosing?: boolean;
+  closeButton?: boolean;
 }
 
 interface UseModalResults {
   isOpen: boolean;
-  openModal: (content: React.ReactNode, customId?: string) => void;
+  openModal: (
+    content: React.ReactNode,
+    customId?: string,
+    options?: {
+      disableClosing?: boolean;
+      closeButton?: boolean;
+    },
+  ) => void;
   closeModal: (id: string) => void;
   modals: ModalItem[];
 }

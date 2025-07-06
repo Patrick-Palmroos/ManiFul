@@ -26,10 +26,14 @@ export default StyleSheet.create({
     elevation: 10,
   },
   modalContent: {
+    marginTop: 30,
     padding: 10,
   },
   closeButton: {
     alignItems: 'flex-end',
+    position: 'absolute',
+    right: 0,
+    width: 40,
   },
   closeIcon: {
     backgroundColor: '#ff5c5c',
