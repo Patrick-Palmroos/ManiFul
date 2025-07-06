@@ -5,7 +5,12 @@ import colors from '../../../../styles/colors';
 
 const ReceiptLoading = () => {
   return (
-    <View style={{ height: 130, alignItems: 'center', marginTop: 30 }}>
+    <View
+      style={{
+        height: 130,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator
           size={90}
