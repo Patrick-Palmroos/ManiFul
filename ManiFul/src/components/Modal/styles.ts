@@ -19,10 +19,9 @@ export default StyleSheet.create({
   },
   modalWrapper: {
     width: '94%',
-    maxHeight: '80%',
+    maxHeight: '90%',
     backgroundColor: colors.background,
     borderRadius: 11,
-    overflow: 'hidden',
     padding: 10,
     elevation: 10,
   },

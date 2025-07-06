@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   Platform,
+  ScrollView,
 } from 'react-native';
 import styles from './styles';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
@@ -38,7 +39,7 @@ const Modal = ({ children, onClose }: Props) => {
           </TouchableOpacity>
 
           {/* Modal Content */}
-          <View style={styles.modalContent}>{children}</View>
+          <ScrollView style={styles.modalContent}>{children}</ScrollView>
         </View>
       </KeyboardAvoidingView>
     </View>

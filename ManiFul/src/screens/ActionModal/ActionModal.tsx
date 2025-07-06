@@ -120,7 +120,11 @@ const ActionModal = () => {
   };
 
   return (
-    <View style={{ alignItems: 'center', height: '70%' }}>
+    <View
+      style={{
+        alignItems: 'center',
+        height: '100%',
+      }}>
       <Toggle
         value={toggle}
         onValueChange={value => setToggle(value)}
@@ -128,67 +132,88 @@ const ActionModal = () => {
         field2="Income"
         width={'70%'}
       />
+
       {!toggle ? (
         <View
           style={{
             width: '100%',
-            alignItems: 'center',
           }}>
-          {imageUri ? (
-            <View style={styles.receiptContainer}>
-              {1 === 1 && resData ? (
-                <View
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text>{resData.total}€</Text>
-                  <Text>{resData.date}</Text>
-                </View>
-              ) : (
-                <Image
-                  source={{ uri: imageUri }}
-                  resizeMode="cover"
-                  style={styles.imageStyle}
-                />
-              )}
-              <TouchableOpacity
-                onPress={clearData}
-                disabled={loading}
-                activeOpacity={1}
-                style={
-                  loading
-                    ? { ...styles.removeButton, backgroundColor: 'grey' }
-                    : styles.removeButton
-                }>
-                <Text style={text.regularLight}>Remove</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.receiptContainer}>
-              <TouchableOpacity
-                onPress={openAndroidStyleChooser}
-                style={styles.receiptButton}>
-                <MaterialIcons
-                  name={'document-scanner'}
-                  size={60}
-                  color={colors.gradient}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-          <GradientButton
-            text={resData ? 'Receipt details' : 'Scan receipt'}
-            onClick={resData ? () => null : getResults}
-            loading={loading}
-            disabled={imageUri ? false : true}
-            width={'60%'}
-            marginTop={30}
-          />
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'center',
+            }}>
+            {imageUri ? (
+              <View style={styles.receiptContainer}>
+                {1 === 1 && resData ? (
+                  <View
+                    style={{
+                      width: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text>{resData.total}€</Text>
+                    <Text>{resData.date}</Text>
+                  </View>
+                ) : (
+                  <Image
+                    source={{ uri: imageUri }}
+                    resizeMode="cover"
+                    style={styles.imageStyle}
+                  />
+                )}
+                <TouchableOpacity
+                  onPress={clearData}
+                  disabled={loading}
+                  activeOpacity={1}
+                  style={
+                    loading
+                      ? { ...styles.removeButton, backgroundColor: 'grey' }
+                      : styles.removeButton
+                  }>
+                  <Text style={text.regularLight}>Remove</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.receiptContainer}>
+                <TouchableOpacity
+                  onPress={openAndroidStyleChooser}
+                  style={styles.receiptButton}>
+                  <MaterialIcons
+                    name={'document-scanner'}
+                    size={60}
+                    color={colors.gradient}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            <GradientButton
+              text={resData ? 'Receipt details' : 'Scan receipt'}
+              onClick={resData ? () => null : getResults}
+              loading={loading}
+              disabled={imageUri ? false : true}
+              width={'60%'}
+              marginTop={30}
+            />
+          </View>
           <Button title="results" onPress={getResults} />
           <Button title="ping" onPress={pingRasperry} />
-          {resData && <Button title="Save receipt" onPress={save} />}
+          <Button title="Save receipt" onPress={save} />
+          <View
+            style={{
+              width: '100%',
+              backgroundColor: 'blue',
+              marginTop: 30,
+            }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: 'yellow',
+                padding: 2,
+                width: '80%',
+              }}>
+              <Text>Save</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
         <View>
