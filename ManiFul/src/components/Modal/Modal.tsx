@@ -13,12 +13,20 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 interface Props {
   children: React.ReactNode;
   onClose: () => void;
+  closeButton?: boolean;
+  disableClosing?: boolean;
 }
 
-const Modal = ({ children, onClose }: Props) => {
+const Modal = ({
+  children,
+  onClose,
+  closeButton = true,
+  disableClosing = false,
+}: Props) => {
   return (
     <View style={styles.backdropContainer}>
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback
+        onPress={!disableClosing ? onClose : () => null}>
         <View style={styles.backdrop} />
       </TouchableWithoutFeedback>
 
@@ -27,16 +35,18 @@ const Modal = ({ children, onClose }: Props) => {
         style={styles.modalWrapper}>
         <View>
           {/* Close Button */}
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            {/* You can use a text fallback or an icon */}
-            {/* <Text style={styles.closeText}>×</Text> */}
-            <MaterialIcons
-              name={'close'}
-              size={30}
-              color={'white'}
-              style={styles.closeIcon}
-            />
-          </TouchableOpacity>
+          {closeButton && !disableClosing && (
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              {/* You can use a text fallback or an icon */}
+              {/* <Text style={styles.closeText}>×</Text> */}
+              <MaterialIcons
+                name={'close'}
+                size={30}
+                color={'white'}
+                style={styles.closeIcon}
+              />
+            </TouchableOpacity>
+          )}
 
           {/* Modal Content */}
           <ScrollView style={styles.modalContent}>{children}</ScrollView>
