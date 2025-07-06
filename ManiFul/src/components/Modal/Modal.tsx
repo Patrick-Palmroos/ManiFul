@@ -23,7 +23,6 @@ const Modal = ({
   closeButton = true,
   disableClosing = false,
 }: Props) => {
-  console.log(`closeButton: ${closeButton}, disabled: ${disableClosing}`);
   return (
     <View style={styles.backdropContainer}>
       <TouchableWithoutFeedback
