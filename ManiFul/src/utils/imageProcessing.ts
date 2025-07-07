@@ -1,6 +1,8 @@
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 import RNFS from 'react-native-fs';
-import { Platform } from 'react-native';
+import { Platform, Image } from 'react-native';
+
+const MAX_DIMENSION = 1000;
 
 export const getMimeType = (uri: string): string => {
   const lowerUri = uri.toLowerCase();
@@ -8,6 +10,18 @@ export const getMimeType = (uri: string): string => {
   if (lowerUri.endsWith('.jpg') || lowerUri.endsWith('.jpeg'))
     return 'image/jpeg';
   return 'application/octet-stream'; // fallback
+};
+
+export const getImageSize = (
+  uri: string,
+): Promise<{ width: number; height: number }> => {
+  return new Promise((resolve, reject) => {
+    Image.getSize(
+      uri,
+      (width, height) => resolve({ width, height }),
+      error => reject(error),
+    );
+  });
 };
 
 export const convertToPngIfNeeded = async (
@@ -20,12 +34,28 @@ export const convertToPngIfNeeded = async (
       return { uri, mimeType: 'image/png' };
     }
 
+    const { width, height } = await getImageSize(uri);
+
+    let targetWidth = width;
+    let targetHeight = height;
+
+    if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+      const aspectRatio = width / height;
+      if (aspectRatio > 1) {
+        targetWidth = MAX_DIMENSION;
+        targetHeight = Math.round(MAX_DIMENSION / aspectRatio);
+      } else {
+        targetHeight = MAX_DIMENSION;
+        targetWidth = Math.round(MAX_DIMENSION * aspectRatio);
+      }
+    }
+
     const result = await ImageResizer.createResizedImage(
       uri,
-      1000, // width
-      1000, // height
+      targetWidth, // width
+      targetHeight, // height
       'PNG', // convert to PNG
-      90, // quality
+      100, // quality
       0, // rotation
       undefined, // outputPath
     );
