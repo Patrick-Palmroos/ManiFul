@@ -33,6 +33,8 @@ import styles from './styles';
 import colors from '../../styles/colors';
 import text from '../../styles/text';
 import ReceiptLoading from './components/ReceiptLoading';
+import DocumentScanner from 'react-native-document-scanner-plugin';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -56,7 +58,38 @@ const ActionModal = () => {
       console.warn('Error ', response.errorMessage || 'Unknown error');
     } else if (response.assets && response.assets.length > 0) {
       setImageUri(response.assets[0].uri || null);
+      //closeModal('optionPicker');
+    }
+  };
+
+  const openScanner = async () => {
+    try {
+      const { scannedImages } = await DocumentScanner.scanDocument({
+        croppedImageQuality: 90,
+      });
+
+      if (scannedImages && scannedImages.length > 0) {
+        const image = scannedImages[0]; // It's a file:// URI
+        setImageUri(image);
+        closeModal('optionPicker');
+      }
+    } catch (err) {
+      console.error('Document scan failed:', err);
+    }
+  };
+
+  const openGalleryAndCrop = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        cropping: true, // enable cropping UI
+        freeStyleCropEnabled: true,
+        compressImageQuality: 0.8, // adjust compression if needed
+        mediaType: 'photo',
+      });
+      setImageUri(image.path);
       closeModal('optionPicker');
+    } catch (err) {
+      console.error('Gallery pick/crop failed:', err);
     }
   };
 
@@ -98,7 +131,7 @@ const ActionModal = () => {
 
   const openAndroidStyleChooser = () => {
     openModal(
-      <OptionPicker camera={openCamera} gallery={openGallery} />,
+      <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />,
       'optionPicker',
     );
   };
