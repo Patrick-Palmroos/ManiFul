@@ -31,6 +31,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     bottom: '5%',
   },
+  generalButton: {
+    backgroundColor: '#C61A79',
+    padding: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    height: 50,
+    width: '90%',
+  },
 });
 
 export default styles;

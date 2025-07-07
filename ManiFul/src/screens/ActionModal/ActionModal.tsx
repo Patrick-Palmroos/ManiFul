@@ -6,6 +6,7 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   launchCamera,
@@ -45,6 +46,7 @@ const ActionModal = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [toggle, setToggle] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
   const [resData, setResData] = useState<ImageScanType | null>(null);
 
   const handleResponse = (response: ImagePickerResponse) => {
@@ -108,6 +110,7 @@ const ActionModal = () => {
 
   const save = async () => {
     if (resData) {
+      setSaving(true);
       const [day, month, year] = resData.date.split('-');
       const data: transactionPost = {
         total: resData.total,
@@ -123,6 +126,9 @@ const ActionModal = () => {
       };
       const response = await saveTransaction({ data: data });
       console.log('result is: ', response);
+      setSaving(false);
+      setResData(null);
+      setImageUri(null);
     }
   };
 
@@ -130,7 +136,7 @@ const ActionModal = () => {
     <View
       style={{
         alignItems: 'center',
-        height: '100%',
+        height: 400,
       }}>
       <Toggle
         value={toggle}
@@ -144,6 +150,8 @@ const ActionModal = () => {
         <View
           style={{
             width: '100%',
+            height: '90%',
+            justifyContent: 'space-between',
           }}>
           <View
             style={{
@@ -197,28 +205,31 @@ const ActionModal = () => {
             <GradientButton
               text={resData ? 'Receipt details' : 'Scan receipt'}
               onClick={resData ? () => null : getResults}
-              loading={loading}
               disabled={imageUri ? false : true}
               width={'60%'}
               marginTop={30}
             />
           </View>
-          <Button title="results" onPress={getResults} />
-          <Button title="ping" onPress={pingRasperry} />
-          <Button title="Save receipt" onPress={save} />
           <View
             style={{
               width: '100%',
-              backgroundColor: 'blue',
+              flexDirection: 'row',
+              justifyContent: 'center',
               marginTop: 30,
             }}>
             <TouchableOpacity
-              style={{
-                backgroundColor: 'yellow',
-                padding: 2,
-                width: '80%',
-              }}>
-              <Text>Save</Text>
+              disabled={resData ? false : true}
+              onPress={save}
+              style={
+                resData
+                  ? styles.generalButton
+                  : { ...styles.generalButton, backgroundColor: '#626262' }
+              }>
+              {saving ? (
+                <ActivityIndicator size={30} color={'white'} />
+              ) : (
+                <Text style={{ ...text.regularLight, fontSize: 20 }}>Save</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
