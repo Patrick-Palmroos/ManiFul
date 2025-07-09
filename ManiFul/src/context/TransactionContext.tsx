@@ -13,6 +13,7 @@ interface TransactionContextType {
   refreshTransactions: () => Promise<void>;
   getTransactionById: (id: number) => TransactionData | undefined;
   createTransaction: (data: transactionPost) => Promise<boolean>;
+  deleteTransaction: (id: number) => Promise<boolean>;
 }
 
 const TransactionContext = createContext<TransactionContextType>({
@@ -22,6 +23,7 @@ const TransactionContext = createContext<TransactionContextType>({
   refreshTransactions: async () => {},
   getTransactionById: () => undefined,
   createTransaction: async () => false,
+  deleteTransaction: async () => false,
 });
 
 export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -85,6 +87,32 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     return transactions.find(t => t.id === id);
   };
 
+  const deleteTransaction = async (id: number) => {
+    try {
+      setLoading(true);
+      const creds = await Keychain.getGenericPassword();
+      if (!creds) throw new Error('No credentials found');
+
+      await axios.delete(`${API_URL}/transactions/delete`, {
+        params: { id },
+        headers: {
+          Authorization: `Bearer ${creds.password}`,
+          'BACKEND-API-KEY': API_KEY,
+        },
+      });
+
+      // Optimistically remove from local state
+      setTransactions(prev => prev.filter(t => t.id !== id));
+      return true;
+    } catch (err) {
+      setError('Failed to delete transaction');
+      console.error('Delete error:', err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Initial fetch on mount
   useEffect(() => {
     fetchTransactions();
@@ -99,6 +127,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         refreshTransactions: fetchTransactions,
         getTransactionById,
         createTransaction,
+        deleteTransaction,
       }}>
       {children}
     </TransactionContext.Provider>
