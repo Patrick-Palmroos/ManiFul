@@ -14,6 +14,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -23,6 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (credentials) {
         try {
           const decoded = jwtDecode(credentials.password);
+          setToken(credentials.password);
           setUser(decoded as User);
           console.log('user being set..:', decoded);
         } catch (err) {
@@ -106,7 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, loading }}>
+      value={{ user, isAuthenticated, login, logout, loading, token }}>
       {children}
     </AuthContext.Provider>
   );
