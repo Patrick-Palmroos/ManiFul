@@ -9,6 +9,7 @@ interface TypeContextType {
   categories: Category[];
   types: Type[];
   loading: boolean;
+  error: string | null;
   refreshData: () => Promise<void>;
 }
 
@@ -16,6 +17,7 @@ const TypeContext = createContext<TypeContextType>({
   categories: [],
   types: [],
   loading: false,
+  error: null,
   refreshData: async () => {},
 });
 
@@ -23,6 +25,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = useAuth();
@@ -31,6 +34,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!user) return;
 
     setLoading(true);
+    setError(null);
 
     try {
       // Fetch both categories and types in parallel
@@ -52,6 +56,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
     } catch (err) {
+      setError('Error fetching types and categories');
       console.error('Fetch error:', err);
     } finally {
       setLoading(false);
@@ -67,6 +72,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
     <TypeContext.Provider
       value={{
         categories,
+        error,
         types,
         loading,
         refreshData: fetchData,

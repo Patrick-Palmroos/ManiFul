@@ -5,6 +5,7 @@ import { AuthProvider } from './src/context/AuthContext';
 import RootNavigation from './src/navigation/RootNavigation';
 import { ModalProvider } from './src/context/ModalContext';
 import { TypesProvider } from './src/context/TypesContext';
+import { TransactionProvider } from './src/context/TransactionContext';
 
 import {
   Button,
@@ -26,9 +27,11 @@ function App(): React.JSX.Element {
   return (
     <AuthProvider>
       <TypesProvider>
-        <ModalProvider>
-          <RootNavigation />
-        </ModalProvider>
+        <TransactionProvider>
+          <ModalProvider>
+            <RootNavigation />
+          </ModalProvider>
+        </TransactionProvider>
       </TypesProvider>
     </AuthProvider>
   );
