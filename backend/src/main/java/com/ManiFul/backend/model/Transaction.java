@@ -1,6 +1,8 @@
 package com.ManiFul.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "transactions")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Transaction {
 
     @Id
@@ -41,5 +44,6 @@ public class Transaction {
     private Instant date;
 
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<TransactionItem> items;
 }

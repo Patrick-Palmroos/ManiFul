@@ -42,18 +42,7 @@ public class TransactionService {
 
     @Transactional
     public List<Transaction> getAllTransactions(Long userId) {
-        List<Transaction> transactions = transactionRepository.findTransactionsByUserId(userId);
-
-        // Load types for all items
-        transactions.forEach(transaction ->
-                transaction.getItems().forEach(item -> {
-                    if (item.getType() != null) {
-                        item.setType(typeRepository.findById(item.getType().getId()).orElse(null));
-                    }
-                })
-        );
-
-        return transactions;
+        return transactionRepository.findTransactionsByUserId(userId);
     }
 
     @Transactional

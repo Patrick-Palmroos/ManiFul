@@ -1,6 +1,8 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "transaction_items")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TransactionItem {
 
     @Id
@@ -31,7 +34,7 @@ public class TransactionItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private Transaction transaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
