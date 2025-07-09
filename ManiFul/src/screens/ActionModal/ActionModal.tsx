@@ -169,7 +169,7 @@ const ActionModal = () => {
     <View
       style={{
         alignItems: 'center',
-        height: 400,
+        height: 800,
       }}>
       <Toggle
         value={toggle}
@@ -193,7 +193,7 @@ const ActionModal = () => {
             }}>
             {imageUri ? (
               <View style={styles.receiptContainer}>
-                {1 === 1 && resData ? (
+                {resData ? (
                   <View
                     style={{
                       width: '100%',
