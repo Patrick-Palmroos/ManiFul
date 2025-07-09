@@ -5,9 +5,11 @@ import { API_KEY, API_URL } from '@env';
 import { TransactionData } from '../types/data';
 import { ImageScanType } from '../types/raspberry';
 import { convertToPngIfNeeded } from '../utils/imageProcessing';
+import { Type } from '../types/categories';
 
 export const parseReceipt = async (
   imageUri: string,
+  types: Array<Type>,
 ): Promise<ImageScanType | null> => {
   const creds = await Keychain.getGenericPassword();
   if (!creds) {
@@ -22,6 +24,8 @@ export const parseReceipt = async (
     name: 'receipt.png',
     type: mimeType,
   } as any);
+  formData.append('types', JSON.stringify(types));
+
   console.log('Stored token:', creds.password);
   console.log('fetching....');
   try {
