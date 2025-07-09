@@ -21,7 +21,7 @@ export const parseReceipt = async (
     uri: processedUri,
     name: 'receipt.png',
     type: mimeType,
-  });
+  } as any);
   console.log('Stored token:', creds.password);
   console.log('fetching....');
   try {
@@ -40,7 +40,7 @@ export const parseReceipt = async (
     console.log('res: ', response.data.data);
     return response.data.data as ImageScanType;
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error(error);
     return null;
   }
 };
