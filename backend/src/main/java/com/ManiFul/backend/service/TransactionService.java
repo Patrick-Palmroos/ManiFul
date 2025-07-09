@@ -77,4 +77,15 @@ public class TransactionService {
 
         return transactionRepository.save(transaction);
     }
+
+    @Transactional
+    public void deleteTransaction(Long transactionId, Long userId) {
+        // Verify the transaction exists and belongs to the user
+        if (!transactionRepository.existsByIdAndUserId(transactionId, userId)) {
+            throw new RuntimeException("Transaction not found or doesn't belong to user");
+        }
+
+        // Automatically delete all associated items due to the cascade
+        transactionRepository.deleteById(transactionId);
+    }
 }

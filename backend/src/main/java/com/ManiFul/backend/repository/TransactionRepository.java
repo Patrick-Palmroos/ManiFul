@@ -16,4 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t FROM Transaction t LEFT JOIN FETCH t.items WHERE t.userId = :userId")
     List<Transaction> findTransactionsByUserId(@Param("userId") Long userId);
+
+    // method to check if transaction belongs to user
+    boolean existsByIdAndUserId(Long id, Long userId);
 }
