@@ -35,29 +35,28 @@ export const convertToPngIfNeeded = async (
     }
 
     const { width, height } = await getImageSize(uri);
-
-    let targetWidth = width;
-    let targetHeight = height;
-
-    if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
-      const aspectRatio = width / height;
-      if (aspectRatio > 1) {
-        targetWidth = MAX_DIMENSION;
-        targetHeight = Math.round(MAX_DIMENSION / aspectRatio);
-      } else {
-        targetHeight = MAX_DIMENSION;
-        targetWidth = Math.round(MAX_DIMENSION * aspectRatio);
-      }
+    if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) {
+      const result = await ImageResizer.createResizedImage(
+        uri,
+        width,
+        height,
+        'PNG',
+        100, // Max quality
+        0,
+        undefined,
+      );
+      return { uri: result.uri, mimeType: 'image/png' };
     }
 
+    // Resize only if necessary, but use higher quality
     const result = await ImageResizer.createResizedImage(
       uri,
-      targetWidth, // width
-      targetHeight, // height
-      'PNG', // convert to PNG
-      100, // quality
-      0, // rotation
-      undefined, // outputPath
+      MAX_DIMENSION,
+      MAX_DIMENSION,
+      'PNG',
+      95, // Slightly lower than 100 to reduce file size
+      0,
+      undefined,
     );
 
     return { uri: result.uri, mimeType: 'image/png' };
