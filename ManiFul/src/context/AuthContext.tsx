@@ -26,21 +26,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const decoded = jwtDecode(credentials.password);
           setToken(credentials.password);
           setUser(decoded as User);
-          console.log('user being set..:', decoded);
+          setIsAuthenticated(true);
         } catch (err) {
           console.log('Token error: ', err);
+          await Keychain.resetGenericPassword();
         }
       }
       setLoading(false);
     };
 
-    if (!user) {
-      console.log('no user');
-      loadToken();
-    } else {
-      console.log('user found');
-      setLoading(false);
-    }
+    loadToken();
   }, []);
 
   const login = async ({

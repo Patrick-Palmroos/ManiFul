@@ -1,7 +1,7 @@
 import { Category, Type } from '../types/categories';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from './AuthContext'; // Assuming you have an auth context
+import { useAuth } from './AuthContext';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -28,15 +28,15 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
-  const { user, token } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
   const fetchData = async () => {
-    if (!user) return;
-
-    setLoading(true);
-    setError(null);
+    if (!isAuthenticated || !token) return;
 
     try {
+      setLoading(true);
+      setError(null);
+
       // Fetch both categories and types in parallel
       const [categoriesRes, typesRes] = await Promise.all([
         axios.get(`${API_URL}/api/categories/getAll`, {
@@ -63,10 +63,12 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Initial fetch on mount and when user change
+  // Initial fetch on mount and when user changes
   useEffect(() => {
-    fetchData();
-  }, [user]);
+    if (isAuthenticated && token) {
+      fetchData();
+    }
+  }, [isAuthenticated, token]);
 
   return (
     <TypeContext.Provider
