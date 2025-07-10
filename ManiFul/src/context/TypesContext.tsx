@@ -2,6 +2,7 @@ import { Category, Type } from '../types/categories';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import * as Keychain from 'react-native-keychain';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -57,14 +58,15 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
       setTypes(typesRes.data);
     } catch (err) {
       setError('Error fetching types and categories');
-      console.error('Fetch error:', err);
+      console.error('Type fetch error:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Initial fetch on mount and when user changes
+  // Initial fetch on mount and when user changess
   useEffect(() => {
+    console.log(token);
     if (isAuthenticated && token) {
       fetchData();
     }

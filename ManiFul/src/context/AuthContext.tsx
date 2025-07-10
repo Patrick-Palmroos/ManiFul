@@ -61,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(response);
       await Keychain.setGenericPassword(email, response.data?.token);
       setIsAuthenticated(true);
+      setToken(response.data?.token);
       const decoded = jwtDecode(response.data?.token);
       setUser(decoded as User);
       setLoading(false);
