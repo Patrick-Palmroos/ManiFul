@@ -8,37 +8,16 @@ import colors from '../../styles/colors';
 import HistoryItem from './components/HistoryItem/HistoryItem';
 import { TransactionData } from '../../types/data';
 import { TransactionItem } from '../../types/data';
+import { useTransactions } from '../../context/TransactionContext';
 //TODO: save user data into a context for easy access across app without multiple fetches
 const HistoryPage = () => {
-  const [transactionData, setTransactionData] = useState<
-    TransactionData[] | null
-  >(null);
-
-  useEffect(() => {
-    const t = async () => {
-      const res = await fetchAllUserTransactions();
-      if (res) {
-        setTransactionData(res);
-        console.log('transaction data: ', res);
-      } else {
-        console.error('ERRROR FETCHING: ', res);
-      }
-    };
-
-    t();
-  }, []);
+  const { transactions, refreshTransactions } = useTransactions();
 
   const fetchAll = async () => {
-    const res = await fetchAllUserTransactions();
-    if (res) {
-      setTransactionData(res);
-      console.log('transaction data: ', res);
-    } else {
-      console.error('ERRROR FETCHING: ', res);
-    }
+    refreshTransactions();
   };
 
-  if (!transactionData) {
+  if (!transactions) {
     return (
       <View style={{ backgroundColor: colors.background, flex: 1 }}>
         <Button title="fetch" onPress={fetchAll} />
@@ -51,7 +30,7 @@ const HistoryPage = () => {
     <ScrollView
       style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       <Button title="fetch" onPress={fetchAll} />
-      {transactionData.map((x, i) => (
+      {transactions.map((x, i) => (
         <View style={{ marginBottom: 15 }} key={i}>
           <HistoryItem item={x} />
         </View>
