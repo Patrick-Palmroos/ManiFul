@@ -1,7 +1,9 @@
 export type ImageItemType = {
   name: string;
   price: number;
-  category: string;
+  quantity: number;
+  discount: number | null;
+  type_id: number;
 };
 
 export type ImageScanType = {
