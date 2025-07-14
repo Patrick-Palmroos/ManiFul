@@ -37,6 +37,7 @@ import DocumentScanner from 'react-native-document-scanner-plugin';
 import ImagePicker from 'react-native-image-crop-picker';
 import { useTypes } from '../../context/TypesContext';
 import { useTransactions } from '../../context/TransactionContext';
+import ReceiptContents from './components/ReceiptContents';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -55,7 +56,7 @@ const ActionModal = () => {
   const { types } = useTypes();
   const { createTransaction } = useTransactions();
 
-  console.log('cats and types: ', types);
+  // console.log('cats and types: ', types);
 
   const handleResponse = (response: ImagePickerResponse) => {
     if (response.didCancel) {
@@ -120,13 +121,29 @@ const ActionModal = () => {
         disableClosing: true,
       });
 
-      const response = await parseReceipt(imageUri, types);
+      const response: ImageScanType | null = await parseReceipt(
+        imageUri,
+        types,
+      );
       if (!response) {
         console.log('Couldnt scan receipt');
+        setLoading(false);
+        closeModal('loading');
+        return;
       }
       setResData(response);
       setLoading(false);
       closeModal('loading');
+      openModal(
+        <ReceiptContents
+          data={response}
+          close={() => {
+            closeModal('contents');
+          }}
+        />,
+        'contents',
+        { disableClosing: true },
+      );
     }
   };
 
