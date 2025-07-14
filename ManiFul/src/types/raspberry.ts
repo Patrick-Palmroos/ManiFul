@@ -1,7 +1,6 @@
 export type ImageItemType = {
   name: string;
   price: number;
-  quantity: number;
   discount: number | null;
   type_id: number;
 };
