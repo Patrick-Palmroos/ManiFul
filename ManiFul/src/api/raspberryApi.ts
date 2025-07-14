@@ -38,6 +38,7 @@ export const parseReceipt = async (
           'BACKEND-API-KEY': API_KEY,
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 50000,
       },
     );
 
