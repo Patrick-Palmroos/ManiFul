@@ -18,11 +18,14 @@ interface UseModalResults {
     },
   ) => void;
   closeModal: (id: string) => void;
+  closeAllModals: () => void;
   modals: ModalItem[];
 }
 
 export default function useModal(): UseModalResults {
   const [modals, setModals] = useState<ModalItem[]>([]);
+
+  const closeAllModals = () => setModals([]);
 
   const openModal = (
     content: React.ReactNode,
@@ -53,6 +56,7 @@ export default function useModal(): UseModalResults {
   return {
     openModal,
     closeModal,
+    closeAllModals,
     modals,
     isOpen: modals.length > 0,
   };
