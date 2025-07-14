@@ -13,6 +13,9 @@ import text from '../../../../styles/text';
 import { useState, useEffect } from 'react';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
+import { transactionPost } from '../../../../types/data';
+import { useTransactions } from '../../../../context/TransactionContext';
+import { useModalContext } from '../../../../context/ModalContext';
 
 type displayDataGroup = {
   category_id: number;
@@ -20,7 +23,6 @@ type displayDataGroup = {
   items: {
     name: string;
     price: number;
-    quantity: number;
     discount: number | null;
     type_id: number;
     type_name: string;
@@ -62,6 +64,12 @@ const ReceiptContents = ({
       }
     | undefined
   >({ start: 0 });
+  const [tempInputValues, setTempInputValues] = useState<{
+    [key: string]: string;
+  }>({});
+  const { createTransaction } = useTransactions();
+  const { closeAllModals } = useModalContext();
+
   const handleFocus = () => {
     setSelection(undefined);
   };
@@ -124,13 +132,13 @@ const ReceiptContents = ({
       const updated = [...prev];
       const itemToUpdate = { ...updated[groupIndex].items[itemIndex] };
 
-      if (
-        field === 'price' ||
-        field === 'quantity' ||
-        field === 'discount' ||
-        field === 'type_id'
-      ) {
-        itemToUpdate[field] = value === null ? 0 : (Number(value) as any);
+      if (field === 'price' || field === 'discount' || field === 'type_id') {
+        const numberValue = Number(value);
+        if (!isNaN(numberValue)) {
+          itemToUpdate[field] = numberValue as any;
+        } else {
+          return prev;
+        }
       } else if (field === 'name' || field === 'type_name') {
         itemToUpdate[field] = (value ?? '') as any;
       }
@@ -138,6 +146,52 @@ const ReceiptContents = ({
       updated[groupIndex].items[itemIndex] = itemToUpdate;
       return updated;
     });
+  };
+
+  const handleOnConfirm = async () => {
+    try {
+      /* const test = {
+        total: 100.5,
+        vendor: 'Test Vendor',
+        date: '2025-07-05T15:30:00Z',
+        items: [
+          {
+            typeId: 2,
+            name: 'Item One',
+            total: 100.5,
+          },
+        ],
+      };*/
+
+      const res: transactionPost = {
+        total: getTotal(),
+        vendor: vendor,
+        date: date.toISOString(),
+        items: editableItems.flatMap(cat =>
+          cat.items.map(item => ({
+            typeId: item.type_id,
+            name: item.name,
+            total: item.price,
+          })),
+        ),
+      };
+
+      const result = await createTransaction(res);
+      console.log(result);
+      if (result) {
+        closeAllModals();
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  const getTotal = () => {
+    const total = editableItems
+      .flatMap(cat => cat.items.map(item => item.price))
+      .reduce((sum, price) => sum + price, 0);
+
+    return parseFloat(total.toFixed(2)); // Ensures it's a number, not a string
   };
 
   return (
@@ -185,6 +239,7 @@ const ReceiptContents = ({
           setDate(date);
         }}
       />
+      <Text>Total: {getTotal()}</Text>
       <ScrollView
         style={{
           backgroundColor: 'yellow',
@@ -202,7 +257,11 @@ const ReceiptContents = ({
                 {group.items.map((item, itemIndex) => (
                   <View
                     key={itemIndex}
-                    style={{ flexDirection: 'row', backgroundColor: 'yellow' }}>
+                    style={{
+                      flexDirection: 'row',
+                      backgroundColor: 'yellow',
+                      alignItems: 'center',
+                    }}>
                     <TextInput
                       style={{ ...text.regular, paddingLeft: 5 }}
                       value={item.name}
@@ -215,13 +274,42 @@ const ReceiptContents = ({
                     />
                     <TextInput
                       style={{ ...text.regular, paddingLeft: 5 }}
-                      value={`${item.price}€`}
-                      onBlur={handleBlur}
+                      value={
+                        tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
+                        item.price.toString()
+                      }
+                      keyboardType="numeric"
+                      onBlur={() => {
+                        handleBlur();
+
+                        const temp =
+                          tempInputValues[`${groupIndex}-${itemIndex}-price`];
+                        const parsed = Number(temp?.replace(',', '.'));
+
+                        if (!isNaN(parsed)) {
+                          updateItemField(
+                            groupIndex,
+                            itemIndex,
+                            'price',
+                            parsed,
+                          );
+                        }
+
+                        // Clean up temporary input
+                        setTempInputValues(prev => {
+                          const updated = { ...prev };
+                          delete updated[`${groupIndex}-${itemIndex}-price`];
+                          return updated;
+                        });
+                      }}
                       onFocus={handleFocus}
                       selection={selection}
-                      onChangeText={text =>
-                        updateItemField(groupIndex, itemIndex, 'price', text)
-                      }
+                      onChangeText={text => {
+                        setTempInputValues(prev => ({
+                          ...prev,
+                          [`${groupIndex}-${itemIndex}-price`]: text,
+                        }));
+                      }}
                     />
                     <Text style={{ ...text.regular, paddingLeft: 15 }}>
                       {item.type_name}
@@ -234,7 +322,7 @@ const ReceiptContents = ({
         </TouchableWithoutFeedback>
       </ScrollView>
       <Button title="cancel" onPress={close} />
-      <Button title="save" onPress={() => null} />
+      <Button title="save" onPress={handleOnConfirm} />
     </View>
   );
 };
