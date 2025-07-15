@@ -169,7 +169,7 @@ const ReceiptContents = ({
         date: date.toISOString(),
         items: editableItems.flatMap(cat =>
           cat.items.map(item => ({
-            typeId: item.type_id,
+            type_id: item.type_id,
             name: item.name,
             total: item.price,
           })),
