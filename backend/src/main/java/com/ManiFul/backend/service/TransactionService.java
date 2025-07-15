@@ -1,6 +1,9 @@
 package com.ManiFul.backend.service;
 
+import com.ManiFul.backend.dto.TransactionDTO;
+import com.ManiFul.backend.dto.TransactionItemDTO;
 import com.ManiFul.backend.model.Transaction;
+import com.ManiFul.backend.model.TransactionItem;
 import com.ManiFul.backend.model.Type;
 import com.ManiFul.backend.repository.TransactionRepository;
 import com.ManiFul.backend.repository.TypeRepository;
@@ -8,6 +11,7 @@ import com.ManiFul.backend.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,22 +50,38 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction createTransaction(Transaction transaction, Long userId) {
-        transaction.setUserId(userId);
+    public Transaction createTransaction(TransactionDTO transactionDTO, Long userId) {
+        // Create new transaction using builder pattern
+        Transaction transaction = Transaction.builder()
+                .date(transactionDTO.getDate())
+                .total(transactionDTO.getTotal())
+                .vendor(transactionDTO.getVendor())
+                .userId(userId)
+                .build();
 
-        if (transaction.getItems() != null) {
-            transaction.getItems().forEach(item -> {
-                item.setTransaction(transaction);
-                if (item.getType() != null && item.getType().getId() != null) {
-                    // Ensure the type exists and belongs to the user
-                    Type type = typeRepository.findById(item.getType().getId())
-                            .orElseThrow(() -> new RuntimeException("Type not found with id " + item.getType().getId()));
+        // Process items if present
+        if (transactionDTO.getItems() != null && !transactionDTO.getItems().isEmpty()) {
+            for (TransactionItemDTO itemDTO : transactionDTO.getItems()) {
+                TransactionItem item = TransactionItem.builder()
+                        .name(itemDTO.getName())
+                        .total(itemDTO.getTotal())
+                        .build();
+
+                // Handle type association
+                if (itemDTO.getTypeId() != null) {
+                    Type type = typeRepository.findById(itemDTO.getTypeId())
+                            .orElseThrow(() -> new RuntimeException("Type not found with id " + itemDTO.getTypeId()));
+
+                    // Verify type belongs to user
                     if (!type.getUserId().equals(userId)) {
                         throw new RuntimeException("Type does not belong to user");
                     }
                     item.setType(type);
                 }
-            });
+
+                // Add item to transaction
+                transaction.addItem(item);
+            }
         }
 
         return transactionRepository.save(transaction);

@@ -1,5 +1,6 @@
 package com.ManiFul.backend.controller;
 
+import com.ManiFul.backend.dto.TransactionDTO;
 import com.ManiFul.backend.model.Transaction;
 import com.ManiFul.backend.service.TransactionService;
 
@@ -40,9 +41,10 @@ public class TransactionController {
     }
 
     @PostMapping("/create")
-    public Transaction createTransaction(@RequestBody Transaction transaction, @AuthenticationPrincipal Jwt jwt) {
+    public Transaction createTransaction(@RequestBody TransactionDTO transactionDTO,
+                                         @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("id");
-        return transactionService.createTransaction(transaction, userId);
+        return transactionService.createTransaction(transactionDTO, userId);
     }
 
     @DeleteMapping("/delete")
