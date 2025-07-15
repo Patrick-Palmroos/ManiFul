@@ -22,13 +22,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const loadToken = async () => {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
+        const storedToken = credentials.password;
+
         try {
-          const decoded = jwtDecode(credentials.password);
-          setToken(credentials.password);
-          setUser(decoded as User);
-          setIsAuthenticated(true);
+          // Check if token is valid
+          const checkRes = await axios.get(`${API_URL}/auth/check`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+              'BACKEND-API-KEY': API_KEY,
+            },
+            timeout: 10000,
+          });
+
+          if (checkRes.status === 200) {
+            const decoded = jwtDecode(storedToken);
+            setToken(storedToken);
+            setUser(decoded as User);
+            setIsAuthenticated(true);
+          } else {
+            //reset password anyway if backend for some reason doesnt respond with 401 error
+            await Keychain.resetGenericPassword();
+          }
         } catch (err) {
-          console.log('Token error: ', err);
           await Keychain.resetGenericPassword();
         }
       }
