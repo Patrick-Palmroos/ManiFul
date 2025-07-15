@@ -29,7 +29,7 @@ export type transactionPost = {
 };
 
 export type TransactionPostItem = {
-  typeId: number;
+  type_id: number;
   name: string;
   total: number;
 };
