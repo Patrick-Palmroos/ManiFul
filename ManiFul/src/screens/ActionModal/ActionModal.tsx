@@ -174,7 +174,7 @@ const ActionModal = () => {
         date: new Date(`${year}-${month}-${day}`).toISOString(),
         items: resData.items.map(i => {
           return {
-            typeId: 7,
+            type_id: 7,
             name: i.name,
             total: i.price,
           } as TransactionPostItem;

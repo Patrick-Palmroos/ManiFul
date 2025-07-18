@@ -16,6 +16,8 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { transactionPost } from '../../../../types/data';
 import { useTransactions } from '../../../../context/TransactionContext';
 import { useModalContext } from '../../../../context/ModalContext';
+import colors from '../../../../styles/colors';
+import generalStyles from '../../../../styles/styles';
 
 type displayDataGroup = {
   category_id: number;
@@ -195,7 +197,11 @@ const ReceiptContents = ({
   };
 
   return (
-    <View style={{ backgroundColor: 'red', height: 500 }}>
+    <View
+      style={{
+        //backgroundColor: 'red',
+        height: 500,
+      }}>
       <TextInput
         style={{
           ...text.title,
@@ -242,28 +248,54 @@ const ReceiptContents = ({
       <Text>Total: {getTotal()}</Text>
       <ScrollView
         style={{
-          backgroundColor: 'yellow',
+          //backgroundColor: 'yellow',
           marginVertical: 8,
         }}
         persistentScrollbar
         contentContainerStyle={{ flexGrow: 1 }}>
         <TouchableWithoutFeedback>
-          <View style={{ flex: 1, backgroundColor: 'green' }}>
+          <View
+            style={
+              {
+                //flex: 1,
+                // backgroundColor: 'green',
+                //padding: 2,
+                //borderRadius: 5,
+              }
+            }>
             {editableItems.map((group, groupIndex) => (
-              <View key={groupIndex}>
+              <View
+                key={groupIndex}
+                style={{
+                  backgroundColor: '#dcdfebff',
+                  padding: 5,
+                  borderRadius: 5,
+                }}>
                 <Text style={{ ...text.title, fontSize: 24 }}>
                   {group.category_name}
                 </Text>
+                {/* Items */}
                 {group.items.map((item, itemIndex) => (
                   <View
                     key={itemIndex}
                     style={{
                       flexDirection: 'row',
-                      backgroundColor: 'yellow',
+                      //backgroundColor: 'yellow',
                       alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingRight: 10,
                     }}>
+                    {/* Name */}
                     <TextInput
-                      style={{ ...text.regular, paddingLeft: 5 }}
+                      style={{
+                        ...generalStyles.textField,
+                        backgroundColor: '#dcdfebff',
+                        paddingLeft: 5,
+                        height: '80%',
+                        paddingBottom: 0,
+                        paddingTop: 0,
+                        width: '48%',
+                      }}
                       value={item.name}
                       onBlur={handleBlur}
                       onFocus={handleFocus}
@@ -271,49 +303,76 @@ const ReceiptContents = ({
                       onChangeText={text =>
                         updateItemField(groupIndex, itemIndex, 'name', text)
                       }
-                    />
-                    <TextInput
-                      style={{ ...text.regular, paddingLeft: 5 }}
-                      value={
-                        tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
-                        item.price.toString()
-                      }
-                      keyboardType="numeric"
-                      onBlur={() => {
-                        handleBlur();
-
-                        const temp =
-                          tempInputValues[`${groupIndex}-${itemIndex}-price`];
-                        const parsed = Number(temp?.replace(',', '.'));
-
-                        if (!isNaN(parsed)) {
-                          updateItemField(
-                            groupIndex,
-                            itemIndex,
-                            'price',
-                            parsed,
-                          );
+                    />{' '}
+                    {/* Type */}
+                    <View
+                      style={{
+                        ...text.regular,
+                        alignItems: 'center',
+                        width: '30%',
+                      }}>
+                      <Text
+                        style={{
+                          ...text.moneyDark,
+                          color: colors.textDefault,
+                          fontSize: 14,
+                          backgroundColor: colors.backgroundWarm,
+                          textAlign: 'center',
+                          width: 'auto',
+                          borderRadius: 8,
+                          padding: 3,
+                        }}>
+                        {item.type_name}
+                      </Text>
+                    </View>
+                    {/* Price */}
+                    <View
+                      style={{ alignItems: 'center', flexDirection: 'row' }}>
+                      <TextInput
+                        style={{
+                          ...text.moneyDark,
+                          textDecorationLine: 'underline',
+                          paddingLeft: 5,
+                        }}
+                        value={
+                          tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
+                          item.price.toString()
                         }
+                        keyboardType="numeric"
+                        onBlur={() => {
+                          handleBlur();
 
-                        // Clean up temporary input
-                        setTempInputValues(prev => {
-                          const updated = { ...prev };
-                          delete updated[`${groupIndex}-${itemIndex}-price`];
-                          return updated;
-                        });
-                      }}
-                      onFocus={handleFocus}
-                      selection={selection}
-                      onChangeText={text => {
-                        setTempInputValues(prev => ({
-                          ...prev,
-                          [`${groupIndex}-${itemIndex}-price`]: text,
-                        }));
-                      }}
-                    />
-                    <Text style={{ ...text.regular, paddingLeft: 15 }}>
-                      {item.type_name}
-                    </Text>
+                          const temp =
+                            tempInputValues[`${groupIndex}-${itemIndex}-price`];
+                          const parsed = Number(temp?.replace(',', '.'));
+
+                          if (!isNaN(parsed)) {
+                            updateItemField(
+                              groupIndex,
+                              itemIndex,
+                              'price',
+                              parsed,
+                            );
+                          }
+
+                          // Clean up temporary input
+                          setTempInputValues(prev => {
+                            const updated = { ...prev };
+                            delete updated[`${groupIndex}-${itemIndex}-price`];
+                            return updated;
+                          });
+                        }}
+                        onFocus={handleFocus}
+                        selection={selection}
+                        onChangeText={text => {
+                          setTempInputValues(prev => ({
+                            ...prev,
+                            [`${groupIndex}-${itemIndex}-price`]: text,
+                          }));
+                        }}
+                      />
+                      <Text style={text.moneyDark}>€</Text>
+                    </View>
                   </View>
                 ))}
               </View>
