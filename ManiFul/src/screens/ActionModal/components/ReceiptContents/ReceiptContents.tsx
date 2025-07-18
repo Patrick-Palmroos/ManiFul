@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
@@ -71,6 +72,7 @@ const ReceiptContents = ({
   }>({});
   const { createTransaction } = useTransactions();
   const { closeAllModals } = useModalContext();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFocus = () => {
     setSelection(undefined);
@@ -152,6 +154,7 @@ const ReceiptContents = ({
 
   const handleOnConfirm = async () => {
     try {
+      setLoading(true);
       /* const test = {
         total: 100.5,
         vendor: 'Test Vendor',
@@ -185,6 +188,8 @@ const ReceiptContents = ({
       }
     } catch (e) {
       console.warn(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -400,8 +405,9 @@ const ReceiptContents = ({
         }}>
         <TouchableOpacity
           onPress={close}
+          disabled={loading}
           style={{
-            backgroundColor: colors.cancelButton,
+            backgroundColor: loading ? 'grey' : colors.cancelButton,
             padding: 5,
             borderRadius: 8,
             width: '45%',
@@ -412,15 +418,21 @@ const ReceiptContents = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleOnConfirm}
+          disabled={loading}
+          touchSoundDisabled={loading}
           style={{
             backgroundColor: colors.confirmButton,
             padding: 5,
             borderRadius: 8,
             width: '45%',
           }}>
-          <Text style={{ ...text.regularLight, textAlign: 'center' }}>
-            Save
-          </Text>
+          {loading ? (
+            <ActivityIndicator color={colors.light} style={{ marginTop: 2 }} />
+          ) : (
+            <Text style={{ ...text.regularLight, textAlign: 'center' }}>
+              Save
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
