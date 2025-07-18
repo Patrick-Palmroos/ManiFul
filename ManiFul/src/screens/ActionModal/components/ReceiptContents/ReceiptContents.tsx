@@ -205,10 +205,10 @@ const ReceiptContents = ({
       <TextInput
         style={{
           ...text.title,
-          fontSize: 18,
+          fontSize: 19,
+          textDecorationLine: 'underline',
           textAlign: 'left',
           paddingVertical: 4,
-          paddingHorizontal: 8,
           textAlignVertical: 'center',
         }}
         value={vendor}
@@ -217,35 +217,47 @@ const ReceiptContents = ({
         selection={selection}
         onChangeText={text => setVendor(text)}
       />
-      <View style={{ flexDirection: 'row', gap: 10, padding: 5 }}>
-        <Text style={text.regular}>{dateToText(date)}</Text>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'black',
-            padding: 3,
-            borderRadius: 8,
-            width: 25,
-            height: 25,
-            justifyContent: 'center',
-            alignItems: 'center',
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginRight: 20,
+        }}>
+        <View style={{ flexDirection: 'row', gap: 10, padding: 5 }}>
+          <Text style={{ ...text.regular, fontFamily: 'Rubik-Medium' }}>
+            {dateToText(date)}
+          </Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'black',
+              padding: 3,
+              borderRadius: 8,
+              width: 25,
+              height: 25,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => setDateOpen(true)}>
+            <MaterialIcons name="edit" size={15} color={'white'} />
+          </TouchableOpacity>
+        </View>
+        <DatePicker
+          modal
+          mode="date"
+          locale="en" // change to fi for finnish
+          date={date}
+          open={dateOpen}
+          onCancel={() => setDateOpen(false)}
+          onConfirm={date => {
+            setDateOpen(false);
+            setDate(date);
           }}
-          onPress={() => setDateOpen(true)}>
-          <MaterialIcons name="edit" size={15} color={'white'} />
-        </TouchableOpacity>
+        />
+        <Text style={{ ...text.moneyDark, color: colors.textDefault }}>
+          Total: <Text style={text.moneyDark}>{getTotal()}€</Text>
+        </Text>
       </View>
-      <DatePicker
-        modal
-        mode="date"
-        locale="en" // change to fi for finnish
-        date={date}
-        open={dateOpen}
-        onCancel={() => setDateOpen(false)}
-        onConfirm={date => {
-          setDateOpen(false);
-          setDate(date);
-        }}
-      />
-      <Text>Total: {getTotal()}</Text>
       <ScrollView
         style={{
           //backgroundColor: 'yellow',
@@ -294,7 +306,7 @@ const ReceiptContents = ({
                         height: '80%',
                         paddingBottom: 0,
                         paddingTop: 0,
-                        width: '48%',
+                        width: '45%',
                       }}
                       value={item.name}
                       onBlur={handleBlur}
@@ -309,7 +321,7 @@ const ReceiptContents = ({
                       style={{
                         ...text.regular,
                         alignItems: 'center',
-                        width: '30%',
+                        width: '28%',
                       }}>
                       <Text
                         style={{
