@@ -73,6 +73,7 @@ const ActionModal = () => {
     try {
       const { scannedImages } = await DocumentScanner.scanDocument({
         croppedImageQuality: 90,
+        maxNumDocuments: 1,
       });
 
       if (scannedImages && scannedImages.length > 0) {
@@ -192,7 +193,7 @@ const ActionModal = () => {
     <View
       style={{
         alignItems: 'center',
-        height: 800,
+        height: 400,
       }}>
       <Toggle
         value={toggle}
@@ -223,8 +224,9 @@ const ActionModal = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text>{resData.total}€</Text>
-                    <Text>{resData.date}</Text>
+                    <Text style={{ ...text.moneyDark, textAlign: 'center' }}>
+                      Receipt scanned succesfully
+                    </Text>
                   </View>
                 ) : (
                   <Image
@@ -248,7 +250,7 @@ const ActionModal = () => {
             ) : (
               <View style={styles.receiptContainer}>
                 <TouchableOpacity
-                  onPress={openAndroidStyleChooser}
+                  onPress={openScanner}
                   style={styles.receiptButton}>
                   <MaterialIcons
                     name={'document-scanner'}
@@ -258,12 +260,31 @@ const ActionModal = () => {
                 </TouchableOpacity>
               </View>
             )}
+            <Text
+              style={{ ...text.subtext, marginTop: 20, textAlign: 'center' }}>
+              Make sure to crop the receipt to include only the vendor, date,
+              items and total for better results.
+            </Text>
             <GradientButton
               text={resData ? 'Receipt details' : 'Scan receipt'}
-              onClick={resData ? () => null : getResults}
-              disabled={imageUri ? false : true}
+              onClick={
+                resData
+                  ? () =>
+                      openModal(
+                        <ReceiptContents
+                          data={resData}
+                          close={() => {
+                            closeModal('contents');
+                          }}
+                        />,
+                        'contents',
+                        { disableClosing: true },
+                      )
+                  : getResults
+              }
+              disabled={resData ? false : imageUri ? false : true}
               width={'60%'}
-              marginTop={30}
+              marginTop={10}
             />
           </View>
           <View
@@ -273,6 +294,7 @@ const ActionModal = () => {
               justifyContent: 'center',
               marginTop: 30,
             }}>
+            {/*
             <TouchableOpacity
               disabled={resData ? false : true}
               onPress={save}
@@ -286,7 +308,7 @@ const ActionModal = () => {
               ) : (
                 <Text style={{ ...text.regularLight, fontSize: 20 }}>Save</Text>
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       ) : (
