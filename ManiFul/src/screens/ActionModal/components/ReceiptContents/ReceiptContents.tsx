@@ -81,7 +81,11 @@ const ReceiptContents = ({
   };
 
   if (!categories || !types || !editableItems) {
-    return <View>Loading...</View>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   useEffect(() => {
@@ -262,7 +266,7 @@ const ReceiptContents = ({
                       onChangeText={text =>
                         updateItemField(groupIndex, itemIndex, 'name', text)
                       }
-                    />{' '}
+                    />
                     {/* Type */}
                     <View
                       style={{
