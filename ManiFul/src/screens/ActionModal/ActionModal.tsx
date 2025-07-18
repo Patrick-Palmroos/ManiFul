@@ -101,19 +101,6 @@ const ActionModal = () => {
     }
   };
 
-  const openCamera = async () => {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      launchCamera(options, handleResponse);
-    }
-  };
-
-  const openGallery = () => {
-    launchImageLibrary(options, handleResponse);
-  };
-
   const getResults = async () => {
     if (imageUri) {
       setLoading(true);
@@ -146,11 +133,6 @@ const ActionModal = () => {
         { disableClosing: true },
       );
     }
-  };
-
-  const pingRasperry = async () => {
-    const resp = await pingRasp();
-    console.log(resp);
   };
 
   const openAndroidStyleChooser = () => {
@@ -313,7 +295,7 @@ const ActionModal = () => {
         </View>
       ) : (
         <View>
-          <Text>INCOME</Text>
+          <Text style={{ ...text.title, marginTop: 20 }}>Coming soon...</Text>
         </View>
       )}
     </View>
