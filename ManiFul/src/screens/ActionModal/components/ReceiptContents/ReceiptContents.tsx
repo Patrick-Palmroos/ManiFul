@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Button,
   ScrollView,
   TextInput,
   TouchableWithoutFeedback,
@@ -18,7 +17,7 @@ import { transactionPost } from '../../../../types/data';
 import { useTransactions } from '../../../../context/TransactionContext';
 import { useModalContext } from '../../../../context/ModalContext';
 import colors from '../../../../styles/colors';
-import generalStyles from '../../../../styles/styles';
+import styles from './styles';
 
 type displayDataGroup = {
   category_id: number;
@@ -204,18 +203,10 @@ const ReceiptContents = ({
   return (
     <View
       style={{
-        //backgroundColor: 'red',
         height: 500,
       }}>
       <TextInput
-        style={{
-          ...text.title,
-          fontSize: 19,
-          textDecorationLine: 'underline',
-          textAlign: 'left',
-          paddingVertical: 4,
-          textAlignVertical: 'center',
-        }}
+        style={styles.vendorInput}
         value={vendor}
         onBlur={handleBlur}
         onFocus={handleFocus}
@@ -234,15 +225,7 @@ const ReceiptContents = ({
             {dateToText(date)}
           </Text>
           <TouchableOpacity
-            style={{
-              backgroundColor: 'black',
-              padding: 3,
-              borderRadius: 8,
-              width: 25,
-              height: 25,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            style={styles.dateEditButton}
             onPress={() => setDateOpen(true)}>
             <MaterialIcons name="edit" size={15} color={'white'} />
           </TouchableOpacity>
@@ -265,21 +248,12 @@ const ReceiptContents = ({
       </View>
       <ScrollView
         style={{
-          //backgroundColor: 'yellow',
           marginVertical: 8,
         }}
         persistentScrollbar
         contentContainerStyle={{ flexGrow: 1 }}>
         <TouchableWithoutFeedback>
-          <View
-            style={
-              {
-                //flex: 1,
-                // backgroundColor: 'green',
-                //padding: 2,
-                //borderRadius: 5,
-              }
-            }>
+          <View>
             {editableItems.map((group, groupIndex) => (
               <View
                 key={groupIndex}
@@ -293,26 +267,10 @@ const ReceiptContents = ({
                 </Text>
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
-                  <View
-                    key={itemIndex}
-                    style={{
-                      flexDirection: 'row',
-                      //backgroundColor: 'yellow',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingRight: 10,
-                    }}>
+                  <View key={itemIndex} style={styles.itemContainer}>
                     {/* Name */}
                     <TextInput
-                      style={{
-                        ...generalStyles.textField,
-                        backgroundColor: '#dcdfebff',
-                        paddingLeft: 5,
-                        height: '80%',
-                        paddingBottom: 0,
-                        paddingTop: 0,
-                        width: '45%',
-                      }}
+                      style={styles.nameInputField}
                       value={item.name}
                       onBlur={handleBlur}
                       onFocus={handleFocus}
@@ -328,19 +286,7 @@ const ReceiptContents = ({
                         alignItems: 'center',
                         width: '28%',
                       }}>
-                      <Text
-                        style={{
-                          ...text.moneyDark,
-                          color: colors.textDefault,
-                          fontSize: 14,
-                          backgroundColor: colors.backgroundWarm,
-                          textAlign: 'center',
-                          width: 'auto',
-                          borderRadius: 8,
-                          padding: 3,
-                        }}>
-                        {item.type_name}
-                      </Text>
+                      <Text style={styles.typeText}>{item.type_name}</Text>
                     </View>
                     {/* Price */}
                     <View
@@ -407,10 +353,8 @@ const ReceiptContents = ({
           onPress={close}
           disabled={loading}
           style={{
+            ...styles.button,
             backgroundColor: loading ? 'grey' : colors.cancelButton,
-            padding: 5,
-            borderRadius: 8,
-            width: '45%',
           }}>
           <Text style={{ ...text.regularLight, textAlign: 'center' }}>
             Cancel
@@ -421,10 +365,8 @@ const ReceiptContents = ({
           disabled={loading}
           touchSoundDisabled={loading}
           style={{
+            ...styles.button,
             backgroundColor: colors.confirmButton,
-            padding: 5,
-            borderRadius: 8,
-            width: '45%',
           }}>
           {loading ? (
             <ActivityIndicator color={colors.light} style={{ marginTop: 2 }} />
