@@ -19,6 +19,8 @@ import { useModalContext } from '../../../../context/ModalContext';
 import colors from '../../../../styles/colors';
 import styles from './styles';
 
+import { showMessage } from 'react-native-flash-message';
+
 type displayDataGroup = {
   category_id: number;
   category_name: string;
@@ -171,6 +173,13 @@ const ReceiptContents = ({
       const result = await createTransaction(res);
       console.log(result);
       if (result) {
+        showMessage({
+          message: 'Successfully saved transaction!',
+          description: 'Your receipt transaction has been successfully saved.',
+          duration: 5000,
+          floating: true,
+          type: 'success',
+        });
         closeAllModals();
       }
     } catch (e) {
