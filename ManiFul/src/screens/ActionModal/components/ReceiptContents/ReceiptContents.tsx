@@ -80,10 +80,6 @@ const ReceiptContents = ({
     setSelection({ start: 0 });
   };
 
-  console.log('Receipt data: ', data);
-  console.log('cats: ', categories);
-  console.log('types: ', types);
-
   if (!categories || !types || !editableItems) {
     return <View>Loading...</View>;
   }
@@ -154,18 +150,6 @@ const ReceiptContents = ({
   const handleOnConfirm = async () => {
     try {
       setLoading(true);
-      /* const test = {
-        total: 100.5,
-        vendor: 'Test Vendor',
-        date: '2025-07-05T15:30:00Z',
-        items: [
-          {
-            typeId: 2,
-            name: 'Item One',
-            total: 100.5,
-          },
-        ],
-      };*/
 
       const res: transactionPost = {
         total: getTotal(),
