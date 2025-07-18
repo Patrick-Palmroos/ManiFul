@@ -392,8 +392,37 @@ const ReceiptContents = ({
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <Button title="cancel" onPress={close} />
-      <Button title="save" onPress={handleOnConfirm} />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          marginTop: 10,
+        }}>
+        <TouchableOpacity
+          onPress={close}
+          style={{
+            backgroundColor: colors.cancelButton,
+            padding: 5,
+            borderRadius: 8,
+            width: '45%',
+          }}>
+          <Text style={{ ...text.regularLight, textAlign: 'center' }}>
+            Cancel
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleOnConfirm}
+          style={{
+            backgroundColor: colors.confirmButton,
+            padding: 5,
+            borderRadius: 8,
+            width: '45%',
+          }}>
+          <Text style={{ ...text.regularLight, textAlign: 'center' }}>
+            Save
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
