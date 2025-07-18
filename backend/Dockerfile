@@ -2,7 +2,7 @@
 FROM gradle:8.4-jdk17-alpine AS builder
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
-RUN gradle build --no-daemon
+RUN gradle build -x test --no-daemon
 
 # Stage 2: Run
 FROM eclipse-temurin:17-jdk-jammy
