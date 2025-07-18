@@ -9,6 +9,8 @@ const colors = {
   textDefault: '#460028',
   moneyLight: '#B1FFBD',
   moneyDark: '#007D28',
+  confirmButton: '#C61A79',
+  cancelButton: '#B35187',
 };
 
 export default colors;

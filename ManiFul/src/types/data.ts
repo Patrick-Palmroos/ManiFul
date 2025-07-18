@@ -8,7 +8,6 @@ export type PieData = {
 
 export type TransactionData = {
   id: number;
-  title: String;
   userId: number;
   total: number;
   date: string;
@@ -18,6 +17,19 @@ export type TransactionData = {
 export type TransactionItem = {
   id: number;
   typeId: number;
-  name: String;
+  name: string;
+  total: number;
+};
+
+export type transactionPost = {
+  total: number;
+  vendor: string;
+  date: string;
+  items: TransactionPostItem[] | null;
+};
+
+export type TransactionPostItem = {
+  type_id: number;
+  name: string;
   total: number;
 };

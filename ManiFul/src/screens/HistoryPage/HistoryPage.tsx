@@ -1,36 +1,26 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import {
   fetchTransactionWithid,
   fetchAllUserTransactions,
-} from '../../api/userApi/transactionApi';
+} from '../../api/transactionApi';
 import colors from '../../styles/colors';
 import HistoryItem from './components/HistoryItem/HistoryItem';
 import { TransactionData } from '../../types/data';
 import { TransactionItem } from '../../types/data';
-
-//TODO: save user data into a context for easy access across app without multiple fetches.
+import { useTransactions } from '../../context/TransactionContext';
+//TODO: save user data into a context for easy access across app without multiple fetches
 const HistoryPage = () => {
-  const [transactionData, setTransactionData] = useState<
-    TransactionData[] | null
-  >(null);
+  const { transactions, refreshTransactions } = useTransactions();
 
-  useEffect(() => {
-    const t = async () => {
-      const res = await fetchAllUserTransactions();
-      if (res) {
-        setTransactionData(res);
-      } else {
-        console.error('ERRROR FETCHING: ', res);
-      }
-    };
+  const fetchAll = async () => {
+    refreshTransactions();
+  };
 
-    t();
-  }, []);
-
-  if (!transactionData) {
+  if (!transactions) {
     return (
       <View style={{ backgroundColor: colors.background, flex: 1 }}>
+        <Button title="fetch" onPress={fetchAll} />
         <Text>Loading...</Text>
       </View>
     );
@@ -39,7 +29,8 @@ const HistoryPage = () => {
   return (
     <ScrollView
       style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
-      {transactionData.map((x, i) => (
+      <Button title="fetch" onPress={fetchAll} />
+      {transactions.map((x, i) => (
         <View style={{ marginBottom: 15 }} key={i}>
           <HistoryItem item={x} />
         </View>

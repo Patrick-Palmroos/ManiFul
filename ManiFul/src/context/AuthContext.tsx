@@ -14,6 +14,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -21,24 +22,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const loadToken = async () => {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
+        const storedToken = credentials.password;
+
         try {
-          const decoded = jwtDecode(credentials.password);
-          setUser(decoded as User);
-          console.log('user being set..:', decoded);
+          // Check if token is valid
+          const checkRes = await axios.get(`${API_URL}/auth/check`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+              'BACKEND-API-KEY': API_KEY,
+            },
+            timeout: 10000,
+          });
+
+          if (checkRes.status === 200) {
+            const decoded = jwtDecode(storedToken);
+            setToken(storedToken);
+            setUser(decoded as User);
+            setIsAuthenticated(true);
+          } else {
+            //reset password anyway if backend for some reason doesnt respond with 401 error
+            await Keychain.resetGenericPassword();
+          }
         } catch (err) {
-          console.log('Token error: ', err);
+          await Keychain.resetGenericPassword();
         }
       }
       setLoading(false);
     };
 
-    if (!user) {
-      console.log('no user');
-      loadToken();
-    } else {
-      console.log('user found');
-      setLoading(false);
-    }
+    loadToken();
   }, []);
 
   const login = async ({
@@ -64,6 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(response);
       await Keychain.setGenericPassword(email, response.data?.token);
       setIsAuthenticated(true);
+      setToken(response.data?.token);
       const decoded = jwtDecode(response.data?.token);
       setUser(decoded as User);
       setLoading(false);
@@ -106,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, loading }}>
+      value={{ user, isAuthenticated, login, logout, loading, token }}>
       {children}
     </AuthContext.Provider>
   );

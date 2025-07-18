@@ -6,12 +6,19 @@ const ModalContext = createContext<ReturnType<typeof useModal> | null>(null);
 
 export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const modal = useModal();
+
   return (
     <ModalContext.Provider value={modal}>
       {children}
-      {modal.isOpen && (
-        <Modal onClose={modal.closeModal}>{modal.modalContent}</Modal>
-      )}
+      {modal.modals.map(({ id, content, disableClosing, closeButton }) => (
+        <Modal
+          key={id}
+          onClose={() => modal.closeModal(id)}
+          disableClosing={disableClosing}
+          closeButton={closeButton}>
+          {content}
+        </Modal>
+      ))}
     </ModalContext.Provider>
   );
 };

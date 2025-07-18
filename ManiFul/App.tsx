@@ -4,6 +4,9 @@ import React from 'react';
 import { AuthProvider } from './src/context/AuthContext';
 import RootNavigation from './src/navigation/RootNavigation';
 import { ModalProvider } from './src/context/ModalContext';
+import { TypesProvider } from './src/context/TypesContext';
+import { TransactionProvider } from './src/context/TransactionContext';
+import FlashMessage from 'react-native-flash-message';
 
 import {
   Button,
@@ -24,9 +27,14 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <ModalProvider>
-        <RootNavigation />
-      </ModalProvider>
+      <TypesProvider>
+        <TransactionProvider>
+          <ModalProvider>
+            <RootNavigation />
+            <FlashMessage />
+          </ModalProvider>
+        </TransactionProvider>
+      </TypesProvider>
     </AuthProvider>
   );
 }
