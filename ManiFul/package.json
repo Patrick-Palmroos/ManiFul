@@ -9,7 +9,7 @@
     "log": "cd android && adb logcat *:E",
     "full-build": "npm run clean && npm run build:android && npm run install:android",
     "android": "react-native run-android",
-    "android-dev": "npm run clean && react-native run-android",
+    "android-dev": "cd android && adb uninstall com.maniful && cd .. && npm run clean && react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
