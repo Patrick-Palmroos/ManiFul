@@ -9,6 +9,7 @@ import { transactionPost } from '../types/data';
 interface TransactionContextType {
   transactions: TransactionData[];
   loading: boolean;
+  initialLoading: boolean; // only for first load
   error: string | null;
   refreshTransactions: () => Promise<void>;
   getTransactionById: (id: number) => TransactionData | undefined;
@@ -19,6 +20,7 @@ interface TransactionContextType {
 const TransactionContext = createContext<TransactionContextType>({
   transactions: [],
   loading: false,
+  initialLoading: true,
   error: null,
   refreshTransactions: async () => {},
   getTransactionById: () => undefined,
@@ -33,11 +35,18 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (isInitialLoad = false) => {
     if (!user) return;
 
-    setLoading(true);
+    if (isInitialLoad) {
+      setInitialLoading(true);
+    } else {
+      if (!loading) {
+        setLoading(true);
+      }
+    }
     setError(null);
 
     try {
@@ -56,7 +65,11 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       setError('Failed to fetch transactions');
       console.error('Transaction fetch error:', err);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setInitialLoading(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -73,7 +86,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       });
 
-      await fetchTransactions(); // Refresh the list
+      await fetchTransactions(false); // Refresh the list
       return true;
     } catch (err) {
       setError('Failed to create transaction');
@@ -115,7 +128,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount
   useEffect(() => {
-    fetchTransactions();
+    fetchTransactions(true);
   }, [user]);
 
   return (
@@ -128,6 +141,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         getTransactionById,
         createTransaction,
         deleteTransaction,
+        initialLoading,
       }}>
       {children}
     </TransactionContext.Provider>
