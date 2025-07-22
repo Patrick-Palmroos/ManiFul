@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password,
   }: AuthCredentials): Promise<authRes> => {
     try {
-      console.log('API:', API_KEY);
+      setLoading(true);
       const response = await axios.post(
         `${API_URL}/auth/token`,
         {
@@ -79,7 +79,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setToken(response.data?.token);
       const decoded = jwtDecode(response.data?.token);
       setUser(decoded as User);
-      setLoading(false);
       return { status: response.status, message: response.statusText };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -103,6 +102,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error('Unexpected error:', error);
         return { status: 0, message: 'Unexpected error' };
       }
+    } finally {
+      setLoading(false);
     }
   };
 
