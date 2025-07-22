@@ -146,10 +146,8 @@ const Loginpage = () => {
                 }}>
                 {error?.find(e => e.type === 'other')?.message}
               </Text>
-              <View style={{ marginBottom: 10, width: '100%' }}>
-                <Text style={generalStyles.errorCode}>
-                  {error?.find(e => e.type === 'email')?.message}
-                </Text>
+              <View style={{ marginBottom: 0, width: '100%' }}>
+                <Text style={text.regular}>Email</Text>
                 <TextInput
                   onFocus={() => handleFocusing('email')}
                   onBlur={handleBlur}
@@ -163,11 +161,13 @@ const Loginpage = () => {
                       generalStyles.textFieldError,
                   ]}
                 />
-              </View>
-              <View style={{ marginBottom: 10, width: '100%' }}>
                 <Text style={generalStyles.errorCode}>
-                  {error?.find(e => e.type === 'password')?.message}
+                  {error?.find(e => e.type === 'email')?.message}
                 </Text>
+              </View>
+
+              <View style={{ marginBottom: 10, width: '100%' }}>
+                <Text style={text.regular}>Password</Text>
                 <TextInput
                   onFocus={() => handleFocusing('password')}
                   onBlur={handleBlur}
@@ -183,6 +183,9 @@ const Loginpage = () => {
                       generalStyles.textFieldError,
                   ]}
                 />
+                <Text style={generalStyles.errorCode}>
+                  {error?.find(e => e.type === 'password')?.message}
+                </Text>
               </View>
               <GradientButton
                 text="Login"
@@ -210,6 +213,7 @@ const Loginpage = () => {
               </Text>
             </View>
           </View>
+          <View style={{ height: 30 }} />
         </ScrollView>
       </LinearGradient>
     </TouchableWithoutFeedback>
