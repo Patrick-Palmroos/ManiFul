@@ -10,6 +10,7 @@ interface TypeContextType {
   categories: Category[];
   types: Type[];
   loading: boolean;
+  initialLoading: boolean; // only for first load
   error: string | null;
   refreshData: () => Promise<void>;
 }
@@ -18,6 +19,7 @@ const TypeContext = createContext<TypeContextType>({
   categories: [],
   types: [],
   loading: false,
+  initialLoading: false,
   error: null,
   refreshData: async () => {},
 });
@@ -29,13 +31,20 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState<boolean>(false);
   const { isAuthenticated, token } = useAuth();
 
-  const fetchData = async () => {
+  const fetchData = async (isInitialLoad = false) => {
     if (!isAuthenticated || !token) return;
 
     try {
-      setLoading(true);
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        if (!loading) {
+          setLoading(true);
+        }
+      }
       setError(null);
 
       // Fetch both categories and types in parallel
@@ -60,7 +69,11 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
       setError('Error fetching types and categories');
       console.error('Type fetch error:', err);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setInitialLoading(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -68,9 +81,9 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     console.log(token);
     if (isAuthenticated && token) {
-      fetchData();
+      fetchData(true);
     }
-  }, [isAuthenticated, token]);
+  }, []);
 
   return (
     <TypeContext.Provider
@@ -79,7 +92,8 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
         error,
         types,
         loading,
-        refreshData: fetchData,
+        initialLoading,
+        refreshData: () => fetchData(false),
       }}>
       {children}
     </TypeContext.Provider>

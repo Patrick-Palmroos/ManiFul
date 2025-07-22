@@ -20,7 +20,7 @@ interface TransactionContextType {
 const TransactionContext = createContext<TransactionContextType>({
   transactions: [],
   loading: false,
-  initialLoading: true,
+  initialLoading: false,
   error: null,
   refreshTransactions: async () => {},
   getTransactionById: () => undefined,
@@ -35,7 +35,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const [initialLoading, setInitialLoading] = useState<boolean>(true);
+  const [initialLoading, setInitialLoading] = useState<boolean>(false);
 
   const fetchTransactions = async (isInitialLoad = false) => {
     if (!user) return;
