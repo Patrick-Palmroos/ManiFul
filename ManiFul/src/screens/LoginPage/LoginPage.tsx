@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import styles from './styles';
 import { LoginPageNavigationProp } from '../../types/navigation';
@@ -106,105 +107,110 @@ const Loginpage = () => {
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.container}>
-        <View style={{ ...styles.box }}>
-          <Image
-            source={require('../../assets/images/maniful-logo.png')}
-            style={{
-              width: '70%',
-              height: '50%',
-              resizeMode: 'contain',
-            }}
-          />
-          <Text
-            style={{
-              fontFamily: 'Rubik-Bold',
-              fontSize: 32,
-              color: '#5C0037',
-            }}>
-            ManiFul
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'Rubik-SemiBold',
-              fontSize: 16,
-              color: '#68485B',
-              textAlign: 'center',
-              width: '85%',
-            }}>
-            Knowing where your money goes made easy!
-          </Text>
-          <View style={styles.loginField}>
-            <Text
+        <ScrollView
+          contentContainerStyle={styles.container}
+          automaticallyAdjustKeyboardInsets={true}>
+          <View style={{ ...styles.box }}>
+            <Image
+              source={require('../../assets/images/maniful-logo.png')}
               style={{
-                ...generalStyles.errorCode,
-                textAlign: 'center',
-                fontSize: 16,
-              }}>
-              {error?.find(e => e.type === 'other')?.message}
-            </Text>
-            <View style={{ marginBottom: 10, width: '100%' }}>
-              <Text style={generalStyles.errorCode}>
-                {error?.find(e => e.type === 'email')?.message}
-              </Text>
-              <TextInput
-                onFocus={() => handleFocusing('email')}
-                onBlur={handleBlur}
-                placeholder="Email"
-                value={input?.email}
-                onChangeText={text => setInput({ ...input, email: text })}
-                style={[
-                  generalStyles.textField,
-                  focusedInput === 'email' && generalStyles.textFieldFocused,
-                  error?.some(e => e.type === 'email') &&
-                    generalStyles.textFieldError,
-                ]}
-              />
-            </View>
-            <View style={{ marginBottom: 10, width: '100%' }}>
-              <Text style={generalStyles.errorCode}>
-                {error?.find(e => e.type === 'password')?.message}
-              </Text>
-              <TextInput
-                onFocus={() => handleFocusing('password')}
-                onBlur={handleBlur}
-                placeholder="password"
-                value={input?.password}
-                secureTextEntry={true}
-                onChangeText={text => setInput({ ...input, password: text })}
-                style={[
-                  generalStyles.textField,
-                  focusedInput === 'password' && generalStyles.textFieldFocused,
-                  error?.some(e => e.type === 'password') &&
-                    generalStyles.textFieldError,
-                ]}
-              />
-            </View>
-            <GradientButton
-              text="Login"
-              onClick={onLogin}
-              loading={loading}
-              marginTop={10}
-              width={'80%'}
+                width: '70%',
+                height: '50%',
+                resizeMode: 'contain',
+              }}
             />
             <Text
               style={{
-                ...text.subtext,
-                maxWidth: '70%',
-                textAlign: 'center',
-                marginTop: 10,
+                fontFamily: 'Rubik-Bold',
+                fontSize: 32,
+                color: '#5C0037',
               }}>
-              Dont't have an account yet?{' '}
+              ManiFul
+            </Text>
+            <Text
+              style={{
+                fontFamily: 'Rubik-SemiBold',
+                fontSize: 16,
+                color: '#68485B',
+                textAlign: 'center',
+                width: '85%',
+              }}>
+              Knowing where your money goes made easy!
+            </Text>
+            <View style={styles.loginField}>
+              <Text
+                style={{
+                  ...generalStyles.errorCode,
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}>
+                {error?.find(e => e.type === 'other')?.message}
+              </Text>
+              <View style={{ marginBottom: 10, width: '100%' }}>
+                <Text style={generalStyles.errorCode}>
+                  {error?.find(e => e.type === 'email')?.message}
+                </Text>
+                <TextInput
+                  onFocus={() => handleFocusing('email')}
+                  onBlur={handleBlur}
+                  placeholder="Email"
+                  value={input?.email}
+                  onChangeText={text => setInput({ ...input, email: text })}
+                  style={[
+                    generalStyles.textField,
+                    focusedInput === 'email' && generalStyles.textFieldFocused,
+                    error?.some(e => e.type === 'email') &&
+                      generalStyles.textFieldError,
+                  ]}
+                />
+              </View>
+              <View style={{ marginBottom: 10, width: '100%' }}>
+                <Text style={generalStyles.errorCode}>
+                  {error?.find(e => e.type === 'password')?.message}
+                </Text>
+                <TextInput
+                  onFocus={() => handleFocusing('password')}
+                  onBlur={handleBlur}
+                  placeholder="password"
+                  value={input?.password}
+                  secureTextEntry={true}
+                  onChangeText={text => setInput({ ...input, password: text })}
+                  style={[
+                    generalStyles.textField,
+                    focusedInput === 'password' &&
+                      generalStyles.textFieldFocused,
+                    error?.some(e => e.type === 'password') &&
+                      generalStyles.textFieldError,
+                  ]}
+                />
+              </View>
+              <GradientButton
+                text="Login"
+                onClick={onLogin}
+                loading={loading}
+                marginTop={10}
+                width={'80%'}
+              />
               <Text
                 style={{
                   ...text.subtext,
-                  color: '#0047A3',
-                  cursor: 'pointer',
+                  maxWidth: '70%',
+                  textAlign: 'center',
+                  marginTop: 10,
                 }}>
-                Register here.
+                Dont't have an account yet?{' '}
+                <Text
+                  style={{
+                    ...text.subtext,
+                    color: '#0047A3',
+                    cursor: 'pointer',
+                  }}>
+                  Register here.
+                </Text>
               </Text>
-            </Text>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </LinearGradient>
     </TouchableWithoutFeedback>
   );
