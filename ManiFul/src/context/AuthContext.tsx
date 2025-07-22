@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             'Content-Type': 'application/json',
             'BACKEND-API-KEY': API_KEY,
           },
-          timeout: 20000,
+          timeout: 100000,
         },
       );
       console.log(response);
