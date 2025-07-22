@@ -6,7 +6,7 @@
     "clean": "cd android && gradlew clean && cd ..",
     "build:android": "cd android && gradlew assembleRelease && cd ..",
     "install:android": "cd android && adb uninstall com.maniful && adb install app/build/outputs/apk/release/app-release.apk && cd ..",
-    "log:android": "cd android && adb logcat *:E",
+    "log": "cd android && adb logcat *:E",
     "full-build": "npm run clean && npm run build:android && npm run install:android",
     "android": "react-native run-android",
     "android-dev": "npm run clean && react-native run-android",
