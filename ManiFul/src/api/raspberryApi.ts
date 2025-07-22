@@ -9,7 +9,7 @@ import { Type } from '../types/categories';
 
 interface ScanResult {
   code: number;
-  message?: string;
+  message: string;
   data?: ImageScanType;
 }
 

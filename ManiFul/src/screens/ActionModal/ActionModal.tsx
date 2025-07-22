@@ -38,6 +38,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { useTypes } from '../../context/TypesContext';
 import { useTransactions } from '../../context/TransactionContext';
 import ReceiptContents from './components/ReceiptContents';
+import { showMessage } from 'react-native-flash-message';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -109,22 +110,25 @@ const ActionModal = () => {
         disableClosing: true,
       });
 
-      const response: ImageScanType | null = await parseReceipt(
-        imageUri,
-        types,
-      );
-      if (!response) {
-        console.log('Couldnt scan receipt');
+      const response = await parseReceipt(imageUri, types);
+      if (response.code !== 200 || !response.data) {
+        showMessage({
+          message: 'Error while scanning your receipt',
+          description: `Error code: ${response.code} - ${response.message}`,
+          duration: 5000,
+          floating: true,
+          type: 'danger',
+        });
         setLoading(false);
         closeModal('loading');
         return;
       }
-      setResData(response);
+      setResData(response.data);
       setLoading(false);
       closeModal('loading');
       openModal(
         <ReceiptContents
-          data={response}
+          data={response.data}
           close={() => {
             closeModal('contents');
           }}
