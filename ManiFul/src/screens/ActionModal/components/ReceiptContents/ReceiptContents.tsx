@@ -255,7 +255,7 @@ const ReceiptContents = ({
               <View
                 key={groupIndex}
                 style={{
-                  backgroundColor: '#dcdfebff',
+                  backgroundColor: colors.backgroundWarm,
                   padding: 5,
                   borderRadius: 5,
                 }}>
@@ -265,25 +265,34 @@ const ReceiptContents = ({
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
                   <View key={itemIndex} style={styles.itemContainer}>
-                    {/* Name */}
-                    <TextInput
-                      style={styles.nameInputField}
-                      value={item.name}
-                      onBlur={handleBlur}
-                      onFocus={handleFocus}
-                      selection={selection}
-                      onChangeText={text =>
-                        updateItemField(groupIndex, itemIndex, 'name', text)
-                      }
-                    />
-                    {/* Type */}
                     <View
                       style={{
-                        ...text.regular,
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        width: '28%',
+                        justifyContent: 'space-between',
+                        height: '100%',
+                        width: '70%',
                       }}>
-                      <Text style={styles.typeText}>{item.type_name}</Text>
+                      {/* Name */}
+                      <TextInput
+                        style={styles.nameInputField}
+                        value={item.name}
+                        onBlur={handleBlur}
+                        onFocus={handleFocus}
+                        selection={selection}
+                        onChangeText={text =>
+                          updateItemField(groupIndex, itemIndex, 'name', text)
+                        }
+                      />
+                      {/* Type */}
+                      <View
+                        style={{
+                          ...text.regular,
+                          alignItems: 'center',
+                          width: '30%',
+                        }}>
+                        <Text style={styles.typeText}>{item.type_name}</Text>
+                      </View>
                     </View>
                     {/* Price */}
                     <View
