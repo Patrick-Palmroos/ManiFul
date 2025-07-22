@@ -296,12 +296,18 @@ const ReceiptContents = ({
                     </View>
                     {/* Price */}
                     <View
-                      style={{ alignItems: 'center', flexDirection: 'row' }}>
+                      style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        width: '35%',
+                      }}>
                       <TextInput
                         style={{
                           ...text.moneyDark,
                           textDecorationLine: 'underline',
-                          paddingLeft: 5,
+                          textAlign: 'right',
+                          width: '85%',
                         }}
                         value={
                           tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
