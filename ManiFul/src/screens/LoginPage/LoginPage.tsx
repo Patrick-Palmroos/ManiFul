@@ -150,6 +150,7 @@ const Loginpage = () => {
                 <Text style={text.regular}>Email</Text>
                 <TextInput
                   onFocus={() => handleFocusing('email')}
+                  autoCapitalize="none"
                   onBlur={handleBlur}
                   placeholder="Email"
                   value={input?.email}
@@ -170,6 +171,7 @@ const Loginpage = () => {
                 <Text style={text.regular}>Password</Text>
                 <TextInput
                   onFocus={() => handleFocusing('password')}
+                  autoCapitalize="none"
                   onBlur={handleBlur}
                   placeholder="password"
                   value={input?.password}
