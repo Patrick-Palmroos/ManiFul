@@ -27,7 +27,7 @@ export const parseReceipt = async (
   formData.append('types', JSON.stringify(types));
 
   console.log('Stored token:', creds.password);
-  console.log('fetching....');
+  console.log('fetching with key.... ', API_KEY);
   try {
     const response = await axios.post(
       `${API_URL}/api/receipts/parse`,
@@ -42,6 +42,10 @@ export const parseReceipt = async (
       },
     );
 
+    if (response.data === null) {
+      console.error('error: Null response');
+      return null;
+    }
     console.log('res: ', response.data.data);
     return response.data.data as ImageScanType;
   } catch (error) {
