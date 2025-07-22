@@ -203,7 +203,7 @@ const Loginpage = () => {
                   textAlign: 'center',
                   marginTop: 10,
                 }}>
-                Dont't have an account yet?{' '}
+                Don't have an account yet?{' '}
                 <Text
                   style={{
                     ...text.subtext,
