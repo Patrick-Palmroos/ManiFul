@@ -31,8 +31,8 @@ function App(): React.JSX.Element {
         <TransactionProvider>
           <ModalProvider>
             <RootNavigation />
-            <FlashMessage />
           </ModalProvider>
+          <FlashMessage style={{ zIndex: 1000 }} />
         </TransactionProvider>
       </TypesProvider>
     </AuthProvider>
