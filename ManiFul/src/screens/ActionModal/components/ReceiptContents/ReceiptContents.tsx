@@ -305,6 +305,8 @@ const ReceiptContents = ({
                         paddingRight: 13,
                       }}>
                       <TextInput
+                        multiline={true}
+                        numberOfLines={1}
                         style={{
                           ...text.moneyDark,
                           textDecorationLine: 'underline',
