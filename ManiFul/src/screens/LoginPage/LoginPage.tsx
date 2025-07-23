@@ -153,6 +153,7 @@ const Loginpage = () => {
                   autoCapitalize="none"
                   onBlur={handleBlur}
                   placeholder="Email"
+                  placeholderTextColor={colors.subText}
                   value={input?.email}
                   onChangeText={text => setInput({ ...input, email: text })}
                   style={[
@@ -174,6 +175,7 @@ const Loginpage = () => {
                   autoCapitalize="none"
                   onBlur={handleBlur}
                   placeholder="password"
+                  placeholderTextColor={colors.subText}
                   value={input?.password}
                   secureTextEntry={true}
                   onChangeText={text => setInput({ ...input, password: text })}
