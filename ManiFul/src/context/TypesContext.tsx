@@ -79,7 +79,6 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount and when user changess
   useEffect(() => {
-    console.log('fetching types');
     fetchData(true);
   }, [isAuthenticated, token, initialized]);
 
