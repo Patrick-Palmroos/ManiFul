@@ -34,8 +34,8 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
   const { isAuthenticated, token, initialized } = useAuth();
 
-  const fetchData = async (isInitialLoad = false) => {
-    if (!isAuthenticated || !token || !initialized) return;
+  const fetchData = async (isInitialLoad = false): Promise<boolean> => {
+    if (!isAuthenticated || !token || !initialized) return false;
 
     try {
       if (isInitialLoad) {
@@ -65,9 +65,11 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
+      return true;
     } catch (err) {
       setError('Error fetching types and categories');
       console.error('Type fetch error:', err);
+      return false;
     } finally {
       if (isInitialLoad) {
         setInitialLoading(false);
