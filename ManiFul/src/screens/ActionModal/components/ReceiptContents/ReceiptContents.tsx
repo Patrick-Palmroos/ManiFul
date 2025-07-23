@@ -10,7 +10,7 @@ import {
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
 import text from '../../../../styles/text';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { transactionPost } from '../../../../types/data';
@@ -74,6 +74,7 @@ const ReceiptContents = ({
   const { createTransaction } = useTransactions();
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const handleFocus = () => {
     setSelection(undefined);
@@ -264,7 +265,7 @@ const ReceiptContents = ({
                 </Text>
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
-                  <View key={itemIndex} style={styles.itemContainer}>
+                  <View key={itemIndex} style={{ ...styles.itemContainer }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -301,6 +302,7 @@ const ReceiptContents = ({
                         flexDirection: 'row',
                         justifyContent: 'flex-end',
                         width: '35%',
+                        paddingRight: 13,
                       }}>
                       <TextInput
                         style={{
@@ -308,6 +310,7 @@ const ReceiptContents = ({
                           textDecorationLine: 'underline',
                           textAlign: 'right',
                           width: '85%',
+                          paddingRight: 2,
                         }}
                         value={
                           tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
