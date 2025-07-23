@@ -45,6 +45,8 @@ const dateToText = (date: Date) => {
   return `${day}.${month}.${year}`;
 };
 
+//TODO: changing types.
+//TODO: removing and adding items
 const ReceiptContents = ({
   data,
   close,
