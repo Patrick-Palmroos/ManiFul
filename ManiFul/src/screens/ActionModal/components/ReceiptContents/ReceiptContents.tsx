@@ -305,7 +305,7 @@ const ReceiptContents = ({
                         paddingRight: 13,
                       }}>
                       <TextInput
-                        multiline={true}
+                        multiline={true} // for some god forsaken reason this fixes scroll being blocked by text align..
                         numberOfLines={1}
                         style={{
                           ...text.moneyDark,
