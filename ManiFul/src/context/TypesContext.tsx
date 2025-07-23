@@ -32,10 +32,10 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token, initialized } = useAuth();
 
   const fetchData = async (isInitialLoad = false) => {
-    if (!isAuthenticated || !token) return;
+    if (!isAuthenticated || !token || !initialized) return;
 
     try {
       if (isInitialLoad) {
@@ -79,11 +79,9 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount and when user changess
   useEffect(() => {
-    console.log(token);
-    if (isAuthenticated && token) {
-      fetchData(true);
-    }
-  }, []);
+    console.log('fetching types');
+    fetchData(true);
+  }, [isAuthenticated, token, initialized]);
 
   return (
     <TypeContext.Provider
