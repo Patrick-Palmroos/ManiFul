@@ -17,9 +17,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     const loadToken = async () => {
+      setLoading(true);
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
         const storedToken = credentials.password;
@@ -45,9 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         } catch (err) {
           await Keychain.resetGenericPassword();
+        } finally {
+          setLoading(false);
+          setInitialized(true);
         }
       }
-      setLoading(false);
     };
 
     loadToken();
@@ -120,7 +124,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, loading, token }}>
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        loading,
+        token,
+        initialized,
+      }}>
       {children}
     </AuthContext.Provider>
   );

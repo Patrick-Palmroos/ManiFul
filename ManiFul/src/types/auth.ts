@@ -10,6 +10,7 @@ export type AuthContextType = {
   login: (credentials: AuthCredentials) => Promise<authRes>;
   logout: () => Promise<void>;
   loading: boolean;
+  initialized: boolean;
 };
 
 export type authRes = {
