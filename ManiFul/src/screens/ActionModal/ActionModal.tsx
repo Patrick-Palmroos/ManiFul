@@ -54,7 +54,7 @@ const ActionModal = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [resData, setResData] = useState<ImageScanType | null>(null);
-  const { types } = useTypes();
+  const { types, refreshData } = useTypes();
   const { createTransaction } = useTransactions();
 
   // console.log('cats and types: ', types);
@@ -109,6 +109,11 @@ const ActionModal = () => {
       openModal(<ReceiptLoading />, 'loading', {
         disableClosing: true,
       });
+
+      //shouldnt enter here but this shit sometimes is empty
+      if (types.length === 0) {
+        await refreshData();
+      }
 
       const response = await parseReceipt(imageUri, types);
       if (response.code !== 200 || !response.data) {
