@@ -11,6 +11,7 @@ const colors = {
   moneyDark: '#007D28',
   confirmButton: '#C61A79',
   cancelButton: '#B35187',
+  subText: '#4A4A4A',
 };
 
 export default colors;

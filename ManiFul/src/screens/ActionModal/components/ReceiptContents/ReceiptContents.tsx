@@ -10,7 +10,7 @@ import {
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
 import text from '../../../../styles/text';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { transactionPost } from '../../../../types/data';
@@ -45,6 +45,8 @@ const dateToText = (date: Date) => {
   return `${day}.${month}.${year}`;
 };
 
+//TODO: changing types.
+//TODO: removing and adding items
 const ReceiptContents = ({
   data,
   close,
@@ -74,6 +76,7 @@ const ReceiptContents = ({
   const { createTransaction } = useTransactions();
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const handleFocus = () => {
     setSelection(undefined);
@@ -255,7 +258,7 @@ const ReceiptContents = ({
               <View
                 key={groupIndex}
                 style={{
-                  backgroundColor: '#dcdfebff',
+                  backgroundColor: colors.backgroundWarm,
                   padding: 5,
                   borderRadius: 5,
                 }}>
@@ -264,35 +267,54 @@ const ReceiptContents = ({
                 </Text>
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
-                  <View key={itemIndex} style={styles.itemContainer}>
-                    {/* Name */}
-                    <TextInput
-                      style={styles.nameInputField}
-                      value={item.name}
-                      onBlur={handleBlur}
-                      onFocus={handleFocus}
-                      selection={selection}
-                      onChangeText={text =>
-                        updateItemField(groupIndex, itemIndex, 'name', text)
-                      }
-                    />
-                    {/* Type */}
+                  <View key={itemIndex} style={{ ...styles.itemContainer }}>
                     <View
                       style={{
-                        ...text.regular,
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        width: '28%',
+                        justifyContent: 'space-between',
+                        height: '100%',
+                        width: '70%',
                       }}>
-                      <Text style={styles.typeText}>{item.type_name}</Text>
+                      {/* Name */}
+                      <TextInput
+                        style={styles.nameInputField}
+                        value={item.name}
+                        onBlur={handleBlur}
+                        onFocus={handleFocus}
+                        selection={selection}
+                        onChangeText={text =>
+                          updateItemField(groupIndex, itemIndex, 'name', text)
+                        }
+                      />
+                      {/* Type */}
+                      <View
+                        style={{
+                          ...text.regular,
+                          alignItems: 'center',
+                          width: '30%',
+                        }}>
+                        <Text style={styles.typeText}>{item.type_name}</Text>
+                      </View>
                     </View>
                     {/* Price */}
                     <View
-                      style={{ alignItems: 'center', flexDirection: 'row' }}>
+                      style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        width: '35%',
+                        paddingRight: 13,
+                      }}>
                       <TextInput
+                        multiline={true} // for some god forsaken reason this fixes scroll being blocked by text align..
+                        numberOfLines={1}
                         style={{
                           ...text.moneyDark,
                           textDecorationLine: 'underline',
-                          paddingLeft: 5,
+                          textAlign: 'right',
+                          width: '85%',
+                          paddingRight: 2,
                         }}
                         value={
                           tempInputValues[`${groupIndex}-${itemIndex}-price`] ??

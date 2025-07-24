@@ -7,14 +7,20 @@ import { ImageScanType } from '../types/raspberry';
 import { convertToPngIfNeeded } from '../utils/imageProcessing';
 import { Type } from '../types/categories';
 
+interface ScanResult {
+  code: number;
+  message: string;
+  data?: ImageScanType;
+}
+
 export const parseReceipt = async (
   imageUri: string,
   types: Array<Type>,
-): Promise<ImageScanType | null> => {
+): Promise<ScanResult> => {
   const creds = await Keychain.getGenericPassword();
   if (!creds) {
     console.log('No credentials found in Keychain');
-    return null;
+    return { code: 401, message: 'Invalid credentials' } as ScanResult;
   }
   const { uri: processedUri, mimeType } = await convertToPngIfNeeded(imageUri);
   const formData = new FormData();
@@ -27,7 +33,7 @@ export const parseReceipt = async (
   formData.append('types', JSON.stringify(types));
 
   console.log('Stored token:', creds.password);
-  console.log('fetching....');
+  console.log('fetching with key.... ', API_KEY);
   try {
     const response = await axios.post(
       `${API_URL}/api/receipts/parse`,
@@ -38,15 +44,22 @@ export const parseReceipt = async (
           'BACKEND-API-KEY': API_KEY,
           'Content-Type': 'multipart/form-data',
         },
-        timeout: 50000,
+        timeout: 300000,
       },
     );
 
+    if (response.data === null) {
+      console.error('error: Null response');
+      return {
+        code: 400,
+        message: 'The server couldnt handle the data,',
+      } as ScanResult;
+    }
     console.log('res: ', response.data.data);
-    return response.data.data as ImageScanType;
+    return { code: 200, message: 'OK', data: response.data.data } as ScanResult;
   } catch (error) {
     console.error(error);
-    return null;
+    return { code: 500, message: `Error: ${error}` } as ScanResult;
   }
 };
 

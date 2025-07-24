@@ -19,7 +19,7 @@ const text = StyleSheet.create({
   },
   subtext: {
     fontFamily: 'Rubik-Regular',
-    color: '#4A4A4A',
+    color: colors.subText,
     fontSize: 13,
   },
   moneyLight: {

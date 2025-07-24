@@ -10,16 +10,18 @@ interface TypeContextType {
   categories: Category[];
   types: Type[];
   loading: boolean;
+  initialLoading: boolean; // only for first load
   error: string | null;
-  refreshData: () => Promise<void>;
+  refreshData: () => Promise<boolean>;
 }
 
 const TypeContext = createContext<TypeContextType>({
   categories: [],
   types: [],
   loading: false,
+  initialLoading: false,
   error: null,
-  refreshData: async () => {},
+  refreshData: async () => false,
 });
 
 export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -29,13 +31,20 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated, token } = useAuth();
+  const [initialLoading, setInitialLoading] = useState<boolean>(false);
+  const { isAuthenticated, token, initialized } = useAuth();
 
-  const fetchData = async () => {
-    if (!isAuthenticated || !token) return;
+  const fetchData = async (isInitialLoad = false): Promise<boolean> => {
+    if (!isAuthenticated || !token || !initialized) return false;
 
     try {
-      setLoading(true);
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        if (!loading) {
+          setLoading(true);
+        }
+      }
       setError(null);
 
       // Fetch both categories and types in parallel
@@ -56,21 +65,24 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
+      return true;
     } catch (err) {
       setError('Error fetching types and categories');
       console.error('Type fetch error:', err);
+      return false;
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setInitialLoading(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
   // Initial fetch on mount and when user changess
   useEffect(() => {
-    console.log(token);
-    if (isAuthenticated && token) {
-      fetchData();
-    }
-  }, [isAuthenticated, token]);
+    fetchData(true);
+  }, [isAuthenticated, token, initialized]);
 
   return (
     <TypeContext.Provider
@@ -79,7 +91,8 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
         error,
         types,
         loading,
-        refreshData: fetchData,
+        initialLoading,
+        refreshData: () => fetchData(false),
       }}>
       {children}
     </TypeContext.Provider>
