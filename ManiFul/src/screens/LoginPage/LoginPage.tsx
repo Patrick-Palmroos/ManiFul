@@ -44,17 +44,6 @@ const Loginpage = () => {
   const navigation = useNavigation<LoginPageNavigationProp>();
   const { width } = useWindowDimensions();
 
-  const [test, setTest] = useState<UserCredentials>();
-
-  useEffect(() => {
-    const test = async () => {
-      const res = await Keychain.getGenericPassword();
-      if (res) setTest(res);
-    };
-
-    test();
-  }, []);
-
   //handles setting focused field for reactive styling.
   const handleFocusing = (field: string) => setFocusedInput(field);
 
