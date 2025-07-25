@@ -108,8 +108,8 @@ const Loginpage = () => {
                 source={require('../../assets/images/maniful-logo.png')}
                 style={{
                   width: '70%',
-                  height: '30%',
-                  marginTop: 30,
+                  height: '20%',
+                  marginTop: 10,
                   resizeMode: 'contain',
                 }}
               />
