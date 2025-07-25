@@ -1,11 +1,14 @@
-import { View, Text } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { TransactionData, TransactionItem } from '../../../../types/data';
 import styles from './styles';
 import { Shadow } from 'react-native-shadow-2';
 import { formatDateToDDMMYYYY } from '../../helper';
 import text from '../../../../styles/text';
+import { useTransactions } from '../../../../context/TransactionContext';
 
 const HistoryItem = ({ item }: { item: TransactionData }) => {
+  const { deleteTransaction } = useTransactions();
+
   return (
     <Shadow
       distance={5}
@@ -17,6 +20,11 @@ const HistoryItem = ({ item }: { item: TransactionData }) => {
         <Text style={{ ...text.subtext, fontSize: 16 }}>
           {formatDateToDDMMYYYY(item.date)}
         </Text>
+        <Button
+          title="delete"
+          onPress={() => deleteTransaction(item.id)}
+          color={'red'}
+        />
       </View>
     </Shadow>
   );

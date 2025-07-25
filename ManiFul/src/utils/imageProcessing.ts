@@ -1,33 +1,76 @@
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 import RNFS from 'react-native-fs';
-import { Platform } from 'react-native';
+import { Platform, Image } from 'react-native';
+
+const MAX_DIMENSION = 1000;
 
 export const getMimeType = (uri: string): string => {
+  if (!uri) return 'image/jpeg';
+
   const lowerUri = uri.toLowerCase();
   if (lowerUri.endsWith('.png')) return 'image/png';
   if (lowerUri.endsWith('.jpg') || lowerUri.endsWith('.jpeg'))
     return 'image/jpeg';
-  return 'application/octet-stream'; // fallback
+  return 'image/jpeg'; // fallback
+};
+
+export const getImageSize = (
+  uri: string,
+): Promise<{ width: number; height: number }> => {
+  return new Promise((resolve, reject) => {
+    Image.getSize(
+      uri,
+      (width, height) => {
+        resolve({ width, height });
+      },
+      error => {
+        console.error('Failed to get image dimensions:', error);
+        reject(new Error(`Could not get image dimensions: ${error}`));
+      },
+    );
+  });
 };
 
 export const convertToPngIfNeeded = async (
   uri: string,
 ): Promise<{ uri: string; mimeType: string }> => {
   try {
-    const mime = getMimeType(uri);
+    const processedUri = await getProcessedImageUri(uri);
+
+    const mime = getMimeType(processedUri);
 
     if (mime === 'image/png') {
-      return { uri, mimeType: 'image/png' };
+      try {
+        const { width, height } = await getImageSize(processedUri);
+        if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) {
+          return { uri: processedUri, mimeType: 'image/png' };
+        }
+      } catch (error) {
+        console.warn('Size check failed, proceeding with conversion:', error);
+      }
     }
 
+    const { width, height } = await getImageSize(processedUri);
+
+    let targetWidth = width;
+    let targetHeight = height;
+
+    if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+      const ratio = Math.min(MAX_DIMENSION / width, MAX_DIMENSION / height);
+      targetWidth = Math.floor(width * ratio);
+      targetHeight = Math.floor(height * ratio);
+      console.log(`Resizing to: ${targetWidth}x${targetHeight}`);
+    }
+
+    // Resize only if necessary, but use higher quality
     const result = await ImageResizer.createResizedImage(
-      uri,
-      1000, // width
-      1000, // height
-      'PNG', // convert to PNG
-      90, // quality
-      0, // rotation
-      undefined, // outputPath
+      processedUri,
+      targetWidth,
+      targetHeight,
+      'PNG',
+      95, // Slightly lower than 100 to reduce file size
+      0,
+      undefined,
     );
 
     return { uri: result.uri, mimeType: 'image/png' };

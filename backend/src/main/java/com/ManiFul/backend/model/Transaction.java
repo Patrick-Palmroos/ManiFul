@@ -1,7 +1,12 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -23,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "transactions")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Transaction {
 
     @Id
@@ -33,8 +39,21 @@ public class Transaction {
 
     private BigDecimal total;
 
+    private String vendor;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private Instant date;
 
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TransactionItem> items;
+    @JsonManagedReference
+    @Builder.Default // This ensures the list is initialized when using @Builder
+    private List<TransactionItem> items = new ArrayList<>();
+
+    public void addItem(TransactionItem item) {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        items.add(item);
+        item.setTransaction(this);
+    }
 }

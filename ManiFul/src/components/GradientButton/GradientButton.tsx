@@ -16,6 +16,7 @@ import colors from '../../styles/colors';
  * @param {string} props.text - Button text
  * @param {() => void} props.onClick - Function for handling click event
  * @param {boolean} [props.loading=false] - Loading state disables button and shows loading text
+ * @param {boolean} [props.disabled=false] - state to disable the button
  * @param {string} [props.width='100%'] - Button width value
  * @param {number} [props.marginTop] - Margin top
  * @param {number} [props.marginBottom] - Margin bottom
@@ -30,6 +31,8 @@ export default function GradientButton({
   onClick,
   width = '100%',
   loading = false,
+  disabled = false,
+  size = 'medium',
   marginTop = undefined,
   marginBottom = undefined,
   marginLeft = undefined,
@@ -39,7 +42,9 @@ export default function GradientButton({
   text: string;
   onClick: () => void;
   loading?: boolean;
+  size?: 'small' | 'medium' | 'large'; //Todo: implement this.
   width?: DimensionValue;
+  disabled?: boolean;
   marginTop?: DimensionValue | undefined;
   marginBottom?: DimensionValue | undefined;
   marginLeft?: DimensionValue | undefined;
@@ -58,9 +63,13 @@ export default function GradientButton({
         marginLeft: marginLeft ?? margin,
         marginRight: marginRight ?? margin,
       }}
-      disabled={loading}>
+      disabled={loading || disabled}>
       <LinearGradient
-        colors={[colors.highlight, colors.gradient]}
+        colors={
+          disabled
+            ? ['#8f8f8f', '#707070']
+            : [colors.highlight, colors.gradient]
+        }
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.button}>

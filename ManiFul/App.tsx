@@ -4,6 +4,13 @@ import React from 'react';
 import { AuthProvider } from './src/context/AuthContext';
 import RootNavigation from './src/navigation/RootNavigation';
 import { ModalProvider } from './src/context/ModalContext';
+import { TypesProvider } from './src/context/TypesContext';
+import { TransactionProvider } from './src/context/TransactionContext';
+import FlashMessage from 'react-native-flash-message';
+import { useAuth } from './src/context/AuthContext';
+import { useTransactions } from './src/context/TransactionContext';
+import { useTypes } from './src/context/TypesContext';
+import LoadingScreen from './src/screens/LoadingScreen';
 
 import {
   Button,
@@ -15,6 +22,25 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
+const AppContent = () => {
+  const { loading: authLoading } = useAuth();
+  const { initialLoading: transactionLoading } = useTransactions();
+  const { initialLoading: typesLoading } = useTypes();
+
+  if (transactionLoading || typesLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <>
+      <ModalProvider>
+        <RootNavigation />
+      </ModalProvider>
+      <FlashMessage position="top" style={{ zIndex: 1000 }} />
+    </>
+  );
+};
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -24,9 +50,11 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <ModalProvider>
-        <RootNavigation />
-      </ModalProvider>
+      <TypesProvider>
+        <TransactionProvider>
+          <AppContent />
+        </TransactionProvider>
+      </TypesProvider>
     </AuthProvider>
   );
 }

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import {
   fetchTransactionWithid,
@@ -8,29 +8,30 @@ import colors from '../../styles/colors';
 import HistoryItem from './components/HistoryItem/HistoryItem';
 import { TransactionData } from '../../types/data';
 import { TransactionItem } from '../../types/data';
-
-//TODO: save user data into a context for easy access across app without multiple fetches.
+import { useTransactions } from '../../context/TransactionContext';
+import { useTypes } from '../../context/TypesContext';
+//TODO: save user data into a context for easy access across app without multiple fetches
 const HistoryPage = () => {
-  const [transactionData, setTransactionData] = useState<
-    TransactionData[] | null
-  >(null);
+  const { transactions, refreshTransactions } = useTransactions();
+  const { types, refreshData } = useTypes();
 
-  useEffect(() => {
-    const t = async () => {
-      const res = await fetchAllUserTransactions();
-      if (res) {
-        setTransactionData(res);
-      } else {
-        console.error('ERRROR FETCHING: ', res);
-      }
-    };
+  const fetchAll = async () => {
+    console.log('fetching transactions...');
+    await refreshTransactions();
+    console.log('done');
+  };
 
-    t();
-  }, []);
+  const getTypes = async () => {
+    console.log('getting types');
+    await refreshData();
+    console.log('done: ', types);
+  };
 
-  if (!transactionData) {
+  if (!transactions) {
     return (
       <View style={{ backgroundColor: colors.background, flex: 1 }}>
+        <Button title="fetch" onPress={fetchAll} />
+        <Button title="fetch types" onPress={getTypes} />
         <Text>Loading...</Text>
       </View>
     );
@@ -39,7 +40,9 @@ const HistoryPage = () => {
   return (
     <ScrollView
       style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
-      {transactionData.map((x, i) => (
+      <Button title="fetch" onPress={fetchAll} />
+      <Button title="fetch types" onPress={getTypes} />
+      {transactions.map((x, i) => (
         <View style={{ marginBottom: 15 }} key={i}>
           <HistoryItem item={x} />
         </View>

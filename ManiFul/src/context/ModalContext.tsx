@@ -10,8 +10,12 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ModalContext.Provider value={modal}>
       {children}
-      {modal.modals.map(({ id, content }) => (
-        <Modal key={id} onClose={() => modal.closeModal(id)}>
+      {modal.modals.map(({ id, content, disableClosing, closeButton }) => (
+        <Modal
+          key={id}
+          onClose={() => modal.closeModal(id)}
+          disableClosing={disableClosing}
+          closeButton={closeButton}>
           {content}
         </Modal>
       ))}
