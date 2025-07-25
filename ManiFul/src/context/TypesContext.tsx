@@ -37,21 +37,24 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchData = async (isInitialLoad = false): Promise<boolean> => {
     if (!isAuthenticated || !token || !initialized) return false;
 
-    try {
-      if (isInitialLoad) {
-        setInitialLoading(true);
-      } else {
-        if (!loading) {
-          setLoading(true);
-        }
+    if (isInitialLoad) {
+      setInitialLoading(true);
+    } else {
+      if (!loading) {
+        setLoading(true);
       }
-      setError(null);
+    }
+    setError(null);
 
+    try {
+      const creds = await Keychain.getGenericPassword();
+
+      if (!creds) return false;
       // Fetch both categories and types in parallel
       const [categoriesRes, typesRes] = await Promise.all([
         axios.get(`${API_URL}/api/categories/getAll`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${creds.password}`,
             'BACKEND-API-KEY': API_KEY,
           },
         }),
