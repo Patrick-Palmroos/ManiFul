@@ -523,10 +523,12 @@ const ReceiptContents = ({
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => {
-                        openModal(
-                          <TypeChangeModal callback={handleTypeSelect} />,
-                          'typeChange',
-                        );
+                        openModal({
+                          content: (
+                            <TypeChangeModal callback={handleTypeSelect} />
+                          ),
+                          id: 'typeChange',
+                        });
                         setPopupVisible(false);
                       }}>
                       <View
