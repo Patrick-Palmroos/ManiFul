@@ -3,20 +3,14 @@ import { useState } from 'react';
 interface ModalItem {
   id: string;
   content: React.ReactNode;
+  onCloseModal?: () => void;
   disableClosing?: boolean;
   closeButton?: boolean;
 }
 
 interface UseModalResults {
   isOpen: boolean;
-  openModal: (
-    content: React.ReactNode,
-    customId?: string,
-    options?: {
-      disableClosing?: boolean;
-      closeButton?: boolean;
-    },
-  ) => void;
+  openModal: (args: ModalItem) => void;
   closeModal: (id: string) => void;
   closeAllModals: () => void;
   modals: ModalItem[];
@@ -27,20 +21,26 @@ export default function useModal(): UseModalResults {
 
   const closeAllModals = () => setModals([]);
 
-  const openModal = (
-    content: React.ReactNode,
-    customId?: string,
-    options?: {
-      disableClosing?: boolean;
-      closeButton?: boolean;
-    },
-  ) => {
-    const id = customId ?? Math.random().toString(36).substring(2, 9); //billions of possible combinations. Play the lottery if id collision happens.
-
+  const openModal = ({
+    content,
+    id = Math.random().toString(36).substring(2, 9),
+    onCloseModal,
+    disableClosing,
+    closeButton,
+  }: ModalItem) => {
     setModals(prev => {
-      if (customId && prev.some(m => m.id === customId)) return prev;
+      if (prev.some(m => m.id === id)) return prev;
 
-      return [...prev, { id, content, ...options }];
+      return [
+        ...prev,
+        {
+          id,
+          content,
+          onCloseModal,
+          disableClosing,
+          closeButton,
+        },
+      ];
     });
 
     return id;
@@ -48,7 +48,15 @@ export default function useModal(): UseModalResults {
 
   const closeModal = (id?: string) => {
     setModals(prev => {
-      if (!id) return prev.slice(0, -1); // close top modal
+      if (!id) {
+        const lastModal = prev[prev.length - 1];
+        lastModal?.onCloseModal?.();
+        return prev.slice(0, -1);
+      }
+
+      const modalToClose = prev.find(m => m.id === id);
+      modalToClose?.onCloseModal?.();
+
       return prev.filter(m => m.id !== id);
     });
   };
