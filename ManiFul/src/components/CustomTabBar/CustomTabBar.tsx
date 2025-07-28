@@ -25,7 +25,7 @@ const CustomTabBar = ({
 
   const handleMiddlePress = () => {
     runMiddleButtonPressAnimation(scaleAnim);
-    openModal(<ActionModal />);
+    openModal({ content: <ActionModal />, id: 'ActionModal' });
   };
 
   return (
