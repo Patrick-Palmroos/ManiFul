@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   nameInputField: {
     ...generalStyles.textField,
-    backgroundColor: colors.backgroundWarm,
+    backgroundColor: 'transparent',
     paddingLeft: 5,
     height: '80%',
     paddingBottom: 0,
