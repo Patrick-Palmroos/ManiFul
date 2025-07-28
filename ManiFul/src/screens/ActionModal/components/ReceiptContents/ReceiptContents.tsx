@@ -348,16 +348,16 @@ const ReceiptContents = ({
                         }
                       />
                       {/* Type */}
-                      <View
+                      <TouchableOpacity
+                        onPress={() => console.log('press lol')}
                         style={{
                           ...text.regular,
-                          alignItems: 'center',
                           width: '30%',
                           marginTop: 5,
                           marginBottom: 5,
                         }}>
                         <Text style={styles.typeText}>{item.type_name}</Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     {/* Price */}
                     <View
@@ -423,6 +423,7 @@ const ReceiptContents = ({
             ))}
           </View>
         </TouchableWithoutFeedback>
+        {/* Popup for deleting */}
         {popupVisible && (
           <Modal transparent>
             <TouchableWithoutFeedback onPress={closePopup}>
@@ -458,6 +459,7 @@ const ReceiptContents = ({
           </Modal>
         )}
       </ScrollView>
+      {/* Cancel and save buttons */}
       <View
         style={{
           flexDirection: 'row',
