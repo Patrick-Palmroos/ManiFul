@@ -80,20 +80,15 @@ const ReceiptContents = ({
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
-  const handleItemPress = (event: GestureResponderEvent, item: number) => {
+  const handleItemPress = (event: GestureResponderEvent, item: string) => {
     const { pageX, pageY } = event.nativeEvent;
     setPopupPosition({ x: pageX, y: pageY });
     setSelectedItem(item);
     setPopupVisible(true);
-  };
-
-  const handleDelete = () => {
-    console.log(`Deleted: ${selectedItem}`);
-    setPopupVisible(false);
   };
 
   const closePopup = () => {
@@ -223,6 +218,30 @@ const ReceiptContents = ({
     return parseFloat(total.toFixed(2)); // Ensures it's a number, not a string
   };
 
+  const handleDelete = () => {
+    setEditableItems(prev => {
+      return prev
+        .map(group => {
+          const filtered = group.items.filter(
+            item => item.name !== selectedItem,
+          );
+
+          if (filtered.length > 0) {
+            return {
+              ...group,
+              items: filtered,
+            };
+          }
+
+          return null;
+        })
+        .filter(group => group !== null);
+    });
+    console.log(`Deleted: ${selectedItem}`);
+    setPopupVisible(false);
+    setSelectedItem(null);
+  };
+
   return (
     <View
       style={{
@@ -295,7 +314,7 @@ const ReceiptContents = ({
                     key={itemIndex}
                     onPressIn={() => setSelected(itemIndex)}
                     onPressOut={() => setSelected(null)}
-                    onLongPress={e => handleItemPress(e, itemIndex)}
+                    onLongPress={e => handleItemPress(e, item.name)}
                     style={{
                       ...styles.itemContainer,
                       backgroundColor:
@@ -305,7 +324,7 @@ const ReceiptContents = ({
                             : itemIndex & 1
                             ? '#edd1e0'
                             : colors.backgroundWarm
-                          : selectedItem === itemIndex
+                          : selectedItem === item.name
                           ? colors.backgroundWarm
                           : '#edd1e0',
                     }}>
