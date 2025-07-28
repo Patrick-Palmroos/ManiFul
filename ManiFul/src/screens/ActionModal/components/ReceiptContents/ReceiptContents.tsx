@@ -21,7 +21,7 @@ import { useTransactions } from '../../../../context/TransactionContext';
 import { useModalContext } from '../../../../context/ModalContext';
 import colors from '../../../../styles/colors';
 import styles from './styles';
-import TypeChangeModal from '../TypeChangeModal/TypeChangeModal';
+import TypeChangeModal from '../TypeChangeModal';
 
 import { showMessage } from 'react-native-flash-message';
 
