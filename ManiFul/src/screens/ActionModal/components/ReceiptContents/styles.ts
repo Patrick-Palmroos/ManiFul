@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'rgba(48, 48, 48, 1)',
     padding: 7,
+    gap: 4,
     borderRadius: 8,
     elevation: 4,
   },

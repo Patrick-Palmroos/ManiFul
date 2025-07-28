@@ -448,7 +448,26 @@ const ReceiptContents = ({
                           size={25}
                           color={'#ffffffff'}
                         />
-                        <Text style={text.regularLight}>Delete</Text>
+                        <Text style={{ ...text.regularLight, fontSize: 15 }}>
+                          Delete
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleDelete}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}>
+                        <MaterialIcons
+                          name="edit"
+                          size={23}
+                          color={'#ffffffff'}
+                        />
+                        <Text style={{ ...text.regularLight, fontSize: 15 }}>
+                          Change type
+                        </Text>
                       </View>
                     </TouchableOpacity>
                   </View>
