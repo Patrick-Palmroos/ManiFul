@@ -48,10 +48,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         } catch (err) {
           await Keychain.resetGenericPassword();
         } finally {
-          setLoading(false);
           setInitialized(true);
         }
       }
+      setLoading(false);
     };
 
     loadToken();
