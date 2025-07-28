@@ -6,11 +6,12 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
 import text from '../../../../styles/text';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { transactionPost } from '../../../../types/data';
@@ -267,7 +268,15 @@ const ReceiptContents = ({
                 </Text>
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
-                  <View key={itemIndex} style={{ ...styles.itemContainer }}>
+                  <Pressable
+                    key={itemIndex}
+                    onPress={() => console.log('short pressed: ', item.name)}
+                    onLongPress={() => console.log('long pressed: ', item.name)}
+                    style={{
+                      ...styles.itemContainer,
+                      backgroundColor:
+                        itemIndex & 1 ? '#edd1e0' : colors.backgroundWarm,
+                    }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -355,7 +364,7 @@ const ReceiptContents = ({
                       />
                       <Text style={text.moneyDark}>€</Text>
                     </View>
-                  </View>
+                  </Pressable>
                 ))}
               </View>
             ))}
