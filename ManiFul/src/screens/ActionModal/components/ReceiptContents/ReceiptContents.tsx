@@ -80,14 +80,21 @@ const ReceiptContents = ({
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{
+    groupIndex: number;
+    itemIndex: number;
+  } | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
-  const handleItemPress = (event: GestureResponderEvent, item: string) => {
+  const handleItemPress = (
+    event: GestureResponderEvent,
+    groupIndex: number,
+    itemIndex: number,
+  ) => {
     const { pageX, pageY } = event.nativeEvent;
     setPopupPosition({ x: pageX, y: pageY });
-    setSelectedItem(item);
+    setSelectedItem({ groupIndex, itemIndex });
     setPopupVisible(true);
   };
 
@@ -219,23 +226,24 @@ const ReceiptContents = ({
   };
 
   const handleDelete = () => {
+    if (!selectedItem) return;
+
+    const { groupIndex, itemIndex } = selectedItem;
+
     setEditableItems(prev => {
-      return prev
-        .map(group => {
-          const filtered = group.items.filter(
-            item => item.name !== selectedItem,
-          );
+      const updated = [...prev];
+      const group = updated[groupIndex];
 
-          if (filtered.length > 0) {
-            return {
-              ...group,
-              items: filtered,
-            };
-          }
+      if (!group) return prev;
 
-          return null;
-        })
-        .filter(group => group !== null);
+      group.items.splice(itemIndex, 1);
+
+      // Remove group if no items
+      if (group.items.length === 0) {
+        updated.splice(groupIndex, 1);
+      }
+
+      return updated;
     });
     console.log(`Deleted: ${selectedItem}`);
     setPopupVisible(false);
@@ -314,7 +322,7 @@ const ReceiptContents = ({
                     key={itemIndex}
                     onPressIn={() => setSelected(itemIndex)}
                     onPressOut={() => setSelected(null)}
-                    onLongPress={e => handleItemPress(e, item.name)}
+                    onLongPress={e => handleItemPress(e, groupIndex, itemIndex)}
                     style={{
                       ...styles.itemContainer,
                       backgroundColor:
@@ -324,9 +332,10 @@ const ReceiptContents = ({
                             : itemIndex & 1
                             ? '#edd1e0'
                             : colors.backgroundWarm
-                          : selectedItem === item.name
+                          : selectedItem.itemIndex === itemIndex &&
+                            selectedItem.groupIndex === groupIndex
                           ? colors.backgroundWarm
-                          : '#dbbdcd',
+                          : '#dbbacb',
                     }}>
                     <View
                       style={{
@@ -422,7 +431,7 @@ const ReceiptContents = ({
             ))}
           </View>
         </TouchableWithoutFeedback>
-        {/* Popup for deleting */}
+        {/* Popup for deleting and selecting edit */}
         {popupVisible && (
           <Modal transparent>
             <TouchableWithoutFeedback onPress={closePopup}>
