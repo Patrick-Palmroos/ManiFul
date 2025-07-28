@@ -77,7 +77,7 @@ const ReceiptContents = ({
   const { createTransaction } = useTransactions();
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isEditable, setIsEditable] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
 
   const handleFocus = () => {
     setSelection(undefined);
@@ -271,12 +271,17 @@ const ReceiptContents = ({
                 {group.items.map((item, itemIndex) => (
                   <Pressable
                     key={itemIndex}
-                    onPress={() => console.log('short pressed: ', item.name)}
+                    onPressIn={() => setSelected(itemIndex)}
+                    onPressOut={() => setSelected(null)}
                     onLongPress={() => console.log('long pressed: ', item.name)}
                     style={{
                       ...styles.itemContainer,
                       backgroundColor:
-                        itemIndex & 1 ? '#edd1e0' : colors.backgroundWarm,
+                        selected === itemIndex
+                          ? '#dbbacb'
+                          : itemIndex & 1
+                          ? '#edd1e0'
+                          : colors.backgroundWarm,
                     }}>
                     <View
                       style={{
