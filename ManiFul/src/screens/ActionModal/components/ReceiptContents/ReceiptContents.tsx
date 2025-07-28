@@ -432,12 +432,24 @@ const ReceiptContents = ({
                     style={[
                       styles.popup,
                       {
-                        top: popupPosition.y - 90,
+                        top: popupPosition.y - 80,
                         left: popupPosition.x + 10,
                       },
                     ]}>
                     <TouchableOpacity onPress={handleDelete}>
-                      <Text style={{ fontSize: 24 }}>Delete</Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 2,
+                        }}>
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={30}
+                          color={'#ffffffff'}
+                        />
+                        <Text style={text.regularLight}>Delete</Text>
+                      </View>
                     </TouchableOpacity>
                   </View>
                 </TouchableWithoutFeedback>
