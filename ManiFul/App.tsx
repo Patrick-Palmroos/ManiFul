@@ -27,7 +27,7 @@ const AppContent = () => {
   const { initialLoading: transactionLoading } = useTransactions();
   const { initialLoading: typesLoading } = useTypes();
 
-  if (transactionLoading || typesLoading) {
+  if (transactionLoading || typesLoading || authLoading) {
     return <LoadingScreen />;
   }
 
