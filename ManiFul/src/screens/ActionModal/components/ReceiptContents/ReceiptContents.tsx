@@ -348,8 +348,7 @@ const ReceiptContents = ({
                         }
                       />
                       {/* Type */}
-                      <TouchableOpacity
-                        onPress={() => console.log('press lol')}
+                      <View
                         style={{
                           ...text.regular,
                           width: '30%',
@@ -357,7 +356,7 @@ const ReceiptContents = ({
                           marginBottom: 5,
                         }}>
                         <Text style={styles.typeText}>{item.type_name}</Text>
-                      </TouchableOpacity>
+                      </View>
                     </View>
                     {/* Price */}
                     <View
