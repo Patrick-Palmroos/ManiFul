@@ -109,7 +109,7 @@ const Loginpage = () => {
                 style={{
                   width: '70%',
                   height: '20%',
-                  marginTop: 10,
+                  marginTop: 20,
                   resizeMode: 'contain',
                 }}
               />
