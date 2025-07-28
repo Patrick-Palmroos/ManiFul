@@ -103,9 +103,6 @@ const ReceiptContents = ({
     setSelectedItem(null);
   };
 
-  const handleFocus = () => {
-    setSelection(undefined);
-  };
   const handleBlur = () => {
     setSelection({ start: 0 });
   };
@@ -259,7 +256,12 @@ const ReceiptContents = ({
         style={styles.vendorInput}
         value={vendor}
         onBlur={handleBlur}
-        onFocus={handleFocus}
+        onFocus={() =>
+          setSelection({
+            start: vendor.length,
+            end: vendor.length,
+          })
+        }
         selection={selection}
         onChangeText={text => setVendor(text)}
       />
@@ -350,7 +352,12 @@ const ReceiptContents = ({
                         style={styles.nameInputField}
                         value={item.name}
                         onBlur={handleBlur}
-                        onFocus={handleFocus}
+                        onFocus={() =>
+                          setSelection({
+                            start: item.name.length,
+                            end: item.name.length,
+                          })
+                        }
                         selection={selection}
                         onChangeText={text =>
                           updateItemField(groupIndex, itemIndex, 'name', text)
@@ -414,7 +421,12 @@ const ReceiptContents = ({
                             return updated;
                           });
                         }}
-                        onFocus={handleFocus}
+                        onFocus={() =>
+                          setSelection({
+                            start: item.name.length,
+                            end: item.name.length,
+                          })
+                        }
                         selection={selection}
                         onChangeText={text => {
                           setTempInputValues(prev => ({
