@@ -445,7 +445,7 @@ const ReceiptContents = ({
                         }}>
                         <MaterialIcons
                           name="delete-outline"
-                          size={30}
+                          size={25}
                           color={'#ffffffff'}
                         />
                         <Text style={text.regularLight}>Delete</Text>
