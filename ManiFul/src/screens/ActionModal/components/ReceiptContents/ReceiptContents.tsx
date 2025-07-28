@@ -528,6 +528,7 @@ const ReceiptContents = ({
                             <TypeChangeModal callback={handleTypeSelect} />
                           ),
                           id: 'typeChange',
+                          onCloseModal: () => setSelectedItem(null),
                         });
                         setPopupVisible(false);
                       }}>
