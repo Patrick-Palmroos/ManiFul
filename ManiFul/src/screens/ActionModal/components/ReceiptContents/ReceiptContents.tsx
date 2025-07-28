@@ -261,6 +261,7 @@ const ReceiptContents = ({
                 style={{
                   backgroundColor: colors.backgroundWarm,
                   padding: 5,
+                  paddingLeft: 0,
                   borderRadius: 5,
                 }}>
                 <Text style={{ ...text.title, fontSize: 24 }}>
@@ -302,6 +303,8 @@ const ReceiptContents = ({
                           ...text.regular,
                           alignItems: 'center',
                           width: '30%',
+                          marginTop: 5,
+                          marginBottom: 5,
                         }}>
                         <Text style={styles.typeText}>{item.type_name}</Text>
                       </View>

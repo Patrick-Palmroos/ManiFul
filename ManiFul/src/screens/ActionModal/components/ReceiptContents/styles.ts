@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingRight: 10,
+    paddingLeft: 5,
   },
   nameInputField: {
     ...generalStyles.textField,
