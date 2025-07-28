@@ -326,7 +326,7 @@ const ReceiptContents = ({
                             : colors.backgroundWarm
                           : selectedItem === item.name
                           ? colors.backgroundWarm
-                          : '#edd1e0',
+                          : '#dbbdcd',
                     }}>
                     <View
                       style={{
@@ -432,7 +432,7 @@ const ReceiptContents = ({
                     style={[
                       styles.popup,
                       {
-                        top: popupPosition.y - 80,
+                        top: popupPosition.y - 90,
                         left: popupPosition.x + 10,
                       },
                     ]}>
