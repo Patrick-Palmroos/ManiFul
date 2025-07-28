@@ -106,7 +106,9 @@ const ActionModal = () => {
     if (imageUri) {
       setLoading(true);
 
-      openModal(<ReceiptLoading />, 'loading', {
+      openModal({
+        content: <ReceiptLoading />,
+        id: 'loading',
         disableClosing: true,
       });
 
@@ -131,24 +133,28 @@ const ActionModal = () => {
       setResData(response.data);
       setLoading(false);
       closeModal('loading');
-      openModal(
-        <ReceiptContents
-          data={response.data}
-          close={() => {
-            closeModal('contents');
-          }}
-        />,
-        'contents',
-        { disableClosing: true },
-      );
+      openModal({
+        content: (
+          <ReceiptContents
+            data={response.data}
+            close={() => {
+              closeModal('contents');
+            }}
+          />
+        ),
+        id: 'contents',
+        disableClosing: true,
+      });
     }
   };
 
   const openAndroidStyleChooser = () => {
-    openModal(
-      <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />,
-      'optionPicker',
-    );
+    openModal({
+      content: (
+        <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />
+      ),
+      id: 'optionPicker',
+    });
   };
 
   const clearData = () => {
@@ -261,16 +267,18 @@ const ActionModal = () => {
               onClick={
                 resData
                   ? () =>
-                      openModal(
-                        <ReceiptContents
-                          data={resData}
-                          close={() => {
-                            closeModal('contents');
-                          }}
-                        />,
-                        'contents',
-                        { disableClosing: true },
-                      )
+                      openModal({
+                        content: (
+                          <ReceiptContents
+                            data={resData}
+                            close={() => {
+                              closeModal('contents');
+                            }}
+                          />
+                        ),
+                        id: 'contents',
+                        disableClosing: true,
+                      })
                   : getResults
               }
               disabled={resData ? false : imageUri ? false : true}
