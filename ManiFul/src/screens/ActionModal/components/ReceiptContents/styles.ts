@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   typeText: {
     ...text.moneyDark,
     color: colors.light,
-    fontSize: 12,
+    fontSize: 11,
     backgroundColor: colors.gradient,
     textAlign: 'center',
     width: 'auto',
