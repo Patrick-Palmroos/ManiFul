@@ -38,9 +38,11 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
 
   const fetchTransactions = async (isInitialLoad = false) => {
+    console.log('fetching transactions');
     if (!user) return;
 
     if (isInitialLoad) {
+      console.log('initial transactions loading');
       setInitialLoading(true);
     } else {
       if (!loading) {
@@ -61,6 +63,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       setTransactions(response.data);
+      console.log('success with transactions');
     } catch (err) {
       setError('Failed to fetch transactions');
       console.error('Transaction fetch error:', err);

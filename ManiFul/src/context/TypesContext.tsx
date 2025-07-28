@@ -32,21 +32,25 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [types, setTypes] = useState<Type[]>([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
-  const { isAuthenticated, token, initialized } = useAuth();
+  const { isAuthenticated, token, user } = useAuth();
 
   const fetchData = async (isInitialLoad = false): Promise<boolean> => {
-    if (!isAuthenticated || !token || !initialized) return false;
+    console.log('fetch types called');
+    if (!user) return false;
 
     if (isInitialLoad) {
+      console.log('initial types loading');
       setInitialLoading(true);
     } else {
       if (!loading) {
+        console.log('loading types afterwards');
         setLoading(true);
       }
     }
     setError(null);
 
     try {
+      console.log('fetching data...');
       const creds = await Keychain.getGenericPassword();
 
       if (!creds) return false;
@@ -68,6 +72,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
+      console.log('success with types');
       return true;
     } catch (err) {
       setError('Error fetching types and categories');
@@ -85,7 +90,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   // Initial fetch on mount and when user changess
   useEffect(() => {
     fetchData(true);
-  }, [isAuthenticated, token, initialized]);
+  }, [user]);
 
   return (
     <TypeContext.Provider
