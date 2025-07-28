@@ -55,6 +55,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: '45%',
   },
+  popup: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    elevation: 4,
+  },
 });
 
 export default styles;

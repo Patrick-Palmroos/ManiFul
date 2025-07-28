@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Pressable,
+  GestureResponderEvent,
+  Modal,
 } from 'react-native';
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
@@ -78,6 +80,26 @@ const ReceiptContents = ({
   const { closeAllModals } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+
+  const handleItemPress = (event: GestureResponderEvent, item: number) => {
+    const { pageX, pageY } = event.nativeEvent;
+    setPopupPosition({ x: pageX, y: pageY });
+    setSelectedItem(item);
+    setPopupVisible(true);
+  };
+
+  const handleDelete = () => {
+    console.log(`Deleted: ${selectedItem}`);
+    setPopupVisible(false);
+  };
+
+  const closePopup = () => {
+    setPopupVisible(false);
+    setSelectedItem(null);
+  };
 
   const handleFocus = () => {
     setSelection(undefined);
@@ -273,15 +295,19 @@ const ReceiptContents = ({
                     key={itemIndex}
                     onPressIn={() => setSelected(itemIndex)}
                     onPressOut={() => setSelected(null)}
-                    onLongPress={() => console.log('long pressed: ', item.name)}
+                    onLongPress={e => handleItemPress(e, itemIndex)}
                     style={{
                       ...styles.itemContainer,
                       backgroundColor:
-                        selected === itemIndex
-                          ? '#dbbacb'
-                          : itemIndex & 1
-                          ? '#edd1e0'
-                          : colors.backgroundWarm,
+                        selectedItem === null
+                          ? selected === itemIndex
+                            ? '#dbbacb'
+                            : itemIndex & 1
+                            ? '#edd1e0'
+                            : colors.backgroundWarm
+                          : selectedItem === itemIndex
+                          ? colors.backgroundWarm
+                          : '#edd1e0',
                     }}>
                     <View
                       style={{
@@ -378,6 +404,28 @@ const ReceiptContents = ({
             ))}
           </View>
         </TouchableWithoutFeedback>
+        {popupVisible && (
+          <Modal transparent>
+            <TouchableWithoutFeedback onPress={closePopup}>
+              <View style={{ flex: 1 }}>
+                <TouchableWithoutFeedback>
+                  <View
+                    style={[
+                      styles.popup,
+                      {
+                        top: popupPosition.y - 90,
+                        left: popupPosition.x + 10,
+                      },
+                    ]}>
+                    <TouchableOpacity onPress={handleDelete}>
+                      <Text style={{ fontSize: 24 }}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        )}
       </ScrollView>
       <View
         style={{
