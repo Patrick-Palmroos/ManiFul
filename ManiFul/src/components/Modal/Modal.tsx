@@ -25,23 +25,24 @@ const Modal = ({
   disableClosing = false,
 }: Props) => {
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-        if (!disableClosing) {
-          onClose();
-        }
-      }}>
-      <View style={styles.backdropContainer}>
-        <TouchableWithoutFeedback
-          onPress={!disableClosing ? onClose : () => null}
-          touchSoundDisabled={disableClosing}>
-          <View style={styles.backdrop} />
-        </TouchableWithoutFeedback>
+    <View style={styles.backdropContainer}>
+      <TouchableWithoutFeedback
+        touchSoundDisabled={disableClosing}
+        onPress={() => {
+          Keyboard.dismiss();
+          if (!disableClosing) {
+            onClose();
+          }
+        }}>
+        <View style={styles.backdrop} />
+      </TouchableWithoutFeedback>
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.modalWrapper}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.modalWrapper}>
+        <TouchableWithoutFeedback
+          onPress={() => Keyboard.dismiss()}
+          touchSoundDisabled={true}>
           <View>
             {/* Close Button */}
             {closeButton && !disableClosing && (
@@ -60,9 +61,9 @@ const Modal = ({
             {/* Modal Content */}
             <ScrollView style={styles.modalContent}>{children}</ScrollView>
           </View>
-        </KeyboardAvoidingView>
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

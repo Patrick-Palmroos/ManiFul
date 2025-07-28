@@ -38,6 +38,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { useTypes } from '../../context/TypesContext';
 import { useTransactions } from '../../context/TransactionContext';
 import ReceiptContents from './components/ReceiptContents';
+import { showMessage } from 'react-native-flash-message';
 
 const options: CameraOptions = {
   mediaType: 'photo' as const,
@@ -53,7 +54,7 @@ const ActionModal = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [resData, setResData] = useState<ImageScanType | null>(null);
-  const { types } = useTypes();
+  const { types, refreshData } = useTypes();
   const { createTransaction } = useTransactions();
 
   // console.log('cats and types: ', types);
@@ -105,41 +106,55 @@ const ActionModal = () => {
     if (imageUri) {
       setLoading(true);
 
-      openModal(<ReceiptLoading />, 'loading', {
+      openModal({
+        content: <ReceiptLoading />,
+        id: 'loading',
         disableClosing: true,
       });
 
-      const response: ImageScanType | null = await parseReceipt(
-        imageUri,
-        types,
-      );
-      if (!response) {
-        console.log('Couldnt scan receipt');
+      //shouldnt enter here but this shit sometimes is empty
+      if (types.length === 0) {
+        await refreshData();
+      }
+
+      const response = await parseReceipt(imageUri, types);
+      if (response.code !== 200 || !response.data) {
+        showMessage({
+          message: 'Error while scanning your receipt',
+          description: `Error code: ${response.code} - ${response.message}`,
+          duration: 5000,
+          floating: true,
+          type: 'danger',
+        });
         setLoading(false);
         closeModal('loading');
         return;
       }
-      setResData(response);
+      setResData(response.data);
       setLoading(false);
       closeModal('loading');
-      openModal(
-        <ReceiptContents
-          data={response}
-          close={() => {
-            closeModal('contents');
-          }}
-        />,
-        'contents',
-        { disableClosing: true },
-      );
+      openModal({
+        content: (
+          <ReceiptContents
+            data={response.data}
+            close={() => {
+              closeModal('contents');
+            }}
+          />
+        ),
+        id: 'contents',
+        disableClosing: true,
+      });
     }
   };
 
   const openAndroidStyleChooser = () => {
-    openModal(
-      <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />,
-      'optionPicker',
-    );
+    openModal({
+      content: (
+        <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />
+      ),
+      id: 'optionPicker',
+    });
   };
 
   const clearData = () => {
@@ -252,16 +267,18 @@ const ActionModal = () => {
               onClick={
                 resData
                   ? () =>
-                      openModal(
-                        <ReceiptContents
-                          data={resData}
-                          close={() => {
-                            closeModal('contents');
-                          }}
-                        />,
-                        'contents',
-                        { disableClosing: true },
-                      )
+                      openModal({
+                        content: (
+                          <ReceiptContents
+                            data={resData}
+                            close={() => {
+                              closeModal('contents');
+                            }}
+                          />
+                        ),
+                        id: 'contents',
+                        disableClosing: true,
+                      })
                   : getResults
               }
               disabled={resData ? false : imageUri ? false : true}

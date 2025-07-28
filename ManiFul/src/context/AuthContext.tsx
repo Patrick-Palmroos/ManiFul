@@ -17,9 +17,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     const loadToken = async () => {
+      setLoading(true);
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
         const storedToken = credentials.password;
@@ -45,6 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         } catch (err) {
           await Keychain.resetGenericPassword();
+        } finally {
+          setInitialized(true);
         }
       }
       setLoading(false);
@@ -58,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password,
   }: AuthCredentials): Promise<authRes> => {
     try {
-      console.log('API:', API_KEY);
+      setLoading(true);
       const response = await axios.post(
         `${API_URL}/auth/token`,
         {
@@ -70,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             'Content-Type': 'application/json',
             'BACKEND-API-KEY': API_KEY,
           },
-          timeout: 20000,
+          timeout: 100000,
         },
       );
       console.log(response);
@@ -79,7 +83,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setToken(response.data?.token);
       const decoded = jwtDecode(response.data?.token);
       setUser(decoded as User);
-      setLoading(false);
       return { status: response.status, message: response.statusText };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -103,6 +106,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error('Unexpected error:', error);
         return { status: 0, message: 'Unexpected error' };
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,7 +124,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, loading, token }}>
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        loading,
+        token,
+        initialized,
+      }}>
       {children}
     </AuthContext.Provider>
   );

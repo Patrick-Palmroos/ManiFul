@@ -18,6 +18,7 @@ const RootNavigation = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          orientation: 'portrait',
         }}>
         {isAuthenticated ? MainStack() : AuthStack()}
       </Stack.Navigator>

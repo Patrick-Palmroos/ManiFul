@@ -6,6 +6,9 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ActivityIndicator,
+  Pressable,
+  GestureResponderEvent,
+  Modal,
 } from 'react-native';
 import { ImageScanType } from '../../../../types/raspberry';
 import { useTypes } from '../../../../context/TypesContext';
@@ -18,6 +21,7 @@ import { useTransactions } from '../../../../context/TransactionContext';
 import { useModalContext } from '../../../../context/ModalContext';
 import colors from '../../../../styles/colors';
 import styles from './styles';
+import TypeChangeModal from '../TypeChangeModal';
 
 import { showMessage } from 'react-native-flash-message';
 
@@ -45,6 +49,8 @@ const dateToText = (date: Date) => {
   return `${day}.${month}.${year}`;
 };
 
+//TODO: changing types.
+//TODO: removing and adding items
 const ReceiptContents = ({
   data,
   close,
@@ -72,12 +78,32 @@ const ReceiptContents = ({
     [key: string]: string;
   }>({});
   const { createTransaction } = useTransactions();
-  const { closeAllModals } = useModalContext();
+  const { closeAllModals, openModal, closeModal } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{
+    groupIndex: number;
+    itemIndex: number;
+  } | null>(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
-  const handleFocus = () => {
-    setSelection(undefined);
+  const handleItemPress = (
+    event: GestureResponderEvent,
+    groupIndex: number,
+    itemIndex: number,
+  ) => {
+    const { pageX, pageY } = event.nativeEvent;
+    setPopupPosition({ x: pageX, y: pageY });
+    setSelectedItem({ groupIndex, itemIndex });
+    setPopupVisible(true);
   };
+
+  const closePopup = () => {
+    setPopupVisible(false);
+    setSelectedItem(null);
+  };
+
   const handleBlur = () => {
     setSelection({ start: 0 });
   };
@@ -197,6 +223,77 @@ const ReceiptContents = ({
     return parseFloat(total.toFixed(2)); // Ensures it's a number, not a string
   };
 
+  const handleDelete = () => {
+    if (!selectedItem) return;
+
+    const { groupIndex, itemIndex } = selectedItem;
+
+    setEditableItems(prev => {
+      const updated = [...prev];
+      const group = updated[groupIndex];
+
+      if (!group) return prev;
+
+      group.items.splice(itemIndex, 1);
+
+      // Remove group if no items
+      if (group.items.length === 0) {
+        updated.splice(groupIndex, 1);
+      }
+
+      return updated;
+    });
+    console.log(`Deleted: ${selectedItem}`);
+    setPopupVisible(false);
+    setSelectedItem(null);
+  };
+
+  const handleTypeSelect = (typeId: number, typeName: string) => {
+    if (!selectedItem) return;
+    const { groupIndex, itemIndex } = selectedItem;
+
+    // Get the item being updated
+    const updatedItem = {
+      ...editableItems[groupIndex].items[itemIndex],
+      type_id: typeId,
+      type_name: typeName,
+    };
+
+    //Flatten all other items (excluding the updated one)
+    const allOtherItems = editableItems.flatMap((group, gi) =>
+      group.items
+        .filter((_, ii) => !(gi === groupIndex && ii === itemIndex))
+        .map(item => ({ ...item })),
+    );
+
+    //Add the updated item
+    const allItems = [...allOtherItems, updatedItem];
+
+    // Regroup based on categories and types
+    const regrouped = categories
+      .map(category => {
+        const categoryTypeIds = category.types.map(t => t.id);
+
+        const itemsInCategory = allItems.filter(item =>
+          categoryTypeIds.includes(item.type_id),
+        );
+
+        return itemsInCategory.length > 0
+          ? {
+              category_id: category.id,
+              category_name: category.name,
+              items: itemsInCategory,
+            }
+          : null;
+      })
+      .filter((group): group is displayDataGroup => group !== null);
+
+    setEditableItems(regrouped);
+    closeModal('typeChange');
+
+    setSelectedItem(null);
+  };
+
   return (
     <View
       style={{
@@ -206,7 +303,12 @@ const ReceiptContents = ({
         style={styles.vendorInput}
         value={vendor}
         onBlur={handleBlur}
-        onFocus={handleFocus}
+        onFocus={() =>
+          setSelection({
+            start: vendor.length,
+            end: vendor.length,
+          })
+        }
         selection={selection}
         onChangeText={text => setVendor(text)}
       />
@@ -255,8 +357,9 @@ const ReceiptContents = ({
               <View
                 key={groupIndex}
                 style={{
-                  backgroundColor: '#dcdfebff',
+                  backgroundColor: colors.backgroundWarm,
                   padding: 5,
+                  paddingLeft: 0,
                   borderRadius: 5,
                 }}>
                 <Text style={{ ...text.title, fontSize: 24 }}>
@@ -264,35 +367,78 @@ const ReceiptContents = ({
                 </Text>
                 {/* Items */}
                 {group.items.map((item, itemIndex) => (
-                  <View key={itemIndex} style={styles.itemContainer}>
-                    {/* Name */}
-                    <TextInput
-                      style={styles.nameInputField}
-                      value={item.name}
-                      onBlur={handleBlur}
-                      onFocus={handleFocus}
-                      selection={selection}
-                      onChangeText={text =>
-                        updateItemField(groupIndex, itemIndex, 'name', text)
-                      }
-                    />
-                    {/* Type */}
+                  <Pressable
+                    key={itemIndex}
+                    onPressIn={() => setSelected(itemIndex)}
+                    onPressOut={() => setSelected(null)}
+                    onLongPress={e => handleItemPress(e, groupIndex, itemIndex)}
+                    style={{
+                      ...styles.itemContainer,
+                      backgroundColor:
+                        selectedItem === null
+                          ? selected === itemIndex
+                            ? '#dbbacb'
+                            : itemIndex & 1
+                            ? '#edd1e0'
+                            : colors.backgroundWarm
+                          : selectedItem.itemIndex === itemIndex &&
+                            selectedItem.groupIndex === groupIndex
+                          ? colors.backgroundWarm
+                          : '#dbbacb',
+                    }}>
                     <View
                       style={{
-                        ...text.regular,
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        width: '28%',
+                        justifyContent: 'space-between',
+                        height: '100%',
+                        width: '70%',
                       }}>
-                      <Text style={styles.typeText}>{item.type_name}</Text>
+                      {/* Name */}
+                      <TextInput
+                        style={styles.nameInputField}
+                        value={item.name}
+                        onBlur={handleBlur}
+                        onFocus={() =>
+                          setSelection({
+                            start: item.name.length,
+                            end: item.name.length,
+                          })
+                        }
+                        selection={selection}
+                        onChangeText={text =>
+                          updateItemField(groupIndex, itemIndex, 'name', text)
+                        }
+                      />
+                      {/* Type */}
+                      <View
+                        style={{
+                          ...text.regular,
+                          width: '30%',
+                          marginTop: 5,
+                          marginBottom: 5,
+                        }}>
+                        <Text style={styles.typeText}>{item.type_name}</Text>
+                      </View>
                     </View>
                     {/* Price */}
                     <View
-                      style={{ alignItems: 'center', flexDirection: 'row' }}>
+                      style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        width: '35%',
+                        paddingRight: 13,
+                      }}>
                       <TextInput
+                        multiline={true} // for some god forsaken reason this fixes scroll being blocked by text align..
+                        numberOfLines={1}
                         style={{
                           ...text.moneyDark,
                           textDecorationLine: 'underline',
-                          paddingLeft: 5,
+                          textAlign: 'right',
+                          width: '85%',
+                          paddingRight: 2,
                         }}
                         value={
                           tempInputValues[`${groupIndex}-${itemIndex}-price`] ??
@@ -322,7 +468,12 @@ const ReceiptContents = ({
                             return updated;
                           });
                         }}
-                        onFocus={handleFocus}
+                        onFocus={() =>
+                          setSelection({
+                            start: item.name.length,
+                            end: item.name.length,
+                          })
+                        }
                         selection={selection}
                         onChangeText={text => {
                           setTempInputValues(prev => ({
@@ -333,13 +484,78 @@ const ReceiptContents = ({
                       />
                       <Text style={text.moneyDark}>€</Text>
                     </View>
-                  </View>
+                  </Pressable>
                 ))}
               </View>
             ))}
           </View>
         </TouchableWithoutFeedback>
+        {/* Popup for deleting and selecting edit */}
+        {popupVisible && (
+          <Modal transparent>
+            <TouchableWithoutFeedback onPress={closePopup}>
+              <View style={{ flex: 1 }}>
+                <TouchableWithoutFeedback>
+                  <View
+                    style={[
+                      styles.popup,
+                      {
+                        top: popupPosition.y - 90,
+                        left: popupPosition.x + 10,
+                      },
+                    ]}>
+                    <TouchableOpacity onPress={handleDelete}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 2,
+                        }}>
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={25}
+                          color={'#ffffffff'}
+                        />
+                        <Text style={{ ...text.regularLight, fontSize: 15 }}>
+                          Delete
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        openModal({
+                          content: (
+                            <TypeChangeModal callback={handleTypeSelect} />
+                          ),
+                          id: 'typeChange',
+                          onCloseModal: () => setSelectedItem(null),
+                        });
+                        setPopupVisible(false);
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}>
+                        <MaterialIcons
+                          name="edit"
+                          size={23}
+                          color={'#ffffffff'}
+                        />
+                        <Text style={{ ...text.regularLight, fontSize: 15 }}>
+                          Change type
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        )}
       </ScrollView>
+      {/* Cancel and save buttons */}
       <View
         style={{
           flexDirection: 'row',
