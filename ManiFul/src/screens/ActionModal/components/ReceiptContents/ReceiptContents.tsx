@@ -21,6 +21,7 @@ import { useTransactions } from '../../../../context/TransactionContext';
 import { useModalContext } from '../../../../context/ModalContext';
 import colors from '../../../../styles/colors';
 import styles from './styles';
+import TypeChangeModal from '../TypeChangeModal/TypeChangeModal';
 
 import { showMessage } from 'react-native-flash-message';
 
@@ -77,7 +78,7 @@ const ReceiptContents = ({
     [key: string]: string;
   }>({});
   const { createTransaction } = useTransactions();
-  const { closeAllModals } = useModalContext();
+  const { closeAllModals, openModal, closeModal } = useModalContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<{
@@ -244,6 +245,52 @@ const ReceiptContents = ({
     });
     console.log(`Deleted: ${selectedItem}`);
     setPopupVisible(false);
+    setSelectedItem(null);
+  };
+
+  const handleTypeSelect = (typeId: number, typeName: string) => {
+    if (!selectedItem) return;
+    const { groupIndex, itemIndex } = selectedItem;
+
+    // Get the item being updated
+    const updatedItem = {
+      ...editableItems[groupIndex].items[itemIndex],
+      type_id: typeId,
+      type_name: typeName,
+    };
+
+    //Flatten all other items (excluding the updated one)
+    const allOtherItems = editableItems.flatMap((group, gi) =>
+      group.items
+        .filter((_, ii) => !(gi === groupIndex && ii === itemIndex))
+        .map(item => ({ ...item })),
+    );
+
+    //Add the updated item
+    const allItems = [...allOtherItems, updatedItem];
+
+    // Regroup based on categories and types
+    const regrouped = categories
+      .map(category => {
+        const categoryTypeIds = category.types.map(t => t.id);
+
+        const itemsInCategory = allItems.filter(item =>
+          categoryTypeIds.includes(item.type_id),
+        );
+
+        return itemsInCategory.length > 0
+          ? {
+              category_id: category.id,
+              category_name: category.name,
+              items: itemsInCategory,
+            }
+          : null;
+      })
+      .filter((group): group is displayDataGroup => group !== null);
+
+    setEditableItems(regrouped);
+    closeModal('typeChange');
+
     setSelectedItem(null);
   };
 
@@ -474,7 +521,14 @@ const ReceiptContents = ({
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleDelete}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        openModal(
+                          <TypeChangeModal callback={handleTypeSelect} />,
+                          'typeChange',
+                        );
+                        setPopupVisible(false);
+                      }}>
                       <View
                         style={{
                           flexDirection: 'row',
