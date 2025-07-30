@@ -29,19 +29,19 @@ public class BudgetController {
     }
 
     @GetMapping("/getAll")
-    public List<Budget> getBudgets(@AuthenticationPrincipal Jwt jwt) {
+    public List<BudgetDTO> getBudgets(@AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("id");
         return budgetService.getBudgets(userId);
     }
 
     @GetMapping("/getById")
-    public Budget getBudgetById(@RequestParam Long id, @AuthenticationPrincipal Jwt jwt) {
+    public BudgetDTO getBudgetById(@RequestParam Long id, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("id");
         return budgetService.getBudgetById(id, userId);
     }
 
     @PutMapping("/update")
-    public Budget updateBudget(@RequestParam Long id, @RequestBody BudgetDTO budgetDTO, @AuthenticationPrincipal Jwt jwt) {
+    public BudgetDTO updateBudget(@RequestParam Long id, @RequestBody BudgetDTO budgetDTO, @AuthenticationPrincipal Jwt jwt) {
         Long userId = jwt.getClaim("id");
         return budgetService.updateBudget(id, budgetDTO, userId);
     }

@@ -1,5 +1,7 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +30,7 @@ public class Budget {
     private boolean repeating;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<BudgetItem> items = new ArrayList<>();
 
     public void addItem(BudgetItem item) {
