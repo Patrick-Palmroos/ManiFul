@@ -1,13 +1,21 @@
-import { View, Text, Button, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import { fetchAllBudgets } from '../../api/budgetApi';
 import colors from '../../styles/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import { useEffect, useState } from 'react';
 import { BudgetType } from '../../types/budgets';
 import { isCurrentMonthAndYear } from './helper';
+import text from '../../styles/text';
 
 const BudgetsPage = () => {
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+  const [budgets, setBudgets] = useState<BudgetType[] | null>(null);
 
   const getThemLol = async () => {
     const res = await fetchAllBudgets();
@@ -22,6 +30,23 @@ const BudgetsPage = () => {
   useEffect(() => {
     getThemLol();
   }, []);
+
+  useEffect(() => console.log(currentBudget), [currentBudget]);
+
+  if (!budgets) {
+    return (
+      <View
+        style={{
+          backgroundColor: colors.background,
+          flex: 1,
+          alignItems: 'center',
+          paddingTop: 40,
+        }}>
+        <ActivityIndicator size={50} color={colors.highlight} />
+        <Text style={text.subtext}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }}>
@@ -49,6 +74,7 @@ const BudgetsPage = () => {
         </LinearGradient>
         <Text>Budgets</Text>
         <Button title="LÖl getting shits" onPress={getThemLol} />
+        <View>{}</View>
       </View>
     </ScrollView>
   );
