@@ -1,13 +1,13 @@
-export type Budget = {
+export type BudgetType = {
   active: boolean;
   budgetTotal: number;
-  items: BudgetItem[];
+  items: BudgetItemType[];
   month: number;
   year: number;
   repeating: boolean;
 };
 
-export type BudgetItem = {
+export type BudgetItemType = {
   categoryId: number | null;
   typeId: number | null;
   amount: number;
