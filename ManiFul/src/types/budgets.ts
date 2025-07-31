@@ -1,4 +1,5 @@
 export type BudgetType = {
+  id: number;
   active: boolean;
   budgetTotal: number;
   items: BudgetItemType[];
