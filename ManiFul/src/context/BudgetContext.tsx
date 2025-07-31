@@ -141,7 +141,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         budgets,
         loading,
         error,
-        refreshBudgets: fetchBudgets,
+        refreshBudgets: () => fetchBudgets(false),
         getBudgetById,
         createBudget,
         deleteBudget,
