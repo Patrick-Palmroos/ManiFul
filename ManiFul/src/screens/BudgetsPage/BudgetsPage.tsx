@@ -10,7 +10,7 @@ import colors from '../../styles/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import { useEffect, useState } from 'react';
 import { BudgetType } from '../../types/budgets';
-import { isCurrentMonthAndYear } from './helper';
+import { isCurrentMonthAndYear } from '../../utils/date_handling';
 import text from '../../styles/text';
 import BudgetItem from './BudgetItem';
 import { useBudgets } from '../../context/BudgetContext';
@@ -69,9 +69,11 @@ const BudgetsPage = () => {
         <Text>Budgets</Text>
         <Button title="LÖl getting shits" onPress={refreshBudgets} />
         <View>
-          {budgets.map((budget, i) => (
-            <BudgetItem key={i} item={budget} />
-          ))}
+          {budgets
+            .filter(b => !isCurrentMonthAndYear(b.month, b.year))
+            .map((budget, i) => (
+              <BudgetItem key={i} item={budget} />
+            ))}
         </View>
       </View>
     </ScrollView>
