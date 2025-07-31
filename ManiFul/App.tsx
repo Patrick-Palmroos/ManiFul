@@ -6,10 +6,12 @@ import RootNavigation from './src/navigation/RootNavigation';
 import { ModalProvider } from './src/context/ModalContext';
 import { TypesProvider } from './src/context/TypesContext';
 import { TransactionProvider } from './src/context/TransactionContext';
+import { BudgetProvider } from './src/context/BudgetContext';
 import FlashMessage from 'react-native-flash-message';
 import { useAuth } from './src/context/AuthContext';
 import { useTransactions } from './src/context/TransactionContext';
 import { useTypes } from './src/context/TypesContext';
+import { useBudgets } from './src/context/BudgetContext';
 import LoadingScreen from './src/screens/LoadingScreen';
 
 import {
@@ -26,8 +28,9 @@ const AppContent = () => {
   const { loading: authLoading } = useAuth();
   const { initialLoading: transactionLoading } = useTransactions();
   const { initialLoading: typesLoading } = useTypes();
+  const { initialLoading: budgetLoading } = useBudgets();
 
-  if (transactionLoading || typesLoading || authLoading) {
+  if (transactionLoading || typesLoading || authLoading || budgetLoading) {
     return <LoadingScreen />;
   }
 
@@ -52,7 +55,9 @@ function App(): React.JSX.Element {
     <AuthProvider>
       <TypesProvider>
         <TransactionProvider>
-          <AppContent />
+          <BudgetProvider>
+            <AppContent />
+          </BudgetProvider>
         </TransactionProvider>
       </TypesProvider>
     </AuthProvider>
