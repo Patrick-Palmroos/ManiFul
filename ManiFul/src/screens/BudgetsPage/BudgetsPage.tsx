@@ -2,12 +2,17 @@ import { View, Text, Button, ScrollView } from 'react-native';
 import { fetchAllBudgets } from '../../api/budgetApi';
 import colors from '../../styles/colors';
 import LinearGradient from 'react-native-linear-gradient';
+import { useEffect } from 'react';
 
 const BudgetsPage = () => {
   const getThemLol = async () => {
     const res = await fetchAllBudgets();
     console.log(res);
   };
+
+  useEffect(() => {
+    getThemLol();
+  }, []);
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }}>
