@@ -2,12 +2,21 @@ import { View, Text, Button, ScrollView } from 'react-native';
 import { fetchAllBudgets } from '../../api/budgetApi';
 import colors from '../../styles/colors';
 import LinearGradient from 'react-native-linear-gradient';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { BudgetType } from '../../types/budgets';
+import { isCurrentMonthAndYear } from './helper';
 
 const BudgetsPage = () => {
+  const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+
   const getThemLol = async () => {
     const res = await fetchAllBudgets();
     console.log(res);
+    if (res) {
+      const lol = res.filter(b => isCurrentMonthAndYear(b.month, b.year));
+      if (lol.length <= 0) return;
+      setCurrentBudget(lol[0]);
+    }
   };
 
   useEffect(() => {
@@ -30,7 +39,7 @@ const BudgetsPage = () => {
             style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View>
               <Text>Current month:</Text>
-              <Text>400€</Text>
+              <Text>{currentBudget?.budgetTotal}</Text>
               <Text>Edit</Text>
             </View>
             <View>
