@@ -2,8 +2,9 @@ import * as Keychain from 'react-native-keychain';
 import axios from 'axios';
 
 import { API_URL, API_KEY } from '@env';
+import { BudgetType } from '../types/budgets';
 
-export const fetchAllBudgets = async () => {
+export const fetchAllBudgets = async (): Promise<BudgetType | null> => {
   try {
     const creds = await Keychain.getGenericPassword();
     if (!creds) return null;
@@ -18,7 +19,7 @@ export const fetchAllBudgets = async () => {
     });
     console.log('fetch data: ', JSON.stringify(response.data));
 
-    return response.data;
+    return response.data as BudgetType;
   } catch (error) {
     console.log('Data fetch error:', error);
     if (axios.isAxiosError(error) && error.response?.status === 401) {
