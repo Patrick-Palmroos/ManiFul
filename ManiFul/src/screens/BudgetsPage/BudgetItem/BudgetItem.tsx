@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native';
+import { BudgetType } from '../../../types/budgets';
 
-const BudgetItem = () => {
+const BudgetItem = ({ item }: { item: BudgetType }) => {
   return (
     <View>
-      <Text>Item</Text>
+      <Text>Item: {item.month}</Text>
     </View>
   );
 };

@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { BudgetType } from '../../types/budgets';
 import { isCurrentMonthAndYear } from './helper';
 import text from '../../styles/text';
+import BudgetItem from './BudgetItem';
 
 const BudgetsPage = () => {
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
@@ -20,11 +21,11 @@ const BudgetsPage = () => {
   const getThemLol = async () => {
     const res = await fetchAllBudgets();
     console.log(res);
-    if (res) {
-      const lol = res.filter(b => isCurrentMonthAndYear(b.month, b.year));
-      if (lol.length <= 0) return;
-      setCurrentBudget(lol[0]);
-    }
+    if (!res) return;
+    setBudgets(res);
+    const lol = res.filter(b => isCurrentMonthAndYear(b.month, b.year));
+    if (lol.length <= 0) return;
+    setCurrentBudget(lol[0]);
   };
 
   useEffect(() => {
@@ -74,7 +75,11 @@ const BudgetsPage = () => {
         </LinearGradient>
         <Text>Budgets</Text>
         <Button title="LÖl getting shits" onPress={getThemLol} />
-        <View>{}</View>
+        <View>
+          {budgets.map((budget, i) => (
+            <BudgetItem key={i} item={budget} />
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
