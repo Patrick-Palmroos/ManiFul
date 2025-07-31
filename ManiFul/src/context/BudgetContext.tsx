@@ -4,9 +4,11 @@ import { useAuth } from './AuthContext';
 import { API_URL, API_KEY } from '@env';
 import * as Keychain from 'react-native-keychain';
 import { BudgetType } from '../types/budgets';
+import { isCurrentMonthAndYear } from '../utils/date_handling';
 
 interface BudgetContextType {
   budgets: BudgetType[];
+  currentBudget: BudgetType | null;
   loading: boolean;
   initialLoading: boolean; // only for first load
   error: string | null;
@@ -18,6 +20,7 @@ interface BudgetContextType {
 
 const BudgetContext = createContext<BudgetContextType>({
   budgets: [],
+  currentBudget: null,
   loading: false,
   initialLoading: false,
   error: null,
@@ -64,6 +67,29 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       setBudgets(response.data as BudgetType[]);
+      const currBudget = budgets.filter(b =>
+        isCurrentMonthAndYear(b.month, b.year),
+      );
+      /* TODO: This should be changed later. Some sort of prompt maybe for user. Just
+      automatically adding a newBudget without user input is probably gonna be annoying.
+      Should still be forced in the app in someway. Cant use the app really without having a
+      budget. */
+      if (currBudget.length === 0) {
+        const repeating = budgets.filter(b => b.repeating);
+
+        const newBudget =
+          repeating.length === 0
+            ? ({
+                active: true,
+                budgetTotal: 2000,
+                month: new Date().getMonth() + 1,
+                year: new Date().getFullYear(),
+                repeating: false,
+              } as BudgetType)
+            : (repeating[0] as BudgetType);
+
+        createBudget(newBudget);
+      }
       console.log('success with budgets');
     } catch (err) {
       setError('Failed to fetch budgets');
