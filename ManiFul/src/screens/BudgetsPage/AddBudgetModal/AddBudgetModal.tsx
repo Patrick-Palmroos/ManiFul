@@ -41,38 +41,32 @@ export default function AddBudgetModal({
 
   //Setting the totals based off percentages.
   useEffect(() => {
-    const previousTotal = chosenCategories.reduce((sum, c) => sum + c.total, 0);
+    const categoryCount = chosenCategories.length;
+    if (categoryCount === 0) return;
 
-    if (previousTotal === 0) return;
+    const baseAmount = Number((total / categoryCount).toFixed(2));
+    const distributedTotal = baseAmount * categoryCount;
+    const remaining = Number((total - distributedTotal).toFixed(2));
 
-    const withRounded = chosenCategories.map(c => {
-      const exact = (c.total / previousTotal) * total;
-      const rounded = Number(exact.toFixed(2));
-      return { ...c, total: rounded, _raw: exact };
-    });
+    const newCategories = chosenCategories.map(c => ({
+      ...c,
+      total: baseAmount,
+    }));
 
-    const currentSum = withRounded.reduce((sum, c) => sum + c.total, 0);
-    const drift = Number((total - currentSum).toFixed(2));
+    if (Math.abs(remaining) >= 0.01) {
+      // Find how many categories need adjustment
+      const adjustCount = Math.round(Math.abs(remaining) / 0.01);
+      const adjustAmount = Number((remaining / adjustCount).toFixed(2));
 
-    if (Math.abs(drift) >= 0.01) {
-      let targetIndex = 0;
-
-      let maxRemainder = -Infinity;
-      withRounded.forEach((c, i) => {
-        const remainder = c._raw - c.total;
-        if (Math.abs(remainder) > maxRemainder) {
-          maxRemainder = Math.abs(remainder);
-          targetIndex = i;
-        }
-      });
-
-      withRounded[targetIndex].total = Number(
-        (withRounded[targetIndex].total + drift).toFixed(2),
-      );
+      // Apply the adjustment to the first few categories
+      for (let i = 0; i < adjustCount; i++) {
+        newCategories[i].total = Number(
+          (newCategories[i].total + adjustAmount).toFixed(2),
+        );
+      }
     }
 
-    const final = withRounded.map(({ _raw, ...rest }) => rest);
-    setChosenCategories(final);
+    setChosenCategories(newCategories);
   }, [total, categories.length]);
 
   const handleChange = (event: any, newDate?: Date) => {
