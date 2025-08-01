@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTypes } from '../../../context/TypesContext';
 import Slider from '@react-native-community/slider';
 import styles from '../../../styles/styles';
+import Toggle from '../../../components/Toggle';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -20,6 +21,7 @@ export default function AddBudgetItemModal({
   totalSum: number;
   onConfirm: (arg1: ChosenCategoryValues[]) => void;
 }) {
+  const [toggle, setToggle] = useState<boolean>(false);
   const [categoryValues, setCategoryValues] = useState<ChosenCategoryValues[]>(
     values.map(v => ({ ...v, total: Number(v.total.toFixed(2)) })),
   );
@@ -30,10 +32,21 @@ export default function AddBudgetItemModal({
   const [inputValues, setInputValues] = useState<string[]>(
     values.map(v => v.total.toFixed(2)),
   );
+  const [percentageValues, setPercentageValues] = useState<string[]>(
+    values.map(v => ((v.total / totalSum) * 100).toFixed(2)),
+  );
 
   useEffect(() => {
-    setInputValues(categoryValues.map(v => v.total.toFixed(2)));
-  }, [categoryValues]);
+    if (toggle) {
+      // Update percentage display values when category values change
+      setPercentageValues(
+        categoryValues.map(v => ((v.total / total) * 100).toFixed(2)),
+      );
+    } else {
+      // Update absolute value display when category values change
+      setInputValues(categoryValues.map(v => v.total.toFixed(2)));
+    }
+  }, [categoryValues, toggle, total]);
 
   const handleValueChange = (index: number, newValue: number) => {
     const currentValues = [...categoryValues];
@@ -90,7 +103,7 @@ export default function AddBudgetItemModal({
     handleValueChange(index, value);
   };
 
-  const handleInputBlur = (index: number) => {
+  const handleAbsoluteInputBlur = (index: number) => {
     const parsed = Number(inputValues[index].replace(',', '.'));
     if (!isNaN(parsed)) {
       handleValueChange(index, parsed);
@@ -102,15 +115,39 @@ export default function AddBudgetItemModal({
     }
   };
 
+  const handlePercentageInputBlur = (index: number) => {
+    const parsed = Number(percentageValues[index].replace(',', '.'));
+    if (!isNaN(parsed)) {
+      const newValue = (parsed / 100) * total;
+      handleValueChange(index, newValue);
+    } else {
+      // Reset to current percentage if invalid
+      const newPercentages = [...percentageValues];
+      newPercentages[index] = (
+        (categoryValues[index].total / total) *
+        100
+      ).toFixed(2);
+      setPercentageValues(newPercentages);
+    }
+  };
+
   return (
     <View>
+      <Toggle
+        value={toggle}
+        onValueChange={value => setToggle(value)}
+        field1="Numbers"
+        field2="Percentages"
+        width={'70%'}
+      />
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
       <Text>Unaccounted: {unaccounted.toFixed(2)}</Text>
       {categoryValues.map((value, i) => (
         <View key={i} style={{ marginBottom: 16 }}>
           <Text>
-            {value.categoryName} | {value.total.toFixed(2)}
+            {value.categoryName} | {value.total.toFixed(2)} (
+            {((value.total / total) * 100).toFixed(2)}%)
           </Text>
           <Slider
             minimumValue={0}
@@ -121,18 +158,36 @@ export default function AddBudgetItemModal({
             value={value.total}
             onValueChange={val => handleSliderChange(i, val)}
           />
-          <TextInput
-            value={inputValues[i]}
-            inputMode="numeric"
-            keyboardType="decimal-pad"
-            style={styles.textField}
-            onChangeText={text => {
-              const newInputs = [...inputValues];
-              newInputs[i] = text;
-              setInputValues(newInputs);
-            }}
-            onBlur={() => handleInputBlur(i)}
-          />
+          {toggle ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TextInput
+                value={percentageValues[i]}
+                inputMode="numeric"
+                keyboardType="decimal-pad"
+                style={styles.textField}
+                onChangeText={text => {
+                  const newPercentages = [...percentageValues];
+                  newPercentages[i] = text;
+                  setPercentageValues(newPercentages);
+                }}
+                onBlur={() => handlePercentageInputBlur(i)}
+              />
+              <Text>%</Text>
+            </View>
+          ) : (
+            <TextInput
+              value={inputValues[i]}
+              inputMode="numeric"
+              keyboardType="decimal-pad"
+              style={styles.textField}
+              onChangeText={text => {
+                const newInputs = [...inputValues];
+                newInputs[i] = text;
+                setInputValues(newInputs);
+              }}
+              onBlur={() => handleAbsoluteInputBlur(i)}
+            />
+          )}
         </View>
       ))}
       <Button title="save" onPress={() => onConfirm(categoryValues)} />
