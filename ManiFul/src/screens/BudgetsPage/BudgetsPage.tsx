@@ -14,10 +14,13 @@ import { isCurrentMonthAndYear } from '../../utils/date_handling';
 import text from '../../styles/text';
 import BudgetItem from './BudgetItem';
 import { useBudgets } from '../../context/BudgetContext';
+import { useModalContext } from '../../context/ModalContext';
+import AddBudgetModal from './AddBudgetModal';
 
 const BudgetsPage = () => {
   const { budgets, refreshBudgets } = useBudgets();
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+  const { openModal, closeModal } = useModalContext();
 
   useEffect(() => {
     const current = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
@@ -65,7 +68,16 @@ const BudgetsPage = () => {
           </View>
         </View>
       </LinearGradient>
-      <Text>Budgets</Text>
+      <Text>Default budget</Text>
+      <Button title="add default budget/edit" />
+      <Button
+        title="Add a budget"
+        onPress={() => {
+          console.log('hi');
+          openModal({ content: <AddBudgetModal />, id: 'addBudgetModal' });
+        }}
+      />
+      <Text>Previous Budgets</Text>
       <Button title="LÖl getting shits" onPress={refreshBudgets} />
       <View style={{ marginTop: 20 }}>
         <ScrollView style={{ padding: 10 }}>
