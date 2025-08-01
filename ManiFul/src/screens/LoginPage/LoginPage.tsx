@@ -18,12 +18,10 @@ import colors from '../../styles/colors';
 import text from '../../styles/text';
 import generalStyles from '../../styles/styles';
 import GradientButton from '../../components/GradientButton/GradientButton';
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validation';
 import { useAuth } from '../../context/AuthContext';
 import { authRes } from '../../types/auth';
-import * as Keychain from 'react-native-keychain';
-import { UserCredentials } from 'react-native-keychain';
 
 type inputProps = {
   email: string;
@@ -42,7 +40,13 @@ const Loginpage = () => {
   const [error, setError] = useState<errorProp[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation<LoginPageNavigationProp>();
-  const { width } = useWindowDimensions();
+  const refPasswordInput = useRef<any>(null);
+
+  const focusOnPassword = () => {
+    if (refPasswordInput && refPasswordInput.current) {
+      refPasswordInput.current.focus();
+    }
+  };
 
   //handles setting focused field for reactive styling.
   const handleFocusing = (field: string) => setFocusedInput(field);
@@ -146,6 +150,8 @@ const Loginpage = () => {
                     onFocus={() => handleFocusing('email')}
                     autoCapitalize="none"
                     onBlur={handleBlur}
+                    returnKeyType="next"
+                    onSubmitEditing={focusOnPassword}
                     placeholder="Email"
                     placeholderTextColor={colors.subText}
                     value={input?.email}
@@ -166,6 +172,9 @@ const Loginpage = () => {
                 <View style={{ marginBottom: 10, width: '100%' }}>
                   <Text style={text.regular}>Password</Text>
                   <TextInput
+                    ref={refPasswordInput}
+                    returnKeyType="done"
+                    onSubmitEditing={() => Keyboard.dismiss()}
                     onFocus={() => handleFocusing('password')}
                     autoCapitalize="none"
                     onBlur={handleBlur}
