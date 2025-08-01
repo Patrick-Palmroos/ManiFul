@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BudgetDTO {
+    private Long id;
     private int month;
     private int year;
     private boolean active;

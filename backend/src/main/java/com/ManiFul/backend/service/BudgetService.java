@@ -42,6 +42,7 @@ public class BudgetService {
 
         Budget budget = Budget.builder()
                 .userId(userId)
+                .id(dto.getId())
                 .month(dto.getMonth())
                 .year(dto.getYear())
                 .active(dto.isActive())

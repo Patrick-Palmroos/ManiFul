@@ -17,6 +17,7 @@ public class BudgetMapper {
                 .month(budget.getMonth())
                 .year(budget.getYear())
                 .active(budget.isActive())
+                .id(budget.getId())
                 .budgetTotal(budget.getBudgetTotal())
                 .repeating(budget.isRepeating())
                 .items(budget.getItems().stream()
