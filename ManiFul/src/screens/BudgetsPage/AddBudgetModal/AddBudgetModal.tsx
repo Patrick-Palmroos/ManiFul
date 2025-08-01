@@ -1,5 +1,9 @@
 import { Text, View, TextInput, Button } from 'react-native';
-import { BudgetType, BudgetPostType } from '../../../types/budgets';
+import {
+  BudgetType,
+  BudgetPostType,
+  BudgetItemType,
+} from '../../../types/budgets';
 import { useBudgets } from '../../../context/BudgetContext';
 import { useTypes } from '../../../context/TypesContext';
 import styles from '../../../styles/styles';
@@ -8,6 +12,7 @@ import { useState, useEffect } from 'react';
 import AddBudgetItemModal from '../AddBudgetItemModal';
 import { useModalContext } from '../../../context/ModalContext';
 import { Category } from '../../../types/categories';
+import { showMessage } from 'react-native-flash-message';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -26,6 +31,7 @@ export default function AddBudgetModal({
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
   const [total, setTotal] = useState<number>(2000);
+  const [loading, setLoading] = useState<boolean>(false);
   const [tempInputValues, setTempInputValues] = useState<string>(
     total.toFixed(2),
   );
@@ -94,6 +100,50 @@ export default function AddBudgetModal({
     }
   };
 
+  const onSave = async () => {
+    setLoading(true);
+    const data = {
+      active: true,
+      budgetTotal: total,
+      items: chosenCategories.map(
+        c =>
+          ({
+            categoryId: c.categoryId,
+            typeId: null,
+            amount: c.total,
+          } as BudgetItemType),
+      ),
+      month: date.getMonth() + 1,
+      year: date.getFullYear(),
+      repeating: false,
+    } as BudgetPostType;
+
+    const res = createBudget(data);
+
+    if (!res) {
+      showMessage({
+        message: 'Error adding budget',
+        description: `Couldn't add budget due to an error`,
+        duration: 5000,
+        floating: true,
+        type: 'danger',
+      });
+      setLoading(false);
+
+      return;
+    }
+    showMessage({
+      message: 'Succesfully added budget!',
+      description: `Your budget was succesfully saved`,
+      duration: 5000,
+      floating: true,
+      type: 'success',
+    });
+    setLoading(false);
+    onConfirm();
+    return;
+  };
+
   return (
     <View>
       <Text>Add a budget</Text>
@@ -137,6 +187,7 @@ export default function AddBudgetModal({
           })
         }
       />
+      <Button title="Save" onPress={onSave} />
       {dateOpen && (
         <MonthPicker
           value={date}
