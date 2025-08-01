@@ -1,9 +1,10 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, Button } from 'react-native';
 import { BudgetType } from '../../../types/budgets';
 import { useTransactions } from '../../../context/TransactionContext';
 import { useEffect, useState } from 'react';
 import { TransactionData } from '../../../types/data';
 import { Shadow } from 'react-native-shadow-2';
+import { useBudgets } from '../../../context/BudgetContext';
 
 const months = [
   'January',
@@ -22,6 +23,7 @@ const months = [
 
 const BudgetItem = ({ item }: { item: BudgetType }) => {
   const { transactions } = useTransactions();
+  const { deleteBudget } = useBudgets();
   const [monthsTransactions, setMonthsTransactions] = useState<
     TransactionData[] | null
   >(null);
@@ -61,6 +63,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
             : 'no expenses found'}
           /{item.budgetTotal} €
         </Text>
+        <Button title="delete" onPress={() => deleteBudget(item.id)} />
       </View>
     </Shadow>
   );
