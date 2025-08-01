@@ -44,40 +44,41 @@ const BudgetsPage = () => {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }}>
-      <View style={{ flex: 1, margin: 20 }}>
-        <LinearGradient
-          colors={[colors.gradient, colors.highlight]}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 0.5, y: 0 }}
-          style={{
-            height: 120,
-            width: '100%',
-            borderRadius: 10,
-          }}>
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <View>
-              <Text>Current month:</Text>
-              <Text>{currentBudget?.budgetTotal}</Text>
-              <Text>Edit</Text>
-            </View>
-            <View>
-              <Text>Meter</Text>
-            </View>
+    <View style={{ backgroundColor: colors.background, flex: 1, margin: 20 }}>
+      <LinearGradient
+        colors={[colors.gradient, colors.highlight]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 0.5, y: 0 }}
+        style={{
+          height: 120,
+          width: '100%',
+          borderRadius: 10,
+        }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View>
+            <Text>Current month:</Text>
+            <Text>{currentBudget?.budgetTotal}</Text>
+            <Text>Edit</Text>
           </View>
-        </LinearGradient>
-        <Text>Budgets</Text>
-        <Button title="LÖl getting shits" onPress={refreshBudgets} />
-        <View>
-          {budgets
-            .filter(b => !isCurrentMonthAndYear(b.month, b.year))
-            .map((budget, i) => (
-              <BudgetItem key={i} item={budget} />
-            ))}
+          <View>
+            <Text>Meter</Text>
+          </View>
         </View>
+      </LinearGradient>
+      <Text>Budgets</Text>
+      <Button title="LÖl getting shits" onPress={refreshBudgets} />
+      <View>
+        <ScrollView>
+          <View>
+            {budgets
+              .filter(b => !isCurrentMonthAndYear(b.month, b.year))
+              .map((budget, i) => (
+                <BudgetItem key={i} item={budget} />
+              ))}
+          </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
