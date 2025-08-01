@@ -1,4 +1,12 @@
-import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { Category } from '../../../types/categories';
 import { useState, useEffect } from 'react';
 import { useTypes } from '../../../context/TypesContext';
@@ -145,7 +153,7 @@ export default function AddBudgetItemModal({
   };
 
   return (
-    <View>
+    <View style={{ height: '100%' }}>
       <Toggle
         value={toggle}
         onValueChange={value => setToggle(value)}
@@ -161,53 +169,59 @@ export default function AddBudgetItemModal({
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
       <Text>Unaccounted: {unaccounted.toFixed(2)}</Text>
-      {categoryValues.map((value, i) => (
-        <View key={i} style={{ marginBottom: 16 }}>
-          <Text>
-            {value.categoryName} | {value.total.toFixed(2)} (
-            {((value.total / total) * 100).toFixed(2)}%)
-          </Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={total}
-            minimumTrackTintColor="#007aff"
-            maximumTrackTintColor="#d3d3d3"
-            step={1}
-            value={value.total}
-            onValueChange={val => handleSliderChange(i, val)}
-          />
-          {toggle ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput
-                value={percentageValues[i]}
-                inputMode="numeric"
-                keyboardType="decimal-pad"
-                style={styles.textField}
-                onChangeText={text => {
-                  const newPercentages = [...percentageValues];
-                  newPercentages[i] = text;
-                  setPercentageValues(newPercentages);
-                }}
-                onBlur={() => handlePercentageInputBlur(i)}
-              />
-              <Text>%</Text>
-            </View>
-          ) : (
-            <TextInput
-              value={inputValues[i]}
-              inputMode="numeric"
-              keyboardType="decimal-pad"
-              style={styles.textField}
-              onChangeText={text => {
-                const newInputs = [...inputValues];
-                newInputs[i] = text;
-                setInputValues(newInputs);
-              }}
-              onBlur={() => handleAbsoluteInputBlur(i)}
-            />
-          )}
-        </View>
-      ))}
+      <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
+        <TouchableWithoutFeedback>
+          <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
+            {categoryValues.map((value, i) => (
+              <View key={i} style={{ marginBottom: 16 }}>
+                <Text>
+                  {value.categoryName} | {value.total.toFixed(2)} (
+                  {((value.total / total) * 100).toFixed(2)}%)
+                </Text>
+                <Slider
+                  minimumValue={0}
+                  maximumValue={total}
+                  minimumTrackTintColor="#007aff"
+                  maximumTrackTintColor="#d3d3d3"
+                  step={1}
+                  value={value.total}
+                  onValueChange={val => handleSliderChange(i, val)}
+                />
+                {toggle ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TextInput
+                      value={percentageValues[i]}
+                      inputMode="numeric"
+                      keyboardType="decimal-pad"
+                      style={styles.textField}
+                      onChangeText={text => {
+                        const newPercentages = [...percentageValues];
+                        newPercentages[i] = text;
+                        setPercentageValues(newPercentages);
+                      }}
+                      onBlur={() => handlePercentageInputBlur(i)}
+                    />
+                    <Text>%</Text>
+                  </View>
+                ) : (
+                  <TextInput
+                    value={inputValues[i]}
+                    inputMode="numeric"
+                    keyboardType="decimal-pad"
+                    style={styles.textField}
+                    onChangeText={text => {
+                      const newInputs = [...inputValues];
+                      newInputs[i] = text;
+                      setInputValues(newInputs);
+                    }}
+                    onBlur={() => handleAbsoluteInputBlur(i)}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
       <Button title="save" onPress={() => onConfirm(categoryValues)} />
     </View>
   );
