@@ -62,7 +62,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password,
   }: AuthCredentials): Promise<authRes> => {
     try {
-      setLoading(true);
       const response = await axios.post(
         `${API_URL}/auth/token`,
         {
@@ -106,8 +105,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error('Unexpected error:', error);
         return { status: 0, message: 'Unexpected error' };
       }
-    } finally {
-      setLoading(false);
     }
   };
 

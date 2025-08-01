@@ -174,7 +174,10 @@ const Loginpage = () => {
                   <TextInput
                     ref={refPasswordInput}
                     returnKeyType="done"
-                    onSubmitEditing={() => Keyboard.dismiss()}
+                    onSubmitEditing={() => {
+                      Keyboard.dismiss();
+                      onLogin();
+                    }}
                     onFocus={() => handleFocusing('password')}
                     autoCapitalize="none"
                     onBlur={handleBlur}
