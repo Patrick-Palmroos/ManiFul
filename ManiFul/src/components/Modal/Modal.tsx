@@ -59,7 +59,7 @@ const Modal = ({
             )}
 
             {/* Modal Content */}
-            <ScrollView style={styles.modalContent}>{children}</ScrollView>
+            <View style={styles.modalContent}>{children}</View>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
