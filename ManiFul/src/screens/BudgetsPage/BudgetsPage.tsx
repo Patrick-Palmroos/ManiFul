@@ -20,11 +20,12 @@ const BudgetsPage = () => {
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
 
   useEffect(() => {
-    const lol = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
-    if (lol.length <= 0) return;
-    setCurrentBudget(lol[0]);
+    const current = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
+    if (current.length <= 0) return;
+    setCurrentBudget(current[0]);
   }, []);
 
+  //debug
   useEffect(() => console.log(currentBudget), [currentBudget]);
 
   if (!budgets) {
