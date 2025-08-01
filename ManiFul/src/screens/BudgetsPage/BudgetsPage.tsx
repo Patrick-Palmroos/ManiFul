@@ -67,7 +67,7 @@ const BudgetsPage = () => {
       </LinearGradient>
       <Text>Budgets</Text>
       <Button title="LÖl getting shits" onPress={refreshBudgets} />
-      <View>
+      <View style={{ marginTop: 20 }}>
         <ScrollView>
           <View>
             {budgets
