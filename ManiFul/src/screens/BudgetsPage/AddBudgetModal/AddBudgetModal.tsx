@@ -26,6 +26,9 @@ export default function AddBudgetModal({
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
   const [total, setTotal] = useState<number>(2000);
+  const [tempInputValues, setTempInputValues] = useState<string>(
+    total.toString(),
+  );
   const [chosenCategories, setChosenCategories] = useState<
     ChosenCategoryValues[]
   >(
@@ -53,7 +56,25 @@ export default function AddBudgetModal({
     <View>
       <Text>Add a budget</Text>
       <Text>Total</Text>
-      <TextInput style={styles.textField} />
+      <TextInput
+        value={tempInputValues ?? total.toString()}
+        inputMode="numeric"
+        keyboardType="decimal-pad"
+        style={styles.textField}
+        onBlur={() => {
+          const parsed = Number(tempInputValues?.replace(',', '.'));
+
+          if (!isNaN(parsed)) {
+            setTotal(parsed);
+          }
+
+          // Clean up temporary input
+          setTempInputValues(total.toString());
+        }}
+        onChangeText={text => {
+          setTempInputValues(text);
+        }}
+      />
       <Text>Date</Text>
       <Text>
         Selected: {date.toLocaleString('default', { month: 'long' })}{' '}
