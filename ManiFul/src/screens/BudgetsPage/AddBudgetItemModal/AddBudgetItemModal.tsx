@@ -58,8 +58,13 @@ export default function AddBudgetItemModal({
   }, [categoryValues, toggle, total]);
 
   const handleValueChange = (index: number, newValue: number) => {
+    const roundedNewValue = Math.round(newValue * 100) / 100;
+
     const currentValues = [...categoryValues];
-    const totalSoFar = currentValues.reduce((sum, c) => sum + c.total, 0);
+    const totalSoFar = currentValues.reduce(
+      (sum, c) => sum + Math.round(c.total * 100) / 100,
+      0,
+    );
     const currentUnaccounted = total - totalSoFar;
 
     const currentVal = currentValues[index].total;
@@ -101,10 +106,22 @@ export default function AddBudgetItemModal({
     }
 
     // Ensure no floating point precision issues come to haunt
-    updated.forEach(c => (c.total = parseFloat(c.total.toFixed(2))));
+    updated.forEach(c => {
+      c.total = Math.round(c.total * 100) / 100;
+    });
     newUnaccounted = parseFloat(newUnaccounted.toFixed(2));
 
-    setUnaccounted(newUnaccounted);
+    const calculatedTotal = updated.reduce((sum, c) => sum + c.total, 0);
+    const roundedTotal = Math.round(calculatedTotal * 100) / 100;
+
+    if (Math.abs(roundedTotal - total) > 0.001 && updated.length > 0) {
+      const diff = total - roundedTotal;
+      updated[updated.length - 1].total += diff;
+      updated[updated.length - 1].total =
+        Math.round(updated[updated.length - 1].total * 100) / 100;
+    }
+
+    setUnaccounted(total - updated.reduce((sum, c) => sum + c.total, 0));
     setCategoryValues(updated);
   };
 
@@ -169,6 +186,9 @@ export default function AddBudgetItemModal({
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
       <Text>Unaccounted: {unaccounted.toFixed(2)}</Text>
+      <Text>
+        Total calculated: {categoryValues.reduce((sum, c) => sum + c.total, 0)}
+      </Text>
       <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
         <TouchableWithoutFeedback>
           <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
@@ -183,7 +203,7 @@ export default function AddBudgetItemModal({
                   maximumValue={total}
                   minimumTrackTintColor="#007aff"
                   maximumTrackTintColor="#d3d3d3"
-                  step={1}
+                  step={10}
                   value={value.total}
                   onValueChange={val => handleSliderChange(i, val)}
                 />
