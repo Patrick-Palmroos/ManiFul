@@ -14,7 +14,7 @@ interface BudgetContextType {
   error: string | null;
   refreshBudgets: () => Promise<void>;
   getBudgetById: (id: number) => BudgetType | undefined;
-  createBudget: (data: BudgetType) => Promise<boolean>;
+  createBudget: (data: BudgetPostType) => Promise<boolean>;
   deleteBudget: (id: number) => Promise<boolean>;
 }
 
