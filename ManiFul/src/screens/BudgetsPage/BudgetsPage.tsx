@@ -44,7 +44,7 @@ const BudgetsPage = () => {
   }
 
   return (
-    <View style={{ backgroundColor: colors.background, flex: 1, margin: 20 }}>
+    <View style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       <LinearGradient
         colors={[colors.gradient, colors.highlight]}
         start={{ x: 0, y: 1 }}
