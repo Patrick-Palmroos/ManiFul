@@ -106,7 +106,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const createBudget = async (data: BudgetPostType) => {
+  const createBudget = async (data: BudgetPostType): Promise<boolean> => {
     try {
       setLoading(true);
       const creds = await Keychain.getGenericPassword();
