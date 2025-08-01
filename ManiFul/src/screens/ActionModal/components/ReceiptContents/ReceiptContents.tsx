@@ -438,6 +438,9 @@ const ReceiptContents = ({
                           textDecorationLine: 'underline',
                           textAlign: 'right',
                           width: '85%',
+                          height: 50,
+                          lineHeight: 30,
+                          includeFontPadding: false,
                           paddingRight: 2,
                         }}
                         value={
