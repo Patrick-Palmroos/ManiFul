@@ -68,7 +68,7 @@ const BudgetsPage = () => {
       <Text>Budgets</Text>
       <Button title="LÖl getting shits" onPress={refreshBudgets} />
       <View style={{ marginTop: 20 }}>
-        <ScrollView>
+        <ScrollView style={{ padding: 10 }}>
           <View>
             {budgets
               .filter(b => !isCurrentMonthAndYear(b.month, b.year))

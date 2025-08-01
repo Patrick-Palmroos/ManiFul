@@ -3,6 +3,7 @@ import { BudgetType } from '../../../types/budgets';
 import { useTransactions } from '../../../context/TransactionContext';
 import { useEffect, useState } from 'react';
 import { TransactionData } from '../../../types/data';
+import { Shadow } from 'react-native-shadow-2';
 
 const months = [
   'January',
@@ -36,25 +37,33 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
   useEffect(() => filterTransactionsByMonth(), []);
 
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: 'white',
-        margin: 5,
-        height: 70,
-        borderRadius: 10,
-        elevation: 2,
-      }}>
-      {/* Date */}
-      <Text>
-        {item.year} {months[item.month - 1]}
-      </Text>
-      {/* Months expenses */}
-      <Text>
-        {monthsTransactions
-          ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
-          : 'no expenses found'}
-        /{item.budgetTotal} €
-      </Text>
+    <TouchableOpacity>
+      <Shadow
+        distance={5}
+        startColor="rgba(0, 4, 29, 0.01)"
+        offset={[0, 2]}
+        stretch={true}>
+        <View
+          style={{
+            backgroundColor: 'white',
+            margin: 5,
+            height: 70,
+            padding: 5,
+            borderRadius: 10,
+          }}>
+          {/* Date */}
+          <Text>
+            {item.year} {months[item.month - 1]}
+          </Text>
+          {/* Months expenses */}
+          <Text>
+            {monthsTransactions
+              ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
+              : 'no expenses found'}
+            /{item.budgetTotal} €
+          </Text>
+        </View>
+      </Shadow>
     </TouchableOpacity>
   );
 };
