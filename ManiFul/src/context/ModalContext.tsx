@@ -16,7 +16,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
           onClose={() => modal.closeModal(id)}
           disableClosing={disableClosing}
           closeButton={closeButton}>
-          {content}
+          {typeof content === 'function' ? content() : content}
         </Modal>
       ))}
     </ModalContext.Provider>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 interface ModalItem {
   id: string;
-  content: React.ReactNode;
+  content: React.ReactNode | (() => React.ReactNode);
   onCloseModal?: () => void;
   disableClosing?: boolean;
   closeButton?: boolean;
