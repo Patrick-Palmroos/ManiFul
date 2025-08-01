@@ -7,6 +7,13 @@ import MonthPicker from 'react-native-month-year-picker';
 import { useState } from 'react';
 import AddBudgetItemModal from '../AddBudgetItemModal';
 import { useModalContext } from '../../../context/ModalContext';
+import { Category } from '../../../types/categories';
+
+type ChosenCategoryValues = {
+  categoryId: number;
+  categoryName: string;
+  total: number;
+};
 
 export default function AddBudgetModal({
   onConfirm,
@@ -15,9 +22,19 @@ export default function AddBudgetModal({
 }) {
   const { createBudget } = useBudgets();
   const { categories } = useTypes();
-  const { openModal } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
+  const [total, setTotal] = useState<number>(2000);
+  const [chosenCategories, setChosenCategories] = useState<
+    ChosenCategoryValues[]
+  >(
+    categories.map(c => ({
+      categoryId: c.id,
+      categoryName: c.name,
+      total: total / categories.length,
+    })),
+  );
 
   const handleChange = (event: any, newDate?: Date) => {
     setDateOpen(false);
@@ -25,6 +42,11 @@ export default function AddBudgetModal({
     if (newDate) {
       setDate(newDate);
     }
+  };
+
+  const onConfirmItems = (items: ChosenCategoryValues[]) => {
+    setChosenCategories(items);
+    closeModal('BudgetItemModal');
   };
 
   return (
@@ -42,7 +64,18 @@ export default function AddBudgetModal({
       <Button
         title="Select budget item"
         onPress={() =>
-          openModal({ content: <AddBudgetItemModal />, id: 'BudgetItemModal' })
+          openModal({
+            content: (
+              <AddBudgetItemModal
+                values={chosenCategories}
+                onConfirm={v => {
+                  setChosenCategories(v);
+                  closeModal('BudgetItemModal');
+                }}
+              />
+            ),
+            id: 'BudgetItemModal',
+          })
         }
       />
       {dateOpen && (
