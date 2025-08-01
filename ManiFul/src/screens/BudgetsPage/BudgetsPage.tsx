@@ -72,10 +72,14 @@ const BudgetsPage = () => {
       <Button title="add default budget/edit" />
       <Button
         title="Add a budget"
-        onPress={() => {
-          console.log('hi');
-          openModal({ content: <AddBudgetModal />, id: 'addBudgetModal' });
-        }}
+        onPress={() =>
+          openModal({
+            content: (
+              <AddBudgetModal onConfirm={() => closeModal('addBudgetModal')} />
+            ),
+            id: 'addBudgetModal',
+          })
+        }
       />
       <Text>Previous Budgets</Text>
       <Button title="LÖl getting shits" onPress={refreshBudgets} />
