@@ -1,10 +1,11 @@
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Category } from '../../../types/categories';
 import { useState, useEffect } from 'react';
 import { useTypes } from '../../../context/TypesContext';
 import Slider from '@react-native-community/slider';
 import styles from '../../../styles/styles';
 import Toggle from '../../../components/Toggle';
+import text from '../../../styles/text';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -131,6 +132,18 @@ export default function AddBudgetItemModal({
     }
   };
 
+  const resetAllToZero = () => {
+    const zeroedValues = categoryValues.map(v => ({
+      ...v,
+      total: 0,
+    }));
+
+    setCategoryValues(zeroedValues);
+    setInputValues(zeroedValues.map(v => v.total.toFixed(2)));
+    setPercentageValues(zeroedValues.map(v => '0.00'));
+    setUnaccounted(totalSum);
+  };
+
   return (
     <View>
       <Toggle
@@ -140,6 +153,11 @@ export default function AddBudgetItemModal({
         field2="Percentages"
         width={'70%'}
       />
+      <TouchableOpacity
+        onPress={resetAllToZero}
+        style={{ backgroundColor: 'cyan', padding: 2, borderRadius: 5 }}>
+        <Text style={text.regular}>Reset All</Text>
+      </TouchableOpacity>
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
       <Text>Unaccounted: {unaccounted.toFixed(2)}</Text>
