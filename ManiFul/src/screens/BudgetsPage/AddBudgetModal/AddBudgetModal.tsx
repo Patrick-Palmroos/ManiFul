@@ -4,7 +4,7 @@ import { useBudgets } from '../../../context/BudgetContext';
 import { useTypes } from '../../../context/TypesContext';
 import styles from '../../../styles/styles';
 import MonthPicker from 'react-native-month-year-picker';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddBudgetItemModal from '../AddBudgetItemModal';
 import { useModalContext } from '../../../context/ModalContext';
 import { Category } from '../../../types/categories';
@@ -27,7 +27,7 @@ export default function AddBudgetModal({
   const [date, setDate] = useState<Date>(new Date());
   const [total, setTotal] = useState<number>(2000);
   const [tempInputValues, setTempInputValues] = useState<string>(
-    total.toString(),
+    total.toFixed(2),
   );
   const [chosenCategories, setChosenCategories] = useState<
     ChosenCategoryValues[]
@@ -38,6 +38,19 @@ export default function AddBudgetModal({
       total: total / categories.length,
     })),
   );
+
+  useEffect(() => {
+    const previousTotal = chosenCategories.reduce((sum, c) => sum + c.total, 0);
+
+    if (previousTotal === 0) return;
+
+    setChosenCategories(prev =>
+      prev.map(c => ({
+        ...c,
+        total: Number(((c.total / previousTotal) * total).toFixed(2)),
+      })),
+    );
+  }, [total, categories.length]);
 
   const handleChange = (event: any, newDate?: Date) => {
     setDateOpen(false);
