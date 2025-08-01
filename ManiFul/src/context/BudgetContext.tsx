@@ -39,6 +39,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
+  const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
 
   const fetchBudgets = async (isInitialLoad = false) => {
     console.log('fetching budgets');
@@ -89,6 +90,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             : (repeating[0] as BudgetType);
 
         createBudget(newBudget);
+      } else {
+        setCurrentBudget(currBudget[0]);
       }
       console.log('success with budgets');
     } catch (err) {
@@ -165,6 +168,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     <BudgetContext.Provider
       value={{
         budgets,
+        currentBudget,
         loading,
         error,
         refreshBudgets: () => fetchBudgets(false),
