@@ -1,5 +1,4 @@
-import { View } from 'react-native';
-import { Text } from 'react-native-svg';
+import { View, Text } from 'react-native';
 
 export default function AddBudgetItemModal() {
   return (
