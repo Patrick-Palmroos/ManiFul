@@ -13,3 +13,12 @@ export type BudgetItemType = {
   typeId: number | null;
   amount: number;
 };
+
+export type BudgetPostType = {
+  active: boolean;
+  budgetTotal: number;
+  items: BudgetItemType[];
+  month: number;
+  year: number;
+  repeating: boolean;
+};

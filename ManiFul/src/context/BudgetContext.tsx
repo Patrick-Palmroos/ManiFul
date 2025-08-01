@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { API_URL, API_KEY } from '@env';
 import * as Keychain from 'react-native-keychain';
-import { BudgetType } from '../types/budgets';
+import { BudgetPostType, BudgetType } from '../types/budgets';
 import { isCurrentMonthAndYear } from '../utils/date_handling';
 
 interface BudgetContextType {
@@ -106,7 +106,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const createBudget = async (data: BudgetType) => {
+  const createBudget = async (data: BudgetPostType) => {
     try {
       setLoading(true);
       const creds = await Keychain.getGenericPassword();
