@@ -52,25 +52,28 @@ export default function AddBudgetModal({
     closeModal('BudgetItemModal');
   };
 
+  const handleTotalChange = () => {
+    const parsed = Number(tempInputValues?.replace(',', '.'));
+
+    if (!isNaN(parsed)) {
+      const fixed = parsed.toFixed(2);
+      setTotal(Number(fixed));
+      setTempInputValues(fixed);
+    } else {
+      setTempInputValues(total.toFixed(2));
+    }
+  };
+
   return (
     <View>
       <Text>Add a budget</Text>
       <Text>Total</Text>
       <TextInput
-        value={tempInputValues ?? total.toString()}
+        value={tempInputValues}
         inputMode="numeric"
         keyboardType="decimal-pad"
         style={styles.textField}
-        onBlur={() => {
-          const parsed = Number(tempInputValues?.replace(',', '.'));
-
-          if (!isNaN(parsed)) {
-            setTotal(parsed);
-          }
-
-          // Clean up temporary input
-          setTempInputValues(total.toString());
-        }}
+        onBlur={handleTotalChange}
         onChangeText={text => {
           setTempInputValues(text);
         }}
