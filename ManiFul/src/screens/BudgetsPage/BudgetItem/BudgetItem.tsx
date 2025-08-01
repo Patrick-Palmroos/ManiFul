@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { BudgetType } from '../../../types/budgets';
 import { useTransactions } from '../../../context/TransactionContext';
 import { useEffect, useState } from 'react';
@@ -36,7 +36,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
   useEffect(() => filterTransactionsByMonth(), []);
 
   return (
-    <View
+    <TouchableOpacity
       style={{
         backgroundColor: 'white',
         margin: 5,
@@ -55,7 +55,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
           : 'no expenses found'}
         /{item.budgetTotal} €
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
