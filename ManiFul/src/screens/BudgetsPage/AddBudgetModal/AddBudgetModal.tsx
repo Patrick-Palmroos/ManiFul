@@ -126,6 +126,7 @@ export default function AddBudgetModal({
             content: (
               <AddBudgetItemModal
                 values={chosenCategories}
+                totalSum={total}
                 onConfirm={v => {
                   setChosenCategories(v);
                   closeModal('BudgetItemModal');
