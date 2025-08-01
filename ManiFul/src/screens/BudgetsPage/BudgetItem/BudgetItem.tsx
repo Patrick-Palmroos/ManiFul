@@ -37,34 +37,32 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
   useEffect(() => filterTransactionsByMonth(), []);
 
   return (
-    <TouchableOpacity>
-      <Shadow
-        distance={5}
-        startColor="rgba(0, 4, 29, 0.01)"
-        offset={[0, 2]}
-        stretch={true}>
-        <View
-          style={{
-            backgroundColor: 'white',
-            margin: 5,
-            height: 70,
-            padding: 5,
-            borderRadius: 10,
-          }}>
-          {/* Date */}
-          <Text>
-            {item.year} {months[item.month - 1]}
-          </Text>
-          {/* Months expenses */}
-          <Text>
-            {monthsTransactions
-              ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
-              : 'no expenses found'}
-            /{item.budgetTotal} €
-          </Text>
-        </View>
-      </Shadow>
-    </TouchableOpacity>
+    <Shadow
+      distance={5}
+      startColor="rgba(0, 4, 29, 0.01)"
+      offset={[0, 2]}
+      stretch={true}>
+      <View
+        style={{
+          backgroundColor: 'white',
+          margin: 5,
+          height: 70,
+          padding: 5,
+          borderRadius: 10,
+        }}>
+        {/* Date */}
+        <Text>
+          {item.year} {months[item.month - 1]}
+        </Text>
+        {/* Months expenses */}
+        <Text>
+          {monthsTransactions
+            ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
+            : 'no expenses found'}
+          /{item.budgetTotal} €
+        </Text>
+      </View>
+    </Shadow>
   );
 };
 
