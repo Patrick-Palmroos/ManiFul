@@ -15,7 +15,7 @@ interface BudgetContextType {
   refreshBudgets: () => Promise<void>;
   getBudgetById: (id: number) => BudgetType | undefined;
   createBudget: (data: BudgetPostType) => Promise<boolean>;
-  updateBudget: (data: BudgetPostType) => Promise<boolean>;
+  updateBudget: (data: BudgetPostType, id: number) => Promise<boolean>;
   deleteBudget: (id: number) => Promise<boolean>;
 }
 
@@ -131,13 +131,17 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const updateBudget = async (data: BudgetPostType): Promise<boolean> => {
+  const updateBudget = async (
+    data: BudgetPostType,
+    id: number,
+  ): Promise<boolean> => {
     try {
       setLoading(true);
       const creds = await Keychain.getGenericPassword();
       if (!creds) throw new Error('No credentials found');
 
-      await axios.post(`${API_URL}/budgets/update`, data, {
+      await axios.put(`${API_URL}/budgets/update`, data, {
+        params: { id },
         headers: {
           Authorization: `Bearer ${creds.password}`,
           'BACKEND-API-KEY': API_KEY,
