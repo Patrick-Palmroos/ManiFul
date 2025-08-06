@@ -16,10 +16,28 @@ import BudgetItem from './BudgetItem';
 import { useBudgets } from '../../context/BudgetContext';
 import { useModalContext } from '../../context/ModalContext';
 import AddBudgetModal from './AddBudgetModal';
+import { useTransactions } from '../../context/TransactionContext';
+import { TransactionData } from '../../types/data';
+
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 const BudgetsPage = () => {
   const { budgets, refreshBudgets } = useBudgets();
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+  const { transactions } = useTransactions();
   const { openModal, closeModal } = useModalContext();
 
   useEffect(() => {
@@ -57,16 +75,38 @@ const BudgetsPage = () => {
           width: '100%',
           borderRadius: 10,
         }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View>
-            <Text>Current month:</Text>
-            <Text>{currentBudget?.budgetTotal}</Text>
-            <Text>Edit</Text>
+        {currentBudget && (
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View>
+              {/* Display the month */}
+              <Text>{`${months[currentBudget.month - 1]} (Current)`}</Text>
+              {/* Display the amount left for the month */}
+              <Text>
+                {Number(
+                  currentBudget.budgetTotal -
+                    transactions
+                      .filter((t: TransactionData) => {
+                        const d = new Date(t.date);
+                        return isCurrentMonthAndYear(
+                          d.getMonth() + 1,
+                          d.getFullYear(),
+                        );
+                      })
+                      .reduce(
+                        (sum: number, t: TransactionData) => sum + t.total,
+                        0,
+                      ),
+                ).toFixed(2)}
+                € <Text>left</Text>
+              </Text>
+              <Text>Edit</Text>
+            </View>
+            <View>
+              <Text>Meter</Text>
+            </View>
           </View>
-          <View>
-            <Text>Meter</Text>
-          </View>
-        </View>
+        )}
       </LinearGradient>
       <Text>Default budget</Text>
       <Button title="add default budget/edit" />
