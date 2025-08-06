@@ -15,6 +15,7 @@ interface BudgetContextType {
   refreshBudgets: () => Promise<void>;
   getBudgetById: (id: number) => BudgetType | undefined;
   createBudget: (data: BudgetPostType) => Promise<boolean>;
+  updateBudget: (data: BudgetPostType) => Promise<boolean>;
   deleteBudget: (id: number) => Promise<boolean>;
 }
 
@@ -27,6 +28,7 @@ const BudgetContext = createContext<BudgetContextType>({
   refreshBudgets: async () => {},
   getBudgetById: () => undefined,
   createBudget: async () => false,
+  updateBudget: async () => false,
   deleteBudget: async () => false,
 });
 
@@ -129,6 +131,29 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const updateBudget = async (data: BudgetPostType): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const creds = await Keychain.getGenericPassword();
+      if (!creds) throw new Error('No credentials found');
+
+      await axios.post(`${API_URL}/budgets/update`, data, {
+        headers: {
+          Authorization: `Bearer ${creds.password}`,
+          'BACKEND-API-KEY': API_KEY,
+        },
+      });
+
+      await fetchBudgets(false); // Refresh the list
+      return true;
+    } catch (err) {
+      setError('Failed to create a budget');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getBudgetById = (id: number) => {
     return budgets.find(b => b.id === id);
   };
@@ -174,6 +199,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         refreshBudgets: () => fetchBudgets(false),
         getBudgetById,
         createBudget,
+        updateBudget,
         deleteBudget,
         initialLoading,
       }}>
