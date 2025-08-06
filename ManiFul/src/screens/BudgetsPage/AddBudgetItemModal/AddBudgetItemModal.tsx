@@ -21,6 +21,8 @@ type ChosenCategoryValues = {
   total: number;
 };
 
+const roundTwo = (n: number) => Math.round(n * 100) / 100;
+
 export default function AddBudgetItemModal({
   values,
   totalSum,
@@ -33,7 +35,13 @@ export default function AddBudgetItemModal({
   const [toggle, setToggle] = useState<boolean>(false);
   const [categoryValues, setCategoryValues] = useState<ChosenCategoryValues[]>([
     ...values.map(v => ({ ...v, total: Number(v.total.toFixed(2)) })),
-    { categoryId: -1, categoryName: 'Unaccounted', total: 0 },
+    {
+      categoryId: -1,
+      categoryName: 'Unaccounted',
+      total:
+        Number(values.reduce((sum, i) => sum + i.total, 0).toFixed(2)) -
+        totalSum,
+    },
   ]);
   const [total] = useState<number>(totalSum);
   const [inputValues, setInputValues] = useState<string[]>(
@@ -56,7 +64,7 @@ export default function AddBudgetItemModal({
   }, [categoryValues, toggle, total]);
 
   const handleValueChange = (index: number, newValue: number) => {
-    const roundedNewValue = Math.round(newValue * 100) / 100;
+    const roundedNewValue = roundTwo(newValue);
 
     const currentValues = [...categoryValues];
     const totalSoFar = currentValues.reduce(
@@ -68,55 +76,85 @@ export default function AddBudgetItemModal({
     const currentVal = currentValues[index].total;
     const delta = newValue - currentVal;
     const updated = [...currentValues];
+    const unaccountedIndex = updated.findIndex(c => c.categoryId === -1);
 
     // Clamp new value between 0 and total
-    const clampedNewValue = Math.max(0, Math.min(newValue, total));
-    updated[index].total = clampedNewValue;
+    updated[index].total = Math.max(0, Math.min(roundedNewValue, total));
 
-    let newUnaccounted = currentUnaccounted - delta;
+    // If increasing the value and don't have any in unaccounted
+    if (delta > 0) {
+      // increasing the value
+      if (unaccountedIndex !== -1) {
+        const unaccountedVal = updated[unaccountedIndex].total;
+        if (unaccountedVal >= delta) {
+          // Use unaccounted value fully
+          updated[unaccountedIndex].total = roundTwo(unaccountedVal - delta);
+        } else {
+          // Use all unaccounted and reduce others for remaining amount
+          const remainder = delta - unaccountedVal;
+          updated[unaccountedIndex].total = 0;
 
-    // If we're increasing the value and don't have any in unaccounted
-    if (delta > 0 && newUnaccounted < 0) {
-      const deficit = -newUnaccounted;
-      const otherCategories = updated.filter((_, i) => i !== index);
-      const totalOther = otherCategories.reduce((sum, c) => sum + c.total, 0);
-
-      if (totalOther > 0) {
-        // Reduce other categories proportionally
-        otherCategories.forEach(cat => {
-          const reduction = (cat.total / totalOther) * deficit;
-          cat.total -= reduction;
-        });
-
-        // Update the main array with reduced values
-        otherCategories.forEach((cat, i) => {
-          const originalIndex = updated.findIndex(
-            c => c.categoryId === cat.categoryId,
+          const otherCategories = updated.filter(
+            (_, i) => i !== index && i !== unaccountedIndex,
           );
-          if (originalIndex !== -1) {
-            updated[originalIndex].total = Math.max(0, cat.total);
-          }
-        });
-      }
+          const totalOther = otherCategories.reduce(
+            (sum, c) => sum + c.total,
+            0,
+          );
 
-      // Recalculate unaccounted after redistribution
-      newUnaccounted = total - updated.reduce((sum, c) => sum + c.total, 0);
+          if (totalOther > 0) {
+            otherCategories.forEach(cat => {
+              const reduction = (cat.total / totalOther) * remainder;
+              cat.total = Math.max(0, cat.total - reduction);
+            });
+
+            // Update main array
+            otherCategories.forEach(cat => {
+              const originalIndex = updated.findIndex(
+                c => c.categoryId === cat.categoryId,
+              );
+              if (originalIndex !== -1) {
+                updated[originalIndex].total = roundTwo(cat.total);
+              }
+            });
+          }
+        }
+      }
+    } else if (delta < 0) {
+      // Decreasing the value, move the delta to unaccounted
+      if (unaccountedIndex !== -1) {
+        updated[unaccountedIndex].total = roundTwo(
+          updated[unaccountedIndex].total - delta,
+        );
+      }
     }
 
     // Ensure no floating point precision issues come to haunt
     updated.forEach(c => {
-      c.total = Math.round(c.total * 100) / 100;
+      c.total = roundTwo(c.total);
     });
-    newUnaccounted = parseFloat(newUnaccounted.toFixed(2));
 
-    const calculatedTotal = updated.reduce((sum, c) => sum + c.total, 0);
-    const roundedTotal = Math.round(calculatedTotal * 100) / 100;
+    if (unaccountedIndex !== -1) {
+      updated[unaccountedIndex].total = Math.max(
+        0,
+        updated[unaccountedIndex].total,
+      );
+    }
 
-    if (Math.abs(roundedTotal - total) > 0.001 && updated.length > 0) {
-      const diff = total - roundedTotal;
-      updated[updated.length - 1].total += diff;
-      updated[updated.length - 1].total =
-        Math.round(updated[updated.length - 1].total * 100) / 100;
+    let runningTotal = updated.reduce((sum, c) => sum + c.total, 0);
+    let finalDiff = roundTwo(total - runningTotal);
+
+    if (Math.abs(finalDiff) >= 0.01) {
+      const adjustableIndex = updated
+        .map((c, idx) => ({ ...c, idx }))
+        .filter(c => c.categoryId !== -1) // exclude "Unaccounted"
+        .sort((a, b) => b.total - a.total)[0]?.idx;
+
+      if (adjustableIndex !== undefined) {
+        updated[adjustableIndex].total = roundTwo(
+          updated[adjustableIndex].total + finalDiff,
+        );
+      }
     }
 
     setCategoryValues(updated);
@@ -244,7 +282,12 @@ export default function AddBudgetItemModal({
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <Button title="save" onPress={() => onConfirm(categoryValues)} />
+      <Button
+        title="save"
+        onPress={() =>
+          onConfirm(categoryValues.filter(c => c.categoryId !== -1))
+        }
+      />
     </View>
   );
 }
