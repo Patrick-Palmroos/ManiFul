@@ -31,13 +31,11 @@ export default function AddBudgetItemModal({
   onConfirm: (arg1: ChosenCategoryValues[]) => void;
 }) {
   const [toggle, setToggle] = useState<boolean>(false);
-  const [categoryValues, setCategoryValues] = useState<ChosenCategoryValues[]>(
-    values.map(v => ({ ...v, total: Number(v.total.toFixed(2)) })),
-  );
+  const [categoryValues, setCategoryValues] = useState<ChosenCategoryValues[]>([
+    ...values.map(v => ({ ...v, total: Number(v.total.toFixed(2)) })),
+    { categoryId: -1, categoryName: 'Unaccounted', total: 0 },
+  ]);
   const [total] = useState<number>(totalSum);
-  const [unaccounted, setUnaccounted] = useState<number>(
-    totalSum - values.reduce((sum, c) => sum + c.total, 0),
-  );
   const [inputValues, setInputValues] = useState<string[]>(
     values.map(v => v.total.toFixed(2)),
   );
@@ -121,7 +119,6 @@ export default function AddBudgetItemModal({
         Math.round(updated[updated.length - 1].total * 100) / 100;
     }
 
-    setUnaccounted(total - updated.reduce((sum, c) => sum + c.total, 0));
     setCategoryValues(updated);
   };
 
@@ -166,7 +163,6 @@ export default function AddBudgetItemModal({
     setCategoryValues(zeroedValues);
     setInputValues(zeroedValues.map(v => v.total.toFixed(2)));
     setPercentageValues(zeroedValues.map(v => '0.00'));
-    setUnaccounted(totalSum);
   };
 
   return (
@@ -185,60 +181,66 @@ export default function AddBudgetItemModal({
       </TouchableOpacity>
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
-      <Text>Unaccounted: {unaccounted.toFixed(2)}</Text>
+      <Text>
+        Unaccounted: {categoryValues.find(c => c.categoryId === -1)?.total}
+      </Text>
       <Text>
         Total calculated: {categoryValues.reduce((sum, c) => sum + c.total, 0)}
       </Text>
       <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
         <TouchableWithoutFeedback>
           <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
-            {categoryValues.map((value, i) => (
-              <View key={i} style={{ marginBottom: 16 }}>
-                <Text>
-                  {value.categoryName} | {value.total.toFixed(2)} (
-                  {((value.total / total) * 100).toFixed(2)}%)
-                </Text>
-                <Slider
-                  minimumValue={0}
-                  maximumValue={total}
-                  minimumTrackTintColor="#007aff"
-                  maximumTrackTintColor="#d3d3d3"
-                  step={10}
-                  value={value.total}
-                  onValueChange={val => handleSliderChange(i, val)}
-                />
-                {toggle ? (
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {categoryValues
+              .filter(c => c.categoryId !== -1)
+              .map((value, i) => (
+                <View key={i} style={{ marginBottom: 16 }}>
+                  <Text>
+                    {value.categoryName} | {value.total.toFixed(2)} (
+                    {((value.total / total) * 100).toFixed(2)}%)
+                  </Text>
+
+                  <Slider
+                    minimumValue={0}
+                    maximumValue={total}
+                    minimumTrackTintColor="#007aff"
+                    maximumTrackTintColor="#d3d3d3"
+                    step={10}
+                    value={value.total}
+                    onValueChange={val => handleSliderChange(i, val)}
+                  />
+                  {toggle ? (
+                    <View
+                      style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <TextInput
+                        value={percentageValues[i]}
+                        inputMode="numeric"
+                        keyboardType="decimal-pad"
+                        style={styles.textField}
+                        onChangeText={text => {
+                          const newPercentages = [...percentageValues];
+                          newPercentages[i] = text;
+                          setPercentageValues(newPercentages);
+                        }}
+                        onBlur={() => handlePercentageInputBlur(i)}
+                      />
+                      <Text>%</Text>
+                    </View>
+                  ) : (
                     <TextInput
-                      value={percentageValues[i]}
+                      value={inputValues[i]}
                       inputMode="numeric"
                       keyboardType="decimal-pad"
                       style={styles.textField}
                       onChangeText={text => {
-                        const newPercentages = [...percentageValues];
-                        newPercentages[i] = text;
-                        setPercentageValues(newPercentages);
+                        const newInputs = [...inputValues];
+                        newInputs[i] = text;
+                        setInputValues(newInputs);
                       }}
-                      onBlur={() => handlePercentageInputBlur(i)}
+                      onBlur={() => handleAbsoluteInputBlur(i)}
                     />
-                    <Text>%</Text>
-                  </View>
-                ) : (
-                  <TextInput
-                    value={inputValues[i]}
-                    inputMode="numeric"
-                    keyboardType="decimal-pad"
-                    style={styles.textField}
-                    onChangeText={text => {
-                      const newInputs = [...inputValues];
-                      newInputs[i] = text;
-                      setInputValues(newInputs);
-                    }}
-                    onBlur={() => handleAbsoluteInputBlur(i)}
-                  />
-                )}
-              </View>
-            ))}
+                  )}
+                </View>
+              ))}
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
