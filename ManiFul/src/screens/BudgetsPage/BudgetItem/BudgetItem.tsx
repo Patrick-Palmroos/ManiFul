@@ -48,7 +48,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
         style={{
           backgroundColor: 'white',
           margin: 5,
-          height: 70,
+          height: 170,
           padding: 5,
           borderRadius: 10,
         }}>
@@ -64,6 +64,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
           /{item.budgetTotal} €
         </Text>
         <Button title="delete" onPress={() => deleteBudget(item.id)} />
+        <Button title="edit" onPress={() => deleteBudget(item.id)} />
       </View>
     </Shadow>
   );
