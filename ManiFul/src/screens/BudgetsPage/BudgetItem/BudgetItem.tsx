@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { TransactionData } from '../../../types/data';
 import { Shadow } from 'react-native-shadow-2';
 import { useBudgets } from '../../../context/BudgetContext';
+import { useModalContext } from '../../../context/ModalContext';
+import EditBudgetModal from '../EditBudgetModal';
 
 const months = [
   'January',
@@ -24,6 +26,7 @@ const months = [
 const BudgetItem = ({ item }: { item: BudgetType }) => {
   const { transactions } = useTransactions();
   const { deleteBudget } = useBudgets();
+  const { openModal, closeModal } = useModalContext();
   const [monthsTransactions, setMonthsTransactions] = useState<
     TransactionData[] | null
   >(null);
@@ -64,7 +67,20 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
           /{item.budgetTotal} €
         </Text>
         <Button title="delete" onPress={() => deleteBudget(item.id)} />
-        <Button title="edit" onPress={() => deleteBudget(item.id)} />
+        <Button
+          title="edit"
+          onPress={() =>
+            openModal({
+              content: (
+                <EditBudgetModal
+                  onConfirm={() => closeModal('editBudgetModal')}
+                  item={item}
+                />
+              ),
+              id: 'editBudgetModal',
+            })
+          }
+        />
       </View>
     </Shadow>
   );
