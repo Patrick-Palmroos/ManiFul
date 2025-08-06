@@ -27,7 +27,7 @@ export default function EditBudgetModal({
   onConfirm: () => void;
   item: BudgetType;
 }) {
-  const { createBudget } = useBudgets();
+  const { updateBudget } = useBudgets();
   const { categories } = useTypes();
   const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
@@ -132,7 +132,7 @@ export default function EditBudgetModal({
       repeating: false,
     } as BudgetPostType;
 
-    const res = createBudget(data);
+    const res = updateBudget(data, item.id);
 
     if (!res) {
       showMessage({
