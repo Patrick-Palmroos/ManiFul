@@ -18,6 +18,7 @@ import { useModalContext } from '../../context/ModalContext';
 import AddBudgetModal from './AddBudgetModal';
 import { useTransactions } from '../../context/TransactionContext';
 import { TransactionData } from '../../types/data';
+import SpeedometerChart from '../../components/SpeedometerChart';
 
 const months = [
   'January',
@@ -104,6 +105,18 @@ const BudgetsPage = () => {
             </View>
             <View>
               <Text>Meter</Text>
+              <SpeedometerChart
+                radius={60}
+                used={transactions
+                  .filter(t =>
+                    isCurrentMonthAndYear(
+                      new Date(t.date).getMonth() + 1,
+                      new Date(t.date).getFullYear(),
+                    ),
+                  )
+                  .reduce((sum, t) => sum + t.total, 0)}
+                total={currentBudget.budgetTotal}
+              />
             </View>
           </View>
         )}
