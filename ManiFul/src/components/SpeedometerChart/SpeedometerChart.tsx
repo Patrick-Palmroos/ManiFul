@@ -74,9 +74,9 @@ const SpeedometerChart = ({
           </SvgText>
           {/* Divider Line */}
           <Line
-            x1={-40}
+            x1={-35}
             y1={-16}
-            x2={40}
+            x2={35}
             y2={-16}
             stroke={backgroundColor}
             strokeWidth="1.5"
