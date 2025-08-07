@@ -73,7 +73,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setBudgets(fetchedBudgets);
       const currBudget = fetchedBudgets.filter(b =>
-        isCurrentMonthAndYear(b.month - 1, b.year),
+        isCurrentMonthAndYear(b.month, b.year),
       );
       /* TODO: This should be changed later. Some sort of prompt maybe for user. Just
       automatically adding a newBudget without user input is probably gonna be annoying.
