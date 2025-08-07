@@ -69,9 +69,11 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       });
 
-      setBudgets(response.data as BudgetType[]);
-      const currBudget = budgets.filter(b =>
-        isCurrentMonthAndYear(b.month, b.year),
+      const fetchedBudgets = response.data as BudgetType[];
+
+      setBudgets(fetchedBudgets);
+      const currBudget = fetchedBudgets.filter(b =>
+        isCurrentMonthAndYear(b.month - 1, b.year),
       );
       /* TODO: This should be changed later. Some sort of prompt maybe for user. Just
       automatically adding a newBudget without user input is probably gonna be annoying.
@@ -90,8 +92,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
                 repeating: false,
               } as BudgetType)
             : (repeating[0] as BudgetType);
-
-        createBudget(newBudget);
+        await createBudget(newBudget);
+        setCurrentBudget(newBudget);
       } else {
         setCurrentBudget(currBudget[0]);
       }
