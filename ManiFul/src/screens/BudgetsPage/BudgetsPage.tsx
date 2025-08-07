@@ -5,6 +5,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import { fetchAllBudgets } from '../../api/budgetApi';
 import colors from '../../styles/colors';
@@ -43,7 +44,7 @@ const BudgetsPage = () => {
   const { openModal, closeModal } = useModalContext();
 
   const screenWidth = Dimensions.get('window').width;
-  const chartRadius = screenWidth * 0.15;
+  const chartRadius = screenWidth * 0.18;
 
   useEffect(() => {
     const current = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
@@ -72,9 +73,9 @@ const BudgetsPage = () => {
   return (
     <View style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       <LinearGradient
-        colors={[colors.gradient, colors.highlight]}
+        colors={[colors.highlight, '#861955']}
         start={{ x: 0, y: 1 }}
-        end={{ x: 0.5, y: 0 }}
+        end={{ x: 0.6, y: 0 }}
         style={{
           height: 120,
           width: '100%',
@@ -82,12 +83,35 @@ const BudgetsPage = () => {
         }}>
         {currentBudget && (
           <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <View>
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              // backgroundColor: 'yellow',
+              height: '100%',
+            }}>
+            <View style={{ justifyContent: 'space-evenly', marginLeft: 10 }}>
               {/* Display the month */}
-              <Text>{`${months[currentBudget.month - 1]} (Current)`}</Text>
+              <Text
+                style={{
+                  ...text.regularSemiBold,
+                  color: colors.light,
+                  //backgroundColor: 'red',
+                  fontSize: 20,
+                }}>
+                {`${months[currentBudget.month - 1]}`}
+                <Text style={{ fontSize: 14 }}>
+                  {'  '}
+                  (Current)
+                </Text>
+              </Text>
               {/* Display the amount left for the month */}
-              <Text>
+              <Text
+                style={{
+                  ...text.moneyLight,
+                  fontSize: 24,
+                  lineHeight: 24,
+                  //backgroundColor: 'blue',
+                }}>
                 {Number(
                   currentBudget.budgetTotal -
                     transactions
@@ -103,13 +127,40 @@ const BudgetsPage = () => {
                         0,
                       ),
                 ).toFixed(2)}
-                € <Text>left</Text>
+                €{' '}
+                <Text
+                  style={{
+                    ...text.regularLight,
+                    color: colors.light,
+                    fontSize: 18,
+                  }}>
+                  left
+                </Text>
               </Text>
-              <Text>Edit</Text>
+              <TouchableOpacity
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: colors.light,
+                  width: 110,
+                  height: 30,
+                  borderRadius: 8,
+                }}>
+                <Text style={{ ...text.regularMedium, color: '#861955' }}>
+                  Edit
+                </Text>
+              </TouchableOpacity>
             </View>
-            <View>
-              <Text>Meter</Text>
+            <View
+              style={{
+                //backgroundColor: 'red',
+                position: 'relative',
+                right: 10,
+                justifyContent: 'center',
+              }}>
               <SpeedometerChart
+                fillColor={colors.light}
+                backgroundColor={colors.highlight}
                 radius={chartRadius}
                 used={transactions
                   .filter(t =>
