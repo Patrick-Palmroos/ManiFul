@@ -4,6 +4,7 @@ import {
   Button,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { fetchAllBudgets } from '../../api/budgetApi';
 import colors from '../../styles/colors';
@@ -40,6 +41,9 @@ const BudgetsPage = () => {
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
   const { transactions } = useTransactions();
   const { openModal, closeModal } = useModalContext();
+
+  const screenWidth = Dimensions.get('window').width;
+  const chartRadius = screenWidth * 0.15;
 
   useEffect(() => {
     const current = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
@@ -106,7 +110,7 @@ const BudgetsPage = () => {
             <View>
               <Text>Meter</Text>
               <SpeedometerChart
-                radius={60}
+                radius={chartRadius}
                 used={transactions
                   .filter(t =>
                     isCurrentMonthAndYear(
