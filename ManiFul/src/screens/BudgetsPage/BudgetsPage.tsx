@@ -21,6 +21,7 @@ import AddBudgetModal from './AddBudgetModal';
 import { useTransactions } from '../../context/TransactionContext';
 import { TransactionData } from '../../types/data';
 import SpeedometerChart from '../../components/SpeedometerChart';
+import EditBudgetModal from './EditBudgetModal';
 
 const months = [
   'January',
@@ -72,6 +73,7 @@ const BudgetsPage = () => {
 
   return (
     <View style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
+      {/* Top card */}
       <LinearGradient
         colors={[colors.highlight, '#861955']}
         start={{ x: 0, y: 1 }}
@@ -81,21 +83,21 @@ const BudgetsPage = () => {
           width: '100%',
           borderRadius: 10,
         }}>
+        {/* Conditional render */}
         {currentBudget && (
+          /* Wrapper for the whole section */
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              // backgroundColor: 'yellow',
               height: '100%',
             }}>
+            {/* Display the month */}
             <View style={{ justifyContent: 'space-evenly', marginLeft: 10 }}>
-              {/* Display the month */}
               <Text
                 style={{
                   ...text.regularSemiBold,
                   color: colors.light,
-                  //backgroundColor: 'red',
                   fontSize: 20,
                 }}>
                 {`${months[currentBudget.month - 1]}`}
@@ -110,7 +112,6 @@ const BudgetsPage = () => {
                   ...text.moneyLight,
                   fontSize: 24,
                   lineHeight: 24,
-                  //backgroundColor: 'blue',
                 }}>
                 {Number(
                   currentBudget.budgetTotal -
@@ -137,7 +138,19 @@ const BudgetsPage = () => {
                   left
                 </Text>
               </Text>
+              {/* Edit button */}
               <TouchableOpacity
+                onPress={() =>
+                  openModal({
+                    content: (
+                      <EditBudgetModal
+                        item={currentBudget}
+                        onConfirm={() => closeModal('EditBudgetModal')}
+                      />
+                    ),
+                    id: 'EditBudgetModal',
+                  })
+                }
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -151,13 +164,14 @@ const BudgetsPage = () => {
                 </Text>
               </TouchableOpacity>
             </View>
+            {/* Speedometer chart wrapper */}
             <View
               style={{
-                //backgroundColor: 'red',
                 position: 'relative',
                 right: 10,
                 justifyContent: 'center',
               }}>
+              {/* speedometer chart */}
               <SpeedometerChart
                 fillColor={colors.light}
                 backgroundColor={colors.highlight}
