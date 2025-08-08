@@ -278,7 +278,7 @@ const BudgetsPage = () => {
           </View>
         </View>
       )}
-      <View style={{ alignItems: 'center', marginBottom: 0 }}>
+      <View style={{ alignItems: 'center', marginBottom: 10 }}>
         <GradientButton
           text="Add a budget"
           width={'90%'}
@@ -294,8 +294,8 @@ const BudgetsPage = () => {
           }
         />
       </View>
-      <Text>Previous Budgets</Text>
-      <View style={{ marginTop: 20, marginBottom: 200 }}>
+      <Text style={text.regularSemiBold}>Previous Budgets</Text>
+      <View style={{ marginBottom: 200 }}>
         <View>
           {budgets
             .filter(b => !isCurrentMonthAndYear(b.month, b.year))
