@@ -22,6 +22,7 @@ import { useTransactions } from '../../context/TransactionContext';
 import { TransactionData } from '../../types/data';
 import SpeedometerChart from '../../components/SpeedometerChart';
 import EditBudgetModal from './EditBudgetModal';
+import { useTypes } from '../../context/TypesContext';
 
 const months = [
   'January',
@@ -39,19 +40,14 @@ const months = [
 ];
 
 const BudgetsPage = () => {
-  const { budgets, refreshBudgets } = useBudgets();
-  const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+  const { budgets, refreshBudgets, defaultBudget, currentBudget } =
+    useBudgets();
+  const { categories } = useTypes();
   const { transactions } = useTransactions();
   const { openModal, closeModal } = useModalContext();
 
   const screenWidth = Dimensions.get('window').width;
   const chartRadius = screenWidth * 0.18;
-
-  useEffect(() => {
-    const current = budgets.filter(b => isCurrentMonthAndYear(b.month, b.year));
-    if (current.length <= 0) return;
-    setCurrentBudget(current[0]);
-  }, []);
 
   //debug
   useEffect(() => console.log(currentBudget), [currentBudget]);
@@ -190,8 +186,48 @@ const BudgetsPage = () => {
           </View>
         )}
       </LinearGradient>
-      <Text>Default budget</Text>
-      <Button title="add default budget/edit" />
+      {defaultBudget && (
+        <View
+          style={{
+            backgroundColor: colors.light,
+            //height: 100,
+            width: '100%',
+            marginTop: 5,
+            marginBottom: 20,
+            borderRadius: 8,
+            padding: 8,
+          }}>
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ ...text.title, fontSize: 18 }}>Default budget</Text>
+            <Text style={{ ...text.regularSemiBold }}>
+              Total:{' '}
+              <Text style={text.moneyDark}>{defaultBudget.budgetTotal}€</Text>
+            </Text>
+          </View>
+          <View
+            style={{
+              marginTop: 5,
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 4,
+            }}>
+            {defaultBudget.items.map((item, i) => (
+              <View key={i} style={{ width: 100, alignItems: 'center' }}>
+                <Text style={{ textAlign: 'center' }}>
+                  {categories.find(c => c.id === item.categoryId)?.name}
+                </Text>
+                <Text>
+                  Pec: {(item.amount / defaultBudget.budgetTotal) * 100}
+                </Text>
+                <Text style={{ textAlign: 'center' }}>{item.amount}€</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
       <Button
         title="Add a budget"
         onPress={() =>
