@@ -18,6 +18,8 @@ export type BudgetType = {
   repeating: false;
 };
 
+export type AnyBudget = BudgetType | RepeatingBudget;
+
 export type BudgetItemType = {
   categoryId: number | null;
   typeId: number | null;
