@@ -57,7 +57,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { initialLoading: typesLoading, categories } = useTypes();
-  const { user } = useAuth();
+  const { user, initialized: authInitialized } = useAuth();
   const [initialized, setInitialized] = useState<boolean>(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
@@ -142,6 +142,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
        do not allow a user to not have a default. This way this redicilousness can be removed*/
 
       if (currBudget.length === 0) {
+        const expenseCategories = categories.filter(c => c.expense);
+
         if (repeating.length !== 0) {
           //repeating budget found
           newBudget = {
@@ -149,7 +151,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             active: true,
             budgetTotal: repeating[0].budgetTotal,
             repeating: false,
-            items: distributeCategoryTotals(categories, 3000).map(d => ({
+            items: distributeCategoryTotals(expenseCategories, 3000).map(d => ({
               categoryId: d.categoryId,
               typeId: null,
               amount: d.total,
@@ -164,13 +166,14 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             active: true,
             budgetTotal: tempBudgetTotal,
             repeating: false,
-            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
-              d => ({
-                categoryId: d.categoryId,
-                typeId: null,
-                amount: d.total,
-              }),
-            ),
+            items: distributeCategoryTotals(
+              expenseCategories,
+              tempBudgetTotal,
+            ).map(d => ({
+              categoryId: d.categoryId,
+              typeId: null,
+              amount: d.total,
+            })),
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
@@ -192,13 +195,14 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             repeating: true,
             month: null,
             year: null,
-            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
-              d => ({
-                categoryId: d.categoryId,
-                typeId: null,
-                amount: d.total,
-              }),
-            ),
+            items: distributeCategoryTotals(
+              expenseCategories,
+              tempBudgetTotal,
+            ).map(d => ({
+              categoryId: d.categoryId,
+              typeId: null,
+              amount: d.total,
+            })),
           };
           await createBudget(newDefault);
           setDefaultBudget(newDefault as RepeatingBudget);
@@ -208,19 +212,21 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         if (repeating.length > 0) {
           setDefaultBudget(repeating[0]);
         } else {
+          const expenseCategories = categories.filter(c => c.expense);
           const newDefault: BudgetPostType = {
             active: true,
             budgetTotal: tempBudgetTotal,
             repeating: true,
             month: null,
             year: null,
-            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
-              d => ({
-                categoryId: d.categoryId,
-                typeId: null,
-                amount: d.total,
-              }),
-            ),
+            items: distributeCategoryTotals(
+              expenseCategories,
+              tempBudgetTotal,
+            ).map(d => ({
+              categoryId: d.categoryId,
+              typeId: null,
+              amount: d.total,
+            })),
           };
           await createBudget(newDefault);
           setDefaultBudget(newDefault as RepeatingBudget);
@@ -300,11 +306,13 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount
   useEffect(() => {
-    if (!typesLoading && categories.length > 0 && user && !initialized) {
+    if (!typesLoading && authInitialized && user && !initialized) {
       setInitialized(true);
       fetchBudgets(true);
+    } else if (!typesLoading && authInitialized && !user) {
+      setInitialLoading(false);
     }
-  }, [typesLoading, categories, user]);
+  }, [typesLoading, categories, user, authInitialized]);
 
   return (
     <BudgetContext.Provider
