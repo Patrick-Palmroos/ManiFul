@@ -138,6 +138,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       budget. */
       let newBudget: BudgetType;
       let shouldCreateDefault = false;
+      /* TODO: Also maybe move the hole thing of this bullshittery to account creation and simply
+       do not allow a user to not have a default. This way this redicilousness can be removed*/
 
       if (currBudget.length === 0) {
         if (repeating.length !== 0) {
@@ -205,6 +207,23 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         setCurrentBudget(currBudget[0] as BudgetType);
         if (repeating.length > 0) {
           setDefaultBudget(repeating[0]);
+        } else {
+          const newDefault: BudgetPostType = {
+            active: true,
+            budgetTotal: tempBudgetTotal,
+            repeating: true,
+            month: null,
+            year: null,
+            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
+              d => ({
+                categoryId: d.categoryId,
+                typeId: null,
+                amount: d.total,
+              }),
+            ),
+          };
+          await createBudget(newDefault);
+          setDefaultBudget(newDefault as RepeatingBudget);
         }
       }
 
