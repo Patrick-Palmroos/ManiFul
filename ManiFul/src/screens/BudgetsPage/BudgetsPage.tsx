@@ -24,6 +24,7 @@ import SpeedometerChart from '../../components/SpeedometerChart';
 import EditBudgetModal from './EditBudgetModal';
 import { useTypes } from '../../context/TypesContext';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
+import GradientButton from '../../components/GradientButton/GradientButton';
 
 const months = [
   'January',
@@ -197,7 +198,6 @@ const BudgetsPage = () => {
             backgroundColor: colors.light,
             width: '100%',
             marginTop: 10,
-            marginBottom: 20,
             borderRadius: 8,
             padding: 8,
           }}>
@@ -277,19 +277,23 @@ const BudgetsPage = () => {
           </View>
         </View>
       )}
-      <Button
-        title="Add a budget"
-        onPress={() =>
-          openModal({
-            content: (
-              <AddBudgetModal onConfirm={() => closeModal('addBudgetModal')} />
-            ),
-            id: 'addBudgetModal',
-          })
-        }
-      />
+      <View style={{ alignItems: 'center', marginBottom: 0 }}>
+        <GradientButton
+          text="Add a budget"
+          width={'90%'}
+          onClick={() =>
+            openModal({
+              content: (
+                <AddBudgetModal
+                  onConfirm={() => closeModal('addBudgetModal')}
+                />
+              ),
+              id: 'addBudgetModal',
+            })
+          }
+        />
+      </View>
       <Text>Previous Budgets</Text>
-      <Button title="LÖl getting shits" onPress={refreshBudgets} />
       <View style={{ marginTop: 20 }}>
         <ScrollView style={{ padding: 10 }}>
           <View>
