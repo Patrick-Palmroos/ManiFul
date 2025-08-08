@@ -1,10 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { API_URL, API_KEY } from '@env';
 import * as Keychain from 'react-native-keychain';
-import { BudgetPostType, BudgetType, RepeatingBudget } from '../types/budgets';
+import {
+  AnyBudget,
+  BudgetPostType,
+  BudgetType,
+  RepeatingBudget,
+} from '../types/budgets';
 import { isCurrentMonthAndYear } from '../utils/date_handling';
+import { useTypes } from './TypesContext';
 
 interface BudgetContextType {
   budgets: BudgetType[];
@@ -41,8 +53,10 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [budgets, setBudgets] = useState<BudgetType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { initialLoading: typesLoading, categories } = useTypes();
   const { user } = useAuth();
-  const [initialLoading, setInitialLoading] = useState<boolean>(false);
+  const didInit = useRef(false);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
   const [defaultBudget, setDefaultBudget] = useState<RepeatingBudget>({
     active: true,
@@ -101,13 +115,19 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       });
 
-      const fetchedBudgets = response.data as BudgetType[];
+      const fetchedBudgets = response.data as AnyBudget[];
 
       setBudgets(fetchedBudgets.filter(b => !b.repeating));
       const currBudget = fetchedBudgets.filter(
         b => !b.repeating && isCurrentMonthAndYear(b.month, b.year),
       );
-      const repeating = fetchedBudgets.filter(b => b.repeating);
+
+      function isRepeatingBudget(budget: AnyBudget): budget is RepeatingBudget {
+        return budget.repeating === true;
+      }
+
+      const repeating: RepeatingBudget[] =
+        fetchedBudgets.filter(isRepeatingBudget);
 
       /* TODO: This should be changed later. Some sort of prompt maybe for user. Just
       automatically adding a newBudget without user input is probably gonna be annoying.
@@ -123,6 +143,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
+          setDefaultBudget(repeating[0]);
         } else {
           newBudget = {
             ...currentBudget,
@@ -209,8 +230,11 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount
   useEffect(() => {
-    fetchBudgets(true);
-  }, [user]);
+    if (!typesLoading && categories.length > 0 && user && !didInit.current) {
+      didInit.current = true;
+      fetchBudgets(true);
+    }
+  }, [typesLoading, categories, user]);
 
   return (
     <BudgetContext.Provider
