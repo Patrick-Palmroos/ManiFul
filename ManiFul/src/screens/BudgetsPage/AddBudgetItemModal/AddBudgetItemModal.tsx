@@ -22,6 +22,12 @@ type ChosenCategoryValues = {
   locked: boolean;
 };
 
+type PropCategoryValues = {
+  categoryId: number;
+  categoryName: string;
+  total: number;
+};
+
 const roundTwo = (n: number) => Math.round(n * 100) / 100;
 
 export default function AddBudgetItemModal({
@@ -29,9 +35,9 @@ export default function AddBudgetItemModal({
   totalSum,
   onConfirm,
 }: {
-  values: ChosenCategoryValues[];
+  values: PropCategoryValues[];
   totalSum: number;
-  onConfirm: (arg1: ChosenCategoryValues[]) => void;
+  onConfirm: (arg1: PropCategoryValues[]) => void;
 }) {
   const [toggle, setToggle] = useState<boolean>(false);
   const [sliderValues, setSliderValues] = useState<number[]>(
