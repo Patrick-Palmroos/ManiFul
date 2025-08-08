@@ -1,6 +1,7 @@
 package com.ManiFul.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,6 +17,8 @@ import java.util.List;
 @Builder
 @Table(name = "budgets")
 public class Budget {
+    @Version
+    private Long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +26,15 @@ public class Budget {
 
     private Long userId;
 
-    private int month;
-    private int year;
+    private Integer month;
+    private Integer year;
     private boolean active;
     private BigDecimal budgetTotal;
     private boolean repeating;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonManagedReference
     private List<BudgetItem> items = new ArrayList<>();
 
     public void addItem(BudgetItem item) {

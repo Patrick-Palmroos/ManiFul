@@ -1,5 +1,6 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class BudgetItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id")
+    @JsonIgnore
     private Budget budget;
 
     @ManyToOne(fetch = FetchType.LAZY)

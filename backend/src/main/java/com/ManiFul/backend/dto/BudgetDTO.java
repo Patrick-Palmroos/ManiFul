@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class BudgetDTO {
     private Long id;
-    private int month;
-    private int year;
+    private Integer month;
+    private Integer year;
     private boolean active;
     private BigDecimal budgetTotal;
     private boolean repeating;

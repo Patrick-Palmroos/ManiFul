@@ -36,13 +36,18 @@ public class BudgetService {
 
     @Transactional
     public Budget createBudget(BudgetDTO dto, Long userId) {
-        if (budgetRepository.existsByUserIdAndMonthAndYear(userId, dto.getMonth(), dto.getYear())) {
-            throw new RuntimeException("Budget already exists for this user and month/year");
+        if (!dto.isRepeating()) {
+            if (dto.getMonth() == null || dto.getYear() == null) {
+                throw new IllegalArgumentException("Month and Year must not be null when repeating is false");
+            }
+
+            if (budgetRepository.existsByUserIdAndMonthAndYear(userId, dto.getMonth(), dto.getYear())) {
+                throw new RuntimeException("Budget already exists for this user and month/year");
+            }
         }
 
         Budget budget = Budget.builder()
                 .userId(userId)
-                .id(dto.getId())
                 .month(dto.getMonth())
                 .year(dto.getYear())
                 .active(dto.isActive())
@@ -89,7 +94,12 @@ public class BudgetService {
         Budget budget = budgetRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Budget not found or doesn't belong to user"));
 
-        validateBudgetPeriodUniqueness(userId, dto.getMonth(), dto.getYear(), id);
+        if (!dto.isRepeating()) {
+            if (dto.getMonth() == null || dto.getYear() == null) {
+                throw new IllegalArgumentException("Month and Year must not be null when repeating is false");
+            }
+            validateBudgetPeriodUniqueness(userId, dto.getMonth(), dto.getYear(), id);
+        }
 
         budget.setMonth(dto.getMonth());
         budget.setYear(dto.getYear());
