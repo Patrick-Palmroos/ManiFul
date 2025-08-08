@@ -26,7 +26,8 @@ export default function AddBudgetModal({
   onConfirm: () => void;
 }) {
   const { createBudget } = useBudgets();
-  const { categories } = useTypes();
+  const { categories: typeCategories } = useTypes();
+  const categories = typeCategories.filter(c => c.expense);
   const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
