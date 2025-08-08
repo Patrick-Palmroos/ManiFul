@@ -138,7 +138,7 @@ export default function EditBudgetModal({
       ),
       month: date ? date.getMonth() + 1 : null,
       year: date ? date.getFullYear() : null,
-      repeating: false,
+      repeating: isRepeatingBudget(item),
     } as BudgetPostType;
 
     const res = updateBudget(data, item.id);
