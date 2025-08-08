@@ -31,6 +31,8 @@ public class Category {
     private String name;
     private Long userId;
 
+    private Boolean expense;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Type> types;
