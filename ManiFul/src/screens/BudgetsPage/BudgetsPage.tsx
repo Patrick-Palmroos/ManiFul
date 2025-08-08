@@ -67,7 +67,8 @@ const BudgetsPage = () => {
   }
 
   return (
-    <View style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
+    <ScrollView
+      style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
       {/* Top card */}
       <LinearGradient
         colors={[colors.highlight, '#861955']}
@@ -294,18 +295,16 @@ const BudgetsPage = () => {
         />
       </View>
       <Text>Previous Budgets</Text>
-      <View style={{ marginTop: 20 }}>
-        <ScrollView style={{ padding: 10 }}>
-          <View>
-            {budgets
-              .filter(b => !isCurrentMonthAndYear(b.month, b.year))
-              .map((budget, i) => (
-                <BudgetItem key={i} item={budget} />
-              ))}
-          </View>
-        </ScrollView>
+      <View style={{ marginTop: 20, marginBottom: 200 }}>
+        <View>
+          {budgets
+            .filter(b => !isCurrentMonthAndYear(b.month, b.year))
+            .map((budget, i) => (
+              <BudgetItem key={i} item={budget} />
+            ))}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
