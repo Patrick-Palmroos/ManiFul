@@ -47,10 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         } catch (err) {
           await Keychain.resetGenericPassword();
-        } finally {
-          setInitialized(true);
         }
       }
+      setInitialized(true);
       setLoading(false);
     };
 
