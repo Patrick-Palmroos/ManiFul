@@ -7,6 +7,9 @@ import { Shadow } from 'react-native-shadow-2';
 import { useBudgets } from '../../../context/BudgetContext';
 import { useModalContext } from '../../../context/ModalContext';
 import EditBudgetModal from '../EditBudgetModal';
+import text from '../../../styles/text';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
+import colors from '../../../styles/colors';
 
 const months = [
   'January',
@@ -51,36 +54,60 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
         style={{
           backgroundColor: 'white',
           margin: 5,
-          height: 170,
-          padding: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 10,
           borderRadius: 10,
         }}>
-        {/* Date */}
-        <Text>
-          {item.year} {months[item.month - 1]}
-        </Text>
-        {/* Months expenses */}
-        <Text>
-          {monthsTransactions
-            ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
-            : 'no expenses found'}
-          /{item.budgetTotal} €
-        </Text>
-        <Button title="delete" onPress={() => deleteBudget(item.id)} />
-        <Button
-          title="edit"
-          onPress={() =>
-            openModal({
-              content: (
-                <EditBudgetModal
-                  onConfirm={() => closeModal('editBudgetModal')}
-                  item={item}
-                />
-              ),
-              id: 'editBudgetModal',
-            })
-          }
-        />
+        <View>
+          {/* Date */}
+          <Text style={{ ...text.title }}>
+            {item.year} {months[item.month - 1]}
+          </Text>
+          {/* Months expenses */}
+          <Text style={text.regular}>
+            {monthsTransactions
+              ? monthsTransactions.reduce((sum, item) => sum + item.total, 0)
+              : '0'}
+            /{item.budgetTotal} €
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: colors.cancelButton,
+              width: 40,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 10,
+            }}
+            onPress={() => deleteBudget(item.id)}>
+            <MaterialIcons name={'delete'} size={20} color={colors.white} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: colors.highlight,
+              width: 40,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 10,
+            }}
+            onPress={() =>
+              openModal({
+                content: (
+                  <EditBudgetModal
+                    onConfirm={() => closeModal('editBudgetModal')}
+                    item={item}
+                  />
+                ),
+                id: 'editBudgetModal',
+              })
+            }>
+            <MaterialIcons name={'edit'} size={20} color={colors.white} />
+          </TouchableOpacity>
+        </View>
       </View>
     </Shadow>
   );
