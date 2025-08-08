@@ -1,3 +1,13 @@
+export type RepeatingBudget = {
+  id: number;
+  active: boolean;
+  budgetTotal: number;
+  items: BudgetItemType[];
+  month: null;
+  year: null;
+  repeating: true;
+};
+
 export type BudgetType = {
   id: number;
   active: boolean;
@@ -5,7 +15,7 @@ export type BudgetType = {
   items: BudgetItemType[];
   month: number;
   year: number;
-  repeating: boolean;
+  repeating: false;
 };
 
 export type BudgetItemType = {
@@ -14,11 +24,20 @@ export type BudgetItemType = {
   amount: number;
 };
 
-export type BudgetPostType = {
-  active: boolean;
-  budgetTotal: number;
-  items: BudgetItemType[];
-  month: number;
-  year: number;
-  repeating: boolean;
-};
+export type BudgetPostType =
+  | {
+      active: boolean;
+      budgetTotal: number;
+      items: BudgetItemType[];
+      month: null;
+      year: null;
+      repeating: true;
+    }
+  | {
+      active: boolean;
+      budgetTotal: number;
+      items: BudgetItemType[];
+      month: number;
+      year: number;
+      repeating: false;
+    };
