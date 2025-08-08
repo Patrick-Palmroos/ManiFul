@@ -3,6 +3,8 @@ import {
   BudgetType,
   BudgetPostType,
   BudgetItemType,
+  RepeatingBudget,
+  AnyBudget,
 } from '../../../types/budgets';
 import { useBudgets } from '../../../context/BudgetContext';
 import { useTypes } from '../../../context/TypesContext';
@@ -13,6 +15,7 @@ import AddBudgetItemModal from '../AddBudgetItemModal';
 import { useModalContext } from '../../../context/ModalContext';
 import { Category } from '../../../types/categories';
 import { showMessage } from 'react-native-flash-message';
+import { isCurrentMonthAndYear } from '../../../utils/date_handling';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -20,18 +23,24 @@ type ChosenCategoryValues = {
   total: number;
 };
 
+function isRepeatingBudget(budget: AnyBudget): budget is RepeatingBudget {
+  return budget.repeating === true;
+}
+
 export default function EditBudgetModal({
   onConfirm,
   item,
 }: {
   onConfirm: () => void;
-  item: BudgetType;
+  item: AnyBudget;
 }) {
   const { updateBudget } = useBudgets();
   const { categories } = useTypes();
   const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
-  const [date, setDate] = useState<Date>(new Date(item.year, item.month - 1));
+  const [date, setDate] = useState<Date | null>(
+    isRepeatingBudget(item) ? null : new Date(item.year, item.month - 1),
+  );
   const [total, setTotal] = useState<number>(item.budgetTotal);
   const [loading, setLoading] = useState<boolean>(false);
   const [tempInputValues, setTempInputValues] = useState<string>(
@@ -127,8 +136,8 @@ export default function EditBudgetModal({
             amount: c.total,
           } as BudgetItemType),
       ),
-      month: date.getMonth() + 1,
-      year: date.getFullYear(),
+      month: date ? date.getMonth() + 1 : null,
+      year: date ? date.getFullYear() : null,
       repeating: false,
     } as BudgetPostType;
 
@@ -177,11 +186,15 @@ export default function EditBudgetModal({
         {chosenCategories.reduce((sum, c) => sum + c.total, 0).toFixed(2)}
       </Text>
       <Text>Date</Text>
-      <Text>
-        Selected: {date.toLocaleString('default', { month: 'long' })}{' '}
-        {date.getFullYear()}
-      </Text>
-      <Button title="Change date" onPress={() => setDateOpen(true)} />
+      {date && isCurrentMonthAndYear(date.getMonth(), date.getFullYear()) && (
+        <View>
+          <Text>
+            Selected: {date.toLocaleString('default', { month: 'long' })}{' '}
+            {date.getFullYear()}
+          </Text>
+          <Button title="Change date" onPress={() => setDateOpen(true)} />
+        </View>
+      )}
       <Text>Budget items</Text>
       <Button
         title="Select budget item"
@@ -202,7 +215,7 @@ export default function EditBudgetModal({
         }
       />
       <Button title="Save" onPress={onSave} />
-      {dateOpen && (
+      {dateOpen && date && (
         <MonthPicker
           value={date}
           onChange={handleChange}
