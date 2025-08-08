@@ -23,6 +23,7 @@ import { TransactionData } from '../../types/data';
 import SpeedometerChart from '../../components/SpeedometerChart';
 import EditBudgetModal from './EditBudgetModal';
 import { useTypes } from '../../context/TypesContext';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 const months = [
   'January',
@@ -48,9 +49,6 @@ const BudgetsPage = () => {
 
   const screenWidth = Dimensions.get('window').width;
   const chartRadius = screenWidth * 0.18;
-
-  //debug
-  useEffect(() => console.log(currentBudget), [currentBudget]);
 
   if (!budgets) {
     return (
@@ -197,9 +195,39 @@ const BudgetsPage = () => {
             borderRadius: 8,
             padding: 8,
           }}>
+          {/* View for title and total */}
           <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ ...text.title, fontSize: 18 }}>Default budget</Text>
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginBottom: 10,
+            }}>
+            {/* Pressable title */}
+            <TouchableOpacity
+              onPress={() =>
+                openModal({
+                  content: (
+                    <EditBudgetModal
+                      item={defaultBudget}
+                      onConfirm={() => closeModal('EditBudgetModal')}
+                    />
+                  ),
+                  id: 'EditBudgetModal',
+                })
+              }>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ ...text.title, fontSize: 18 }}>
+                  Default budget
+                </Text>
+                <MaterialIcons
+                  name={'edit'}
+                  size={20}
+                  color={colors.textDefault}
+                  style={{ marginLeft: 5, marginBottom: 3 }}
+                />
+              </View>
+            </TouchableOpacity>
+            {/* Total */}
             <Text style={{ ...text.regularSemiBold }}>
               Total:{' '}
               <Text style={text.moneyDark}>{defaultBudget.budgetTotal}€</Text>
@@ -210,19 +238,34 @@ const BudgetsPage = () => {
               marginTop: 5,
               flexDirection: 'row',
               flexWrap: 'wrap',
-              justifyContent: 'space-between',
+              justifyContent: 'space-evenly',
               alignItems: 'flex-start',
-              gap: 4,
+              gap: 2,
             }}>
             {defaultBudget.items.map((item, i) => (
               <View key={i} style={{ width: 100, alignItems: 'center' }}>
-                <Text style={{ textAlign: 'center' }}>
+                <Text
+                  style={{
+                    ...text.regular,
+                    fontSize: 14,
+                    textAlign: 'center',
+                  }}>
                   {categories.find(c => c.id === item.categoryId)?.name}
                 </Text>
-                <Text>
-                  Pec: {(item.amount / defaultBudget.budgetTotal) * 100}
-                </Text>
-                <Text style={{ textAlign: 'center' }}>{item.amount}€</Text>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text
+                    style={{
+                      ...text.moneyDark,
+                      fontSize: 14,
+                      textAlign: 'center',
+                    }}>
+                    {item.amount}€
+                  </Text>
+                  <Text style={{ ...text.subtext, marginLeft: 3 }}>
+                    ({(item.amount / defaultBudget.budgetTotal) * 100}%)
+                  </Text>
+                </View>
               </View>
             ))}
           </View>
