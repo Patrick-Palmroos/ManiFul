@@ -148,14 +148,21 @@ const BudgetsPage = () => {
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
+                  flexDirection: 'row',
                   backgroundColor: colors.light,
-                  width: 110,
+                  width: 130,
                   height: 30,
                   borderRadius: 8,
                 }}>
                 <Text style={{ ...text.regularMedium, color: '#861955' }}>
                   Edit
                 </Text>
+                <MaterialIcons
+                  name={'edit'}
+                  size={20}
+                  color={'#861955'}
+                  style={{ marginLeft: 5, marginBottom: 3 }}
+                />
               </TouchableOpacity>
             </View>
             {/* Speedometer chart wrapper */}
@@ -188,9 +195,8 @@ const BudgetsPage = () => {
         <View
           style={{
             backgroundColor: colors.light,
-            //height: 100,
             width: '100%',
-            marginTop: 5,
+            marginTop: 10,
             marginBottom: 20,
             borderRadius: 8,
             padding: 8,
@@ -240,7 +246,7 @@ const BudgetsPage = () => {
               flexWrap: 'wrap',
               justifyContent: 'space-evenly',
               alignItems: 'flex-start',
-              gap: 2,
+              gap: 4,
             }}>
             {defaultBudget.items.map((item, i) => (
               <View key={i} style={{ width: 100, alignItems: 'center' }}>
