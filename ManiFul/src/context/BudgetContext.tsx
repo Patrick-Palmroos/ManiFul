@@ -52,17 +52,18 @@ const BudgetContext = createContext<BudgetContextType>({
 export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const tempBudgetTotal = 2500;
   const [budgets, setBudgets] = useState<BudgetType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { initialLoading: typesLoading, categories } = useTypes();
   const { user } = useAuth();
-  const didInit = useRef(false);
+  const [initialized, setInitialized] = useState<boolean>(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
   const [defaultBudget, setDefaultBudget] = useState<RepeatingBudget>({
     active: true,
-    budgetTotal: 3000,
+    budgetTotal: tempBudgetTotal,
     month: null,
     year: null,
     repeating: true,
@@ -92,12 +93,12 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const fetchBudgets = async (isInitialLoad = false) => {
-    console.log('fetching budgets');
-    if (!user) return;
+    if (!user || loading) return;
 
     if (isInitialLoad) {
       console.log('initial budgets loading');
       setInitialLoading(true);
+      setLoading(true);
     } else {
       if (!loading) {
         setLoading(true);
@@ -136,11 +137,15 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       Should still be forced in the app in someway. Cant use the app really without having a
       budget. */
       let newBudget: BudgetType;
+      let shouldCreateDefault = false;
 
       if (currBudget.length === 0) {
         if (repeating.length !== 0) {
+          //repeating budget found
           newBudget = {
             ...repeating[0],
+            active: true,
+            budgetTotal: repeating[0].budgetTotal,
             repeating: false,
             items: distributeCategoryTotals(categories, 3000).map(d => ({
               categoryId: d.categoryId,
@@ -150,24 +155,57 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
-          setDefaultBudget(repeating[0]);
         } else {
+          //no repeating budget found
           newBudget = {
             ...currentBudget,
+            active: true,
+            budgetTotal: tempBudgetTotal,
             repeating: false,
-            items: distributeCategoryTotals(categories, 3000).map(d => ({
-              categoryId: d.categoryId,
-              typeId: null,
-              amount: d.total,
-            })),
+            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
+              d => ({
+                categoryId: d.categoryId,
+                typeId: null,
+                amount: d.total,
+              }),
+            ),
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
+          shouldCreateDefault = true;
         }
+        //create the months budget
         await createBudget(newBudget);
         setCurrentBudget(newBudget);
+
+        //save the repeating if one doesnte exist.
+        if (repeating.length > 0) {
+          // Use existing repeating budget as default
+          setDefaultBudget(repeating[0]);
+        } else if (shouldCreateDefault) {
+          // Create new default budget
+          const newDefault: BudgetPostType = {
+            active: true,
+            budgetTotal: tempBudgetTotal,
+            repeating: true,
+            month: null,
+            year: null,
+            items: distributeCategoryTotals(categories, tempBudgetTotal).map(
+              d => ({
+                categoryId: d.categoryId,
+                typeId: null,
+                amount: d.total,
+              }),
+            ),
+          };
+          await createBudget(newDefault);
+          setDefaultBudget(newDefault as RepeatingBudget);
+        }
       } else {
         setCurrentBudget(currBudget[0] as BudgetType);
+        if (repeating.length > 0) {
+          setDefaultBudget(repeating[0]);
+        }
       }
 
       console.log('success with budgets');
@@ -177,6 +215,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       if (isInitialLoad) {
         setInitialLoading(false);
+        setLoading(false);
       } else {
         setLoading(false);
       }
@@ -242,8 +281,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount
   useEffect(() => {
-    if (!typesLoading && categories.length > 0 && user && !didInit.current) {
-      didInit.current = true;
+    if (!typesLoading && categories.length > 0 && user && !initialized) {
+      setInitialized(true);
       fetchBudgets(true);
     }
   }, [typesLoading, categories, user]);
