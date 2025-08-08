@@ -20,9 +20,13 @@ public class BudgetMapper {
                 .id(budget.getId())
                 .budgetTotal(budget.getBudgetTotal())
                 .repeating(budget.isRepeating())
-                .items(budget.getItems().stream()
-                        .map(this::toItemDto)
-                        .collect(Collectors.toList()))
+                .items(
+                        budget.getItems() != null
+                                ? budget.getItems().stream()
+                                .map(this::toItemDto)
+                                .collect(Collectors.toList())
+                                : List.of() // empty list if null
+                )
                 .build();
     }
 
