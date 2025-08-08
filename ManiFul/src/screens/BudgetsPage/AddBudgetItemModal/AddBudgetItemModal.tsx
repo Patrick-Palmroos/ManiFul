@@ -294,6 +294,7 @@ export default function AddBudgetItemModal({
           <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
             {categoryValues
               .filter(c => c.categoryId !== -1)
+              .sort((a, b) => a.categoryId - b.categoryId)
               .map((value, i) => (
                 <View key={i} style={{ marginBottom: 16 }}>
                   <Text>
