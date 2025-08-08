@@ -3,12 +3,13 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { API_URL, API_KEY } from '@env';
 import * as Keychain from 'react-native-keychain';
-import { BudgetPostType, BudgetType } from '../types/budgets';
+import { BudgetPostType, BudgetType, RepeatingBudget } from '../types/budgets';
 import { isCurrentMonthAndYear } from '../utils/date_handling';
 
 interface BudgetContextType {
   budgets: BudgetType[];
   currentBudget: BudgetType | null;
+  defaultBudget: RepeatingBudget | null;
   loading: boolean;
   initialLoading: boolean; // only for first load
   error: string | null;
@@ -22,6 +23,7 @@ interface BudgetContextType {
 const BudgetContext = createContext<BudgetContextType>({
   budgets: [],
   currentBudget: null,
+  defaultBudget: null,
   loading: false,
   initialLoading: false,
   error: null,
@@ -42,6 +44,36 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const { user } = useAuth();
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
+  const [defaultBudget, setDefaultBudget] = useState<RepeatingBudget>({
+    active: true,
+    budgetTotal: 2000,
+    month: null,
+    year: null,
+    repeating: true,
+  } as RepeatingBudget);
+
+  const createBudget = async (data: BudgetPostType): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const creds = await Keychain.getGenericPassword();
+      if (!creds) throw new Error('No credentials found');
+
+      await axios.post(`${API_URL}/budgets/create`, data, {
+        headers: {
+          Authorization: `Bearer ${creds.password}`,
+          'BACKEND-API-KEY': API_KEY,
+        },
+      });
+
+      await fetchBudgets(false); // Refresh the list
+      return true;
+    } catch (err) {
+      setError('Failed to create a budget');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchBudgets = async (isInitialLoad = false) => {
     console.log('fetching budgets');
@@ -71,32 +103,40 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const fetchedBudgets = response.data as BudgetType[];
 
-      setBudgets(fetchedBudgets);
-      const currBudget = fetchedBudgets.filter(b =>
-        isCurrentMonthAndYear(b.month, b.year),
+      setBudgets(fetchedBudgets.filter(b => !b.repeating));
+      const currBudget = fetchedBudgets.filter(
+        b => !b.repeating && isCurrentMonthAndYear(b.month, b.year),
       );
+      const repeating = fetchedBudgets.filter(b => b.repeating);
+
       /* TODO: This should be changed later. Some sort of prompt maybe for user. Just
       automatically adding a newBudget without user input is probably gonna be annoying.
       Should still be forced in the app in someway. Cant use the app really without having a
       budget. */
-      if (currBudget.length === 0) {
-        const repeating = budgets.filter(b => b.repeating);
+      let newBudget: BudgetType;
 
-        const newBudget =
-          repeating.length === 0
-            ? ({
-                active: true,
-                budgetTotal: 2000,
-                month: new Date().getMonth() + 1,
-                year: new Date().getFullYear(),
-                repeating: false,
-              } as BudgetType)
-            : (repeating[0] as BudgetType);
+      if (currBudget.length === 0) {
+        if (repeating.length !== 0) {
+          newBudget = {
+            ...repeating[0],
+            repeating: false,
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear(),
+          } as BudgetType;
+        } else {
+          newBudget = {
+            ...currentBudget,
+            repeating: false,
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear(),
+          } as BudgetType;
+        }
         await createBudget(newBudget);
         setCurrentBudget(newBudget);
       } else {
-        setCurrentBudget(currBudget[0]);
+        setCurrentBudget(currBudget[0] as BudgetType);
       }
+
       console.log('success with budgets');
     } catch (err) {
       setError('Failed to fetch budgets');
@@ -107,29 +147,6 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         setLoading(false);
       }
-    }
-  };
-
-  const createBudget = async (data: BudgetPostType): Promise<boolean> => {
-    try {
-      setLoading(true);
-      const creds = await Keychain.getGenericPassword();
-      if (!creds) throw new Error('No credentials found');
-
-      await axios.post(`${API_URL}/budgets/create`, data, {
-        headers: {
-          Authorization: `Bearer ${creds.password}`,
-          'BACKEND-API-KEY': API_KEY,
-        },
-      });
-
-      await fetchBudgets(false); // Refresh the list
-      return true;
-    } catch (err) {
-      setError('Failed to create a budget');
-      return false;
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -200,6 +217,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         budgets,
         currentBudget,
+        defaultBudget,
         loading,
         error,
         refreshBudgets: () => fetchBudgets(false),
