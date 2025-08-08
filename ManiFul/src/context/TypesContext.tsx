@@ -72,7 +72,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
-      console.log('success with types');
+
       return true;
     } catch (err) {
       setError('Error fetching types and categories');
