@@ -19,6 +19,7 @@ type ChosenCategoryValues = {
   categoryId: number;
   categoryName: string;
   total: number;
+  locked: boolean;
 };
 
 const roundTwo = (n: number) => Math.round(n * 100) / 100;
@@ -33,14 +34,22 @@ export default function AddBudgetItemModal({
   onConfirm: (arg1: ChosenCategoryValues[]) => void;
 }) {
   const [toggle, setToggle] = useState<boolean>(false);
+  const [sliderValues, setSliderValues] = useState<number[]>(
+    values.map(v => v.total),
+  );
   const [categoryValues, setCategoryValues] = useState<ChosenCategoryValues[]>([
-    ...values.map(v => ({ ...v, total: Number(v.total.toFixed(2)) })),
+    ...values.map(v => ({
+      ...v,
+      total: Number(v.total.toFixed(2)),
+      locked: false,
+    })),
     {
       categoryId: -1,
       categoryName: 'Unaccounted',
       total:
         Number(values.reduce((sum, i) => sum + i.total, 0).toFixed(2)) -
         totalSum,
+      locked: false,
     },
   ]);
   const [total] = useState<number>(totalSum);
@@ -63,15 +72,22 @@ export default function AddBudgetItemModal({
     }
   }, [categoryValues, toggle, total]);
 
+  useEffect(() => {
+    setSliderValues(
+      categoryValues.filter(c => c.categoryId !== -1).map(c => c.total),
+    );
+  }, [categoryValues]);
+
+  const toggleLock = (index: number) => {
+    const updated = [...categoryValues];
+    updated[index].locked = !updated[index].locked;
+    setCategoryValues(updated);
+  };
+
   const handleValueChange = (index: number, newValue: number) => {
     const roundedNewValue = roundTwo(newValue);
 
     const currentValues = [...categoryValues];
-    const totalSoFar = currentValues.reduce(
-      (sum, c) => sum + Math.round(c.total * 100) / 100,
-      0,
-    );
-    const currentUnaccounted = total - totalSoFar;
 
     const currentVal = currentValues[index].total;
     const delta = newValue - currentVal;
@@ -81,8 +97,20 @@ export default function AddBudgetItemModal({
     // Clamp new value between 0 and total
     updated[index].total = Math.max(0, Math.min(roundedNewValue, total));
 
+    // Get all locked categories (excluding the current one and unaccounted)
+    const lockedCategories = updated.filter(
+      (c, i) => c.locked && i !== index && c.categoryId !== -1,
+    );
+    const totalLocked = lockedCategories.reduce((sum, c) => sum + c.total, 0);
+
+    const maxAvailable = total - totalLocked;
+
     // If increasing the value and don't have any in unaccounted
     if (delta > 0) {
+      // Check if has have enough available considering locked values
+      if (updated[index].total > maxAvailable) {
+        updated[index].total = maxAvailable;
+      }
       // increasing the value
       if (unaccountedIndex !== -1) {
         const unaccountedVal = updated[unaccountedIndex].total;
@@ -94,22 +122,23 @@ export default function AddBudgetItemModal({
           const remainder = delta - unaccountedVal;
           updated[unaccountedIndex].total = 0;
 
-          const otherCategories = updated.filter(
-            (_, i) => i !== index && i !== unaccountedIndex,
+          // Only adjust unlocked categories (excluding current and unaccounted)
+          const adjustableCategories = updated.filter(
+            (c, i) => !c.locked && i !== index && i !== unaccountedIndex,
           );
-          const totalOther = otherCategories.reduce(
+          const totalAdjustable = adjustableCategories.reduce(
             (sum, c) => sum + c.total,
             0,
           );
 
-          if (totalOther > 0) {
-            otherCategories.forEach(cat => {
-              const reduction = (cat.total / totalOther) * remainder;
+          if (totalAdjustable > 0) {
+            adjustableCategories.forEach(cat => {
+              const reduction = (cat.total / totalAdjustable) * remainder;
               cat.total = Math.max(0, cat.total - reduction);
             });
 
             // Update main array
-            otherCategories.forEach(cat => {
+            adjustableCategories.forEach(cat => {
               const originalIndex = updated.findIndex(
                 c => c.categoryId === cat.categoryId,
               );
@@ -145,12 +174,11 @@ export default function AddBudgetItemModal({
     let finalDiff = roundTwo(total - runningTotal);
 
     if (Math.abs(finalDiff) >= 0.01) {
-      const adjustableIndex = updated
-        .map((c, idx) => ({ ...c, idx }))
-        .filter(c => c.categoryId !== -1) // exclude "Unaccounted"
-        .sort((a, b) => b.total - a.total)[0]?.idx;
+      const adjustableIndex = updated.findIndex(
+        (c, idx) => !c.locked && idx !== index && c.categoryId !== -1,
+      );
 
-      if (adjustableIndex !== undefined) {
+      if (adjustableIndex !== -1) {
         updated[adjustableIndex].total = roundTwo(
           updated[adjustableIndex].total + finalDiff,
         );
@@ -162,6 +190,28 @@ export default function AddBudgetItemModal({
 
   const handleSliderChange = (index: number, value: number) => {
     handleValueChange(index, value);
+  };
+
+  const calculateMaxPossibleValue = (index: number) => {
+    const currentValues = [...categoryValues];
+
+    // Current unaccounted amount
+    const unaccountedIndex = currentValues.findIndex(c => c.categoryId === -1);
+    const unaccountedValue =
+      unaccountedIndex !== -1 ? currentValues[unaccountedIndex].total : 0;
+
+    // Current value of this category
+    const currentValue = currentValues[index].total;
+
+    return (
+      currentValue +
+      unaccountedValue +
+      currentValues.reduce(
+        (sum, c, i) =>
+          sum + (!c.locked && i !== index && c.categoryId !== -1 ? c.total : 0),
+        0,
+      )
+    );
   };
 
   const handleAbsoluteInputBlur = (index: number) => {
@@ -195,12 +245,20 @@ export default function AddBudgetItemModal({
   const resetAllToZero = () => {
     const zeroedValues = categoryValues.map(v => ({
       ...v,
-      total: 0,
+      total: v.locked ? v.total : 0, // Keep locked values the same
     }));
 
     setCategoryValues(zeroedValues);
     setInputValues(zeroedValues.map(v => v.total.toFixed(2)));
     setPercentageValues(zeroedValues.map(v => '0.00'));
+  };
+
+  const unlockAll = () => {
+    const unlockedValues = categoryValues.map(v => ({
+      ...v,
+      locked: false,
+    }));
+    setCategoryValues(unlockedValues);
   };
 
   return (
@@ -236,15 +294,19 @@ export default function AddBudgetItemModal({
                     {value.categoryName} | {value.total.toFixed(2)} (
                     {((value.total / total) * 100).toFixed(2)}%)
                   </Text>
-
+                  <TouchableOpacity onPress={() => toggleLock(i)}>
+                    <Text>{value.locked ? 'locked' : 'unlocked'}</Text>
+                  </TouchableOpacity>
                   <Slider
                     minimumValue={0}
                     maximumValue={total}
                     minimumTrackTintColor="#007aff"
                     maximumTrackTintColor="#d3d3d3"
+                    upperLimit={calculateMaxPossibleValue(i)}
                     step={10}
-                    value={value.total}
+                    value={sliderValues[i]}
                     onValueChange={val => handleSliderChange(i, val)}
+                    disabled={value.locked}
                   />
                   {toggle ? (
                     <View
