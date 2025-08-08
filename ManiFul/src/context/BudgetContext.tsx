@@ -11,12 +11,14 @@ import { API_URL, API_KEY } from '@env';
 import * as Keychain from 'react-native-keychain';
 import {
   AnyBudget,
+  BudgetItemType,
   BudgetPostType,
   BudgetType,
   RepeatingBudget,
 } from '../types/budgets';
 import { isCurrentMonthAndYear } from '../utils/date_handling';
 import { useTypes } from './TypesContext';
+import { distributeCategoryTotals } from '../utils/data_handling';
 
 interface BudgetContextType {
   budgets: BudgetType[];
@@ -60,7 +62,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentBudget, setCurrentBudget] = useState<BudgetType | null>(null);
   const [defaultBudget, setDefaultBudget] = useState<RepeatingBudget>({
     active: true,
-    budgetTotal: 2000,
+    budgetTotal: 3000,
     month: null,
     year: null,
     repeating: true,
@@ -140,6 +142,11 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
           newBudget = {
             ...repeating[0],
             repeating: false,
+            items: distributeCategoryTotals(categories, 3000).map(d => ({
+              categoryId: d.categoryId,
+              typeId: null,
+              amount: d.total,
+            })),
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
@@ -148,6 +155,11 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
           newBudget = {
             ...currentBudget,
             repeating: false,
+            items: distributeCategoryTotals(categories, 3000).map(d => ({
+              categoryId: d.categoryId,
+              typeId: null,
+              amount: d.total,
+            })),
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
           } as BudgetType;
