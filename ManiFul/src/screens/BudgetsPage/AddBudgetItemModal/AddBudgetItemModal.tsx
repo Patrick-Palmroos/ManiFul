@@ -52,9 +52,10 @@ export default function AddBudgetItemModal({
     {
       categoryId: -1,
       categoryName: 'Unaccounted',
-      total:
+      total: Math.abs(
         Number(values.reduce((sum, i) => sum + i.total, 0).toFixed(2)) -
-        totalSum,
+          totalSum,
+      ),
       locked: false,
     },
   ]);
@@ -287,7 +288,10 @@ export default function AddBudgetItemModal({
         Unaccounted: {categoryValues.find(c => c.categoryId === -1)?.total}
       </Text>
       <Text>
-        Total calculated: {categoryValues.reduce((sum, c) => sum + c.total, 0)}
+        Total calculated:{' '}
+        {categoryValues
+          .filter(c => c.categoryId !== -1)
+          .reduce((sum, c) => sum + c.total, 0)}
       </Text>
       <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
         <TouchableWithoutFeedback>
