@@ -250,14 +250,19 @@ export default function AddBudgetItemModal({
   };
 
   const resetAllToZero = () => {
-    const zeroedValues = categoryValues.map(v => ({
-      ...v,
-      total: v.locked ? v.total : 0, // Keep locked values the same
-    }));
+    const totalSum = total;
+    const zeroedValues = categoryValues.map(v => {
+      if (v.categoryId === -1) {
+        return { ...v, total: totalSum, locked: false };
+      }
+      return { ...v, total: 0, locked: false };
+    });
 
     setCategoryValues(zeroedValues);
     setInputValues(zeroedValues.map(v => v.total.toFixed(2)));
-    setPercentageValues(zeroedValues.map(v => '0.00'));
+    setPercentageValues(
+      zeroedValues.map(v => ((v.total / totalSum) * 100).toFixed(2)),
+    );
   };
 
   const unlockAll = () => {
