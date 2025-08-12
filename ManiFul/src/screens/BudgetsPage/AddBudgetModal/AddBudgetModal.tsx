@@ -101,6 +101,10 @@ export default function AddBudgetModal({
     const parsed = Number(tempInputValues?.replace(',', '.'));
 
     if (!isNaN(parsed)) {
+      if (parsed < 0) {
+        setTempInputValues(total.toFixed(2));
+        return;
+      }
       const fixed = parsed.toFixed(2);
       setTotal(Number(fixed));
       setTempInputValues(fixed);
