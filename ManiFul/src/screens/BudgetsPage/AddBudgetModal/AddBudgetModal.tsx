@@ -25,7 +25,7 @@ export default function AddBudgetModal({
 }: {
   onConfirm: () => void;
 }) {
-  const { createBudget } = useBudgets();
+  const { createBudget, budgets } = useBudgets();
   const { categories: typeCategories } = useTypes();
   const categories = typeCategories.filter(c => c.expense);
   const { openModal, closeModal } = useModalContext();
@@ -130,6 +130,21 @@ export default function AddBudgetModal({
       year: date.getFullYear(),
       repeating: false,
     } as BudgetPostType;
+
+    //If budget for said month and year already exists show error
+    if (budgets.some(b => b.month === data.month && b.year === data.year)) {
+      showMessage({
+        message: 'Budget already exists',
+        description: `A budget for ${date.toLocaleString('default', {
+          month: 'long',
+        })} ${date.getFullYear()} already exists.`,
+        duration: 5000,
+        floating: true,
+        type: 'warning',
+      });
+      setLoading(false);
+      return;
+    }
 
     const res = createBudget(data);
 
