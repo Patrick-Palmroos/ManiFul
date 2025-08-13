@@ -265,6 +265,63 @@ export default function AllocationsModal({
     );
   };
 
+  const divideEvenly = () => {
+    const unlockedCategories = categoryValues.filter(
+      c => !c.locked && c.categoryId !== -1,
+    );
+    const lockedCategories = categoryValues.filter(
+      c => c.locked && c.categoryId !== -1,
+    );
+    const unaccountedIndex = categoryValues.findIndex(c => c.categoryId === -1);
+
+    // How much is available after keeping locked categories
+    const availableTotal =
+      total - lockedCategories.reduce((sum, c) => sum + c.total, 0);
+
+    if (unlockedCategories.length === 0) return;
+
+    // divide evenly for unlocked categories
+    const share = roundTwo(availableTotal / unlockedCategories.length);
+
+    let updated = categoryValues.map(c => {
+      if (c.locked || c.categoryId === -1) {
+        return { ...c }; // no change for locked and unaccounted
+      }
+      return { ...c, total: share };
+    });
+
+    // Fix any rounding difference by adjusting first unlocked category
+    let distributedSum = updated
+      .filter(c => c.categoryId !== -1)
+      .reduce((sum, c) => sum + c.total, 0);
+    let roundingDiff = roundTwo(total - distributedSum);
+
+    if (Math.abs(roundingDiff) >= 0.01) {
+      const adjustIndex = updated.findIndex(
+        c => !c.locked && c.categoryId !== -1,
+      );
+      if (adjustIndex !== -1) {
+        updated[adjustIndex].total = roundTwo(
+          updated[adjustIndex].total + roundingDiff,
+        );
+      }
+    }
+
+    // Update unaccounted
+    if (unaccountedIndex !== -1) {
+      updated[unaccountedIndex].total = roundTwo(
+        total -
+          updated
+            .filter(c => c.categoryId !== -1)
+            .reduce((sum, c) => sum + c.total, 0),
+      );
+    }
+
+    setCategoryValues(updated);
+    setInputValues(updated.map(v => v.total.toFixed(2)));
+    setPercentageValues(updated.map(v => ((v.total / total) * 100).toFixed(2)));
+  };
+
   const unlockAll = () => {
     const unlockedValues = categoryValues.map(v => ({
       ...v,
@@ -275,17 +332,24 @@ export default function AllocationsModal({
 
   return (
     <View style={{ height: '100%' }}>
-      <Toggle
-        value={toggle}
-        onValueChange={value => setToggle(value)}
-        field1="Numbers"
-        field2="Percentages"
-        width={'70%'}
-      />
+      <View style={{ alignItems: 'center' }}>
+        <Toggle
+          value={toggle}
+          onValueChange={value => setToggle(value)}
+          field1="Numbers"
+          field2="Percentages"
+          width={'70%'}
+        />
+      </View>
       <TouchableOpacity
         onPress={resetAllToZero}
         style={{ backgroundColor: 'cyan', padding: 2, borderRadius: 5 }}>
         <Text style={text.regular}>Reset All</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={divideEvenly}
+        style={{ backgroundColor: 'cyan', padding: 2, borderRadius: 5 }}>
+        <Text style={text.regular}>divide evenly</Text>
       </TouchableOpacity>
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
