@@ -11,7 +11,7 @@ import { useTypes } from '../../../context/TypesContext';
 import styles from '../../../styles/styles';
 import MonthPicker from 'react-native-month-year-picker';
 import { useState, useEffect } from 'react';
-import AddBudgetItemModal from '../AddBudgetItemModal';
+import AllocationsModal from '../AllocationsModal';
 import { useModalContext } from '../../../context/ModalContext';
 import { Category } from '../../../types/categories';
 import { showMessage } from 'react-native-flash-message';
@@ -288,7 +288,7 @@ export default function EditBudgetModal({
             onPress={() =>
               openModal({
                 content: (
-                  <AddBudgetItemModal
+                  <AllocationsModal
                     values={chosenCategories}
                     totalSum={total}
                     onConfirm={v => {
