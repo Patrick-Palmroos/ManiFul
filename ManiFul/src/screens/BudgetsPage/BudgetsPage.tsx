@@ -77,7 +77,7 @@ const BudgetsPage = () => {
         style={{
           height: 120,
           width: '100%',
-          borderRadius: 10,
+          borderRadius: 15,
         }}>
         {/* Conditional render */}
         {currentBudget && (
@@ -199,7 +199,7 @@ const BudgetsPage = () => {
             backgroundColor: colors.light,
             width: '100%',
             marginTop: 10,
-            borderRadius: 8,
+            borderRadius: 15,
             padding: 8,
           }}>
           {/* View for title and total */}
