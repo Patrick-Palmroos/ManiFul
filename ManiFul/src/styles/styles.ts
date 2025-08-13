@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     borderColor: colors.highlight,
     backgroundColor: colors.white,
     color: colors.textDefault,
-    borderRadius: 5,
+    borderRadius: 10,
     fontSize: 16,
   },
   textFieldFocused: {
