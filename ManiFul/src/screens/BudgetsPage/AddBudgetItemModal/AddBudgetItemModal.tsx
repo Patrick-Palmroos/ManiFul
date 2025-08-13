@@ -52,9 +52,9 @@ export default function AddBudgetItemModal({
     {
       categoryId: -1,
       categoryName: 'Unaccounted',
-      total: Math.abs(
-        Number(values.reduce((sum, i) => sum + i.total, 0).toFixed(2)) -
-          totalSum,
+      total: Math.max(
+        0,
+        roundTwo(totalSum - values.reduce((sum, i) => sum + i.total, 0)),
       ),
       locked: false,
     },
