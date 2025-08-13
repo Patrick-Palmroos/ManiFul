@@ -362,68 +362,70 @@ export default function AllocationsModal({
           .filter(c => c.categoryId !== -1)
           .reduce((sum, c) => sum + c.total, 0)}
       </Text>
-      <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
-        <TouchableWithoutFeedback>
-          <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
-            {categoryValues
-              .filter(c => c.categoryId !== -1)
-              .sort((a, b) => a.categoryId - b.categoryId)
-              .map((value, i) => (
-                <View key={i} style={{ marginBottom: 16 }}>
-                  <Text>
-                    {value.categoryName} | {value.total.toFixed(2)} (
-                    {((value.total / total) * 100).toFixed(2)}%)
-                  </Text>
-                  <TouchableOpacity onPress={() => toggleLock(i)}>
-                    <Text>{value.locked ? 'locked' : 'unlocked'}</Text>
-                  </TouchableOpacity>
-                  <Slider
-                    minimumValue={0}
-                    maximumValue={total}
-                    minimumTrackTintColor="#007aff"
-                    maximumTrackTintColor="#d3d3d3"
-                    upperLimit={calculateMaxPossibleValue(i)}
-                    step={10}
-                    value={sliderValues[i]}
-                    onValueChange={val => handleSliderChange(i, val)}
-                    disabled={value.locked}
-                  />
-                  {toggle ? (
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ maxHeight: '60%' }}>
+        <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
+          <TouchableWithoutFeedback>
+            <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
+              {categoryValues
+                .filter(c => c.categoryId !== -1)
+                .sort((a, b) => a.categoryId - b.categoryId)
+                .map((value, i) => (
+                  <View key={i} style={{ marginBottom: 16 }}>
+                    <Text>
+                      {value.categoryName} | {value.total.toFixed(2)} (
+                      {((value.total / total) * 100).toFixed(2)}%)
+                    </Text>
+                    <TouchableOpacity onPress={() => toggleLock(i)}>
+                      <Text>{value.locked ? 'locked' : 'unlocked'}</Text>
+                    </TouchableOpacity>
+                    <Slider
+                      minimumValue={0}
+                      maximumValue={total}
+                      minimumTrackTintColor="#007aff"
+                      maximumTrackTintColor="#d3d3d3"
+                      upperLimit={calculateMaxPossibleValue(i)}
+                      step={10}
+                      value={sliderValues[i]}
+                      onValueChange={val => handleSliderChange(i, val)}
+                      disabled={value.locked}
+                    />
+                    {toggle ? (
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TextInput
+                          value={percentageValues[i]}
+                          inputMode="numeric"
+                          keyboardType="decimal-pad"
+                          style={styles.textField}
+                          onChangeText={text => {
+                            const newPercentages = [...percentageValues];
+                            newPercentages[i] = text;
+                            setPercentageValues(newPercentages);
+                          }}
+                          onBlur={() => handlePercentageInputBlur(i)}
+                        />
+                        <Text>%</Text>
+                      </View>
+                    ) : (
                       <TextInput
-                        value={percentageValues[i]}
+                        value={inputValues[i]}
                         inputMode="numeric"
                         keyboardType="decimal-pad"
                         style={styles.textField}
                         onChangeText={text => {
-                          const newPercentages = [...percentageValues];
-                          newPercentages[i] = text;
-                          setPercentageValues(newPercentages);
+                          const newInputs = [...inputValues];
+                          newInputs[i] = text;
+                          setInputValues(newInputs);
                         }}
-                        onBlur={() => handlePercentageInputBlur(i)}
+                        onBlur={() => handleAbsoluteInputBlur(i)}
                       />
-                      <Text>%</Text>
-                    </View>
-                  ) : (
-                    <TextInput
-                      value={inputValues[i]}
-                      inputMode="numeric"
-                      keyboardType="decimal-pad"
-                      style={styles.textField}
-                      onChangeText={text => {
-                        const newInputs = [...inputValues];
-                        newInputs[i] = text;
-                        setInputValues(newInputs);
-                      }}
-                      onBlur={() => handleAbsoluteInputBlur(i)}
-                    />
-                  )}
-                </View>
-              ))}
-          </View>
-        </TouchableWithoutFeedback>
-      </ScrollView>
+                    )}
+                  </View>
+                ))}
+            </View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </View>
       <Button
         title="save"
         onPress={() =>
