@@ -32,6 +32,7 @@ export default function AddBudgetModal({
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
   const [total, setTotal] = useState<number>(2000);
+  const [prevTotal, setPrevTotal] = useState<number>(2000);
   const [loading, setLoading] = useState<boolean>(false);
   const [tempInputValues, setTempInputValues] = useState<string>(
     total.toFixed(2),
@@ -48,41 +49,45 @@ export default function AddBudgetModal({
 
   //Setting the totals based off percentages.
   useEffect(() => {
-    const currentSum = chosenCategories.reduce(
-      (sum, cat) => sum + cat.total,
-      0,
-    );
+    if (total === prevTotal) return;
 
-    if (currentSum === 0) return;
-
-    // Calculate the distribution based on current amounts
+    // Calculate the proportional distribution based on current amounts
     const newCategoryTotals = chosenCategories.map(cat => ({
       ...cat,
-      total: Number(((cat.total / currentSum) * total).toFixed(2)),
+      total: Number(((cat.total / prevTotal) * total).toFixed(2)),
     }));
 
-    // Fix rounding errors
+    // Fix any rounding errors (e.g., if sum != total due to .toFixed(2))
     const adjustedSum = newCategoryTotals.reduce(
       (sum, cat) => sum + cat.total,
       0,
     );
     let roundingDifference = Number((total - adjustedSum).toFixed(2));
 
-    // Distribute the rounding difference
-    for (
-      let i = 0;
-      Math.abs(roundingDifference) >= 0.01 && i < newCategoryTotals.length;
-      i++
-    ) {
-      const adjustment = roundingDifference > 0 ? 0.01 : -0.01;
-      newCategoryTotals[i].total = Number(
-        (newCategoryTotals[i].total + adjustment).toFixed(2),
-      );
-      roundingDifference = Number((roundingDifference - adjustment).toFixed(2));
+    // Distribute the rounding difference (if any) starting from the first category
+    const nonZeroCategories = chosenCategories.filter(cat => cat.total > 0);
+    const unaccounted =
+      prevTotal - chosenCategories.reduce((sum, c) => sum + c.total, 0);
+
+    if (nonZeroCategories.length > 0 && unaccounted <= 0) {
+      for (
+        let i = 0;
+        Math.abs(roundingDifference) >= 0.01 && i < newCategoryTotals.length;
+        i++
+      ) {
+        const adjustment = roundingDifference > 0 ? 0.01 : -0.01;
+        if (newCategoryTotals[i].total <= 0) continue;
+        newCategoryTotals[i].total = Number(
+          (newCategoryTotals[i].total + adjustment).toFixed(2),
+        );
+        roundingDifference = Number(
+          (roundingDifference - adjustment).toFixed(2),
+        );
+      }
     }
 
     setChosenCategories(newCategoryTotals);
-  }, [total, categories.length]);
+  }, [total]);
 
   const handleChange = (event: any, newDate?: Date) => {
     setDateOpen(false);
@@ -101,11 +106,8 @@ export default function AddBudgetModal({
     const parsed = Number(tempInputValues?.replace(',', '.'));
 
     if (!isNaN(parsed)) {
-      if (parsed < 0) {
-        setTempInputValues(total.toFixed(2));
-        return;
-      }
       const fixed = parsed.toFixed(2);
+      setPrevTotal(total);
       setTotal(Number(fixed));
       setTempInputValues(fixed);
     } else {
