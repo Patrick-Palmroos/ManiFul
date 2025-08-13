@@ -57,7 +57,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           padding: 10,
-          borderRadius: 10,
+          borderRadius: 15,
         }}>
         <View>
           {/* Date */}
