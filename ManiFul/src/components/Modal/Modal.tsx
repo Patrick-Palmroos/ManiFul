@@ -5,7 +5,6 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   Platform,
-  ScrollView,
   Keyboard,
 } from 'react-native';
 import styles from './styles';
@@ -15,6 +14,7 @@ interface Props {
   children: React.ReactNode;
   onClose: () => void;
   closeButton?: boolean;
+  title?: string;
   disableClosing?: boolean;
 }
 
@@ -22,6 +22,7 @@ const Modal = ({
   children,
   onClose,
   closeButton = true,
+  title = '',
   disableClosing = false,
 }: Props) => {
   return (
@@ -46,16 +47,17 @@ const Modal = ({
           <View>
             {/* Close Button */}
             {closeButton && !disableClosing && (
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                {/* You can use a text fallback or an icon */}
-                {/* <Text style={styles.closeText}>×</Text> */}
-                <MaterialIcons
-                  name={'close'}
-                  size={30}
-                  color={'white'}
-                  style={styles.closeIcon}
-                />
-              </TouchableOpacity>
+              <View style={styles.headerWrapper}>
+                <Text style={styles.title}>{title}</Text>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                  <MaterialIcons
+                    name={'close'}
+                    size={35}
+                    color={'white'}
+                    style={styles.closeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             )}
 
             {/* Modal Content */}
