@@ -144,6 +144,7 @@ const BudgetsPage = () => {
                         onConfirm={() => closeModal('EditBudgetModal')}
                       />
                     ),
+                    title: 'Edit current budget',
                     id: 'EditBudgetModal',
                   })
                 }
@@ -219,6 +220,7 @@ const BudgetsPage = () => {
                       onConfirm={() => closeModal('EditBudgetModal')}
                     />
                   ),
+                  title: 'Edit default budget',
                   id: 'EditBudgetModal',
                 })
               }>
@@ -289,6 +291,7 @@ const BudgetsPage = () => {
                   onConfirm={() => closeModal('addBudgetModal')}
                 />
               ),
+              title: 'Add a budget',
               id: 'addBudgetModal',
             })
           }

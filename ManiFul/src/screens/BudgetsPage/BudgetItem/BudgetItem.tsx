@@ -102,6 +102,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
                     item={item}
                   />
                 ),
+                title: 'Edit budget',
                 id: 'editBudgetModal',
               })
             }>
