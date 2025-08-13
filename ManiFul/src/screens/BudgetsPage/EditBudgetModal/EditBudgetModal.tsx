@@ -1,4 +1,4 @@
-import { Text, View, TextInput, Button } from 'react-native';
+import { Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import {
   BudgetType,
   BudgetPostType,
@@ -16,6 +16,10 @@ import { useModalContext } from '../../../context/ModalContext';
 import { Category } from '../../../types/categories';
 import { showMessage } from 'react-native-flash-message';
 import { isCurrentMonthAndYear } from '../../../utils/date_handling';
+import text from '../../../styles/text';
+import colors from '../../../styles/colors';
+import { Shadow } from 'react-native-shadow-2';
+import GradientButton from '../../../components/GradientButton/GradientButton';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -172,53 +176,144 @@ export default function EditBudgetModal({
   };
 
   return (
-    <View>
-      <Text>Edit a budget</Text>
-      <Text>Total</Text>
-      <TextInput
-        value={tempInputValues}
-        inputMode="numeric"
-        keyboardType="decimal-pad"
-        style={styles.textField}
-        onBlur={handleTotalChange}
-        onChangeText={text => {
-          setTempInputValues(text);
-        }}
-      />
-      <Text>
-        Chosen totals:{' '}
-        {chosenCategories.reduce((sum, c) => sum + c.total, 0).toFixed(2)}
-      </Text>
-      <Text>Date</Text>
-      {date && isCurrentMonthAndYear(date.getMonth(), date.getFullYear()) && (
-        <View>
-          <Text>
-            Selected: {date.toLocaleString('default', { month: 'long' })}{' '}
-            {date.getFullYear()}
-          </Text>
-          <Button title="Change date" onPress={() => setDateOpen(true)} />
-        </View>
-      )}
-      <Text>Budget items</Text>
-      <Button
-        title="Select budget item"
-        onPress={() =>
-          openModal({
-            content: (
-              <AddBudgetItemModal
-                values={chosenCategories}
-                totalSum={total}
-                onConfirm={v => {
-                  setChosenCategories(v);
-                  closeModal('BudgetItemModal');
+    <View style={{ gap: 15 }}>
+      {/* Total section */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
+          justifyContent: 'center',
+        }}>
+        <Text style={{ ...text.regularSemiBold, fontSize: 18 }}>Total:</Text>
+        <TextInput
+          value={tempInputValues}
+          inputMode="numeric"
+          keyboardType="decimal-pad"
+          style={{
+            ...styles.textField,
+            width: 120,
+            height: 45,
+          }}
+          onBlur={handleTotalChange}
+          onChangeText={text => {
+            setTempInputValues(text);
+          }}
+        />
+        <Text
+          style={{ ...text.moneyDark, fontSize: 20, color: colors.highlight }}>
+          €
+        </Text>
+      </View>
+      {/* Date section */}
+      {date &&
+        !isCurrentMonthAndYear(date.getMonth() + 1, date.getFullYear()) && (
+          <View style={{ alignItems: 'center', marginTop: 10 }}>
+            <View
+              style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+              <Text style={{ ...text.regularSemiBold, fontSize: 18 }}>
+                Date:{' '}
+              </Text>
+              <Text style={{ ...text.regular }}>
+                {date.toLocaleString('default', { month: 'long' })}{' '}
+                {date.getFullYear()}
+              </Text>
+            </View>
+            <Shadow
+              distance={5}
+              startColor="rgba(0, 4, 29, 0.03)"
+              offset={[0, 2]}
+              stretch={true}>
+              <TouchableOpacity
+                style={{
+                  padding: 10,
+                  width: 200,
+                  marginTop: 5,
+                  alignItems: 'center',
+                  borderRadius: 15,
+                  backgroundColor: colors.highlight,
                 }}
-              />
-            ),
-            id: 'BudgetItemModal',
-          })
-        }
-      />
-      <Button title="Save" onPress={onSave} />
+                onPress={() => setDateOpen(true)}>
+                <Text style={{ ...text.regularSemiBold, color: colors.white }}>
+                  Change date
+                </Text>
+              </TouchableOpacity>
+            </Shadow>
+          </View>
+        )}
+      {/* Budget categories section */}
+      <View style={{ marginTop: 20 }}>
+        <Text style={{ ...text.title, fontSize: 20 }}>Budget Allocation</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ ...text.regular, textAlign: 'center' }}>
+            {`Allocated amount\n`}
+            <Text
+              style={{
+                ...text.moneyDark,
+                fontSize: 18,
+                color: colors.gradient,
+              }}>
+              {chosenCategories.reduce((sum, c) => sum + c.total, 0).toFixed(2)}
+              €
+            </Text>
+          </Text>
+          <Text style={{ ...text.regular, textAlign: 'center' }}>
+            {`Unallocated amount\n`}
+            <Text
+              style={{
+                ...text.moneyDark,
+                fontSize: 18,
+              }}>
+              {(
+                total - chosenCategories.reduce((sum, c) => sum + c.total, 0)
+              ).toFixed(2)}
+              €
+            </Text>
+          </Text>
+        </View>
+        <Shadow
+          distance={5}
+          startColor="rgba(0, 4, 29, 0.03)"
+          offset={[0, 2]}
+          stretch={true}>
+          <TouchableOpacity
+            style={{
+              padding: 10,
+              width: '100%',
+              marginTop: 10,
+              alignItems: 'center',
+              borderRadius: 15,
+              backgroundColor: colors.highlight,
+            }}
+            onPress={() =>
+              openModal({
+                content: (
+                  <AddBudgetItemModal
+                    values={chosenCategories}
+                    totalSum={total}
+                    onConfirm={v => {
+                      setChosenCategories(v);
+                      closeModal('BudgetItemModal');
+                    }}
+                  />
+                ),
+                id: 'BudgetItemModal',
+              })
+            }>
+            <Text
+              style={{
+                ...text.regularSemiBold,
+                color: colors.white,
+                fontSize: 18,
+              }}>
+              Edit allocations
+            </Text>
+          </TouchableOpacity>
+        </Shadow>
+      </View>
+      <View style={{ marginTop: 30 }}>
+        <GradientButton text="Save budget" onClick={onSave} width={'95%'} />
+      </View>
       {dateOpen && date && (
         <MonthPicker
           value={date}
