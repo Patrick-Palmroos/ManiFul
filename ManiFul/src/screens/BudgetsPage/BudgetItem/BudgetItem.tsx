@@ -52,7 +52,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
       stretch={true}>
       <View
         style={{
-          backgroundColor: 'white',
+          backgroundColor: colors.light,
           margin: 5,
           flexDirection: 'row',
           justifyContent: 'space-between',
