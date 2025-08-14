@@ -34,6 +34,5 @@ public class Category {
     private Boolean expense;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Type> types;
 }
