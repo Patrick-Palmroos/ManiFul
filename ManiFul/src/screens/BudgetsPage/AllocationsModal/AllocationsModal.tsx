@@ -15,6 +15,7 @@ import Slider from '@react-native-community/slider';
 import styles from '../../../styles/styles';
 import Toggle from '../../../components/Toggle';
 import text from '../../../styles/text';
+import colors from '../../../styles/colors';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -41,6 +42,7 @@ export default function AllocationsModal({
   onConfirm: (arg1: PropCategoryValues[]) => void;
 }) {
   const screenHeight = Dimensions.get('window').height;
+  const screenWidth = Dimensions.get('window').width;
   const [toggle, setToggle] = useState<boolean>(false);
   const [sliderValues, setSliderValues] = useState<number[]>(
     values.map(v => v.total),
@@ -343,16 +345,37 @@ export default function AllocationsModal({
           width={'70%'}
         />
       </View>
-      <TouchableOpacity
-        onPress={resetAllToZero}
-        style={{ backgroundColor: 'cyan', padding: 2, borderRadius: 5 }}>
-        <Text style={text.regular}>Reset All</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={divideEvenly}
-        style={{ backgroundColor: 'cyan', padding: 2, borderRadius: 5 }}>
-        <Text style={text.regular}>divide evenly</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          marginTop: 20,
+        }}>
+        <TouchableOpacity
+          onPress={resetAllToZero}
+          style={{
+            backgroundColor: colors.gradient,
+            padding: 5,
+            borderRadius: 15,
+            width: screenWidth * 0.35,
+          }}>
+          <Text style={{ ...text.regularLight, textAlign: 'center' }}>
+            Reset All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={divideEvenly}
+          style={{
+            backgroundColor: colors.gradient,
+            padding: 5,
+            borderRadius: 15,
+            width: screenWidth * 0.35,
+          }}>
+          <Text style={{ ...text.regularLight, textAlign: 'center' }}>
+            divide evenly
+          </Text>
+        </TouchableOpacity>
+      </View>
       <Text>Add them items</Text>
       <Text>Total: {total.toFixed(2)}</Text>
       <Text>
