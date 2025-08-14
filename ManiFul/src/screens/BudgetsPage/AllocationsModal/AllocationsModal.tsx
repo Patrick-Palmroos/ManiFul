@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import { Category } from '../../../types/categories';
 import { useState, useEffect } from 'react';
@@ -39,6 +40,7 @@ export default function AllocationsModal({
   totalSum: number;
   onConfirm: (arg1: PropCategoryValues[]) => void;
 }) {
+  const screenHeight = Dimensions.get('window').height;
   const [toggle, setToggle] = useState<boolean>(false);
   const [sliderValues, setSliderValues] = useState<number[]>(
     values.map(v => v.total),
@@ -331,7 +333,7 @@ export default function AllocationsModal({
   };
 
   return (
-    <View style={{ height: '100%' }}>
+    <View style={{ height: screenHeight * 0.7 }}>
       <View style={{ alignItems: 'center' }}>
         <Toggle
           value={toggle}
@@ -362,7 +364,7 @@ export default function AllocationsModal({
           .filter(c => c.categoryId !== -1)
           .reduce((sum, c) => sum + c.total, 0)}
       </Text>
-      <View style={{ maxHeight: '60%' }}>
+      <View style={{ maxHeight: screenHeight * 0.45 }}>
         <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
           <TouchableWithoutFeedback>
             <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
