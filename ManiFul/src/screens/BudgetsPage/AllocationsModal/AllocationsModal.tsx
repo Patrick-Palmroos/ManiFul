@@ -533,12 +533,20 @@ export default function AllocationsModal({
           </TouchableWithoutFeedback>
         </ScrollView>
       </View>
-      <Button
-        title="save"
+      <TouchableOpacity
+        style={{
+          backgroundColor: colors.confirmButton,
+          padding: 6,
+          borderRadius: 15,
+        }}
         onPress={() =>
           onConfirm(categoryValues.filter(c => c.categoryId !== -1))
-        }
-      />
+        }>
+        <Text
+          style={{ ...text.regularLight, fontSize: 18, textAlign: 'center' }}>
+          Save changes
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
