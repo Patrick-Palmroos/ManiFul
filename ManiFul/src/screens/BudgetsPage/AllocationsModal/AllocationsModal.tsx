@@ -16,6 +16,7 @@ import styles from '../../../styles/styles';
 import Toggle from '../../../components/Toggle';
 import text from '../../../styles/text';
 import colors from '../../../styles/colors';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -336,6 +337,7 @@ export default function AllocationsModal({
 
   return (
     <View style={{ height: screenHeight * 0.7 }}>
+      {/* Toggle */}
       <View style={{ alignItems: 'center' }}>
         <Toggle
           value={toggle}
@@ -345,6 +347,7 @@ export default function AllocationsModal({
           width={'70%'}
         />
       </View>
+      {/* Action buttons */}
       <View
         style={{
           flexDirection: 'row',
@@ -376,75 +379,154 @@ export default function AllocationsModal({
           </Text>
         </TouchableOpacity>
       </View>
-      <Text>Add them items</Text>
-      <Text>Total: {total.toFixed(2)}</Text>
-      <Text>
-        Unaccounted: {categoryValues.find(c => c.categoryId === -1)?.total}
-      </Text>
-      <Text>
-        Total calculated:{' '}
-        {categoryValues
-          .filter(c => c.categoryId !== -1)
-          .reduce((sum, c) => sum + c.total, 0)}
-      </Text>
+      {/* Information (total etc.) */}
+      <View style={{ marginTop: 20, paddingBottom: 10 }}>
+        <Text style={text.regular}>Total: {total.toFixed(2)}€</Text>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+          <Text style={text.regular}>
+            Allocated:{' '}
+            {categoryValues
+              .filter(c => c.categoryId !== -1)
+              .reduce((sum, c) => sum + c.total, 0)
+              .toFixed(2)}
+            €
+          </Text>
+          <Text style={text.regular}>
+            Unallocated:{' '}
+            {(
+              categoryValues.find(c => c.categoryId === -1)?.total || 0
+            ).toFixed(2)}
+            €
+          </Text>
+        </View>
+      </View>
+      {/* allocation items */}
       <View style={{ maxHeight: screenHeight * 0.45 }}>
         <ScrollView scrollEnabled={true} style={{ marginBottom: 20 }}>
           <TouchableWithoutFeedback>
-            <View style={{ flex: 1, marginBottom: 20, marginTop: 20 }}>
+            <View style={{ flex: 1, marginBottom: 20, marginTop: 10 }}>
               {categoryValues
                 .filter(c => c.categoryId !== -1)
                 .sort((a, b) => a.categoryId - b.categoryId)
                 .map((value, i) => (
                   <View key={i} style={{ marginBottom: 16 }}>
-                    <Text>
-                      {value.categoryName} | {value.total.toFixed(2)} (
-                      {((value.total / total) * 100).toFixed(2)}%)
-                    </Text>
-                    <TouchableOpacity onPress={() => toggleLock(i)}>
-                      <Text>{value.locked ? 'locked' : 'unlocked'}</Text>
-                    </TouchableOpacity>
-                    <Slider
-                      minimumValue={0}
-                      maximumValue={total}
-                      minimumTrackTintColor="#007aff"
-                      maximumTrackTintColor="#d3d3d3"
-                      upperLimit={calculateMaxPossibleValue(i)}
-                      step={10}
-                      value={sliderValues[i]}
-                      onValueChange={val => handleSliderChange(i, val)}
-                      disabled={value.locked}
-                    />
-                    {toggle ? (
-                      <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TextInput
-                          value={percentageValues[i]}
-                          inputMode="numeric"
-                          keyboardType="decimal-pad"
-                          style={styles.textField}
-                          onChangeText={text => {
-                            const newPercentages = [...percentageValues];
-                            newPercentages[i] = text;
-                            setPercentageValues(newPercentages);
-                          }}
-                          onBlur={() => handlePercentageInputBlur(i)}
-                        />
-                        <Text>%</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      {/* Wrapper for name and value + slider */}
+                      <View>
+                        {/* Wrapper for name and value */}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: 6,
+                          }}>
+                          <Text
+                            style={{
+                              ...text.regularSemiBold,
+                              // backgroundColor: 'red',
+                            }}>
+                            {value.categoryName}
+                          </Text>
+                          <Text
+                            style={{
+                              ...text.subtext,
+                              //  backgroundColor: 'green',
+                              lineHeight: 16,
+                              fontSize: 14,
+                            }}>
+                            {toggle
+                              ? `${value.total.toFixed(2)}€`
+                              : `${((value.total / total) * 100).toFixed(2)}%`}
+                          </Text>
+                        </View>
+                        {/* wrapper for slider and lock */}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            //backgroundColor: 'cyan',
+                            width: screenWidth * 0.5,
+                          }}>
+                          <TouchableOpacity onPress={() => toggleLock(i)}>
+                            <MaterialIcons
+                              name={value.locked ? 'lock-outline' : 'lock-open'}
+                              size={25}
+                              color={
+                                value.locked ? colors.gradient : colors.subText
+                              }
+                            />
+                          </TouchableOpacity>
+                          <Slider
+                            style={{ width: screenWidth * 0.45 }}
+                            minimumValue={0}
+                            maximumValue={total}
+                            minimumTrackTintColor={colors.highlight}
+                            thumbTintColor={colors.highlight}
+                            maximumTrackTintColor={colors.gradient}
+                            upperLimit={calculateMaxPossibleValue(i)}
+                            step={10}
+                            value={sliderValues[i]}
+                            onValueChange={val => handleSliderChange(i, val)}
+                            disabled={value.locked}
+                          />
+                        </View>
                       </View>
-                    ) : (
-                      <TextInput
-                        value={inputValues[i]}
-                        inputMode="numeric"
-                        keyboardType="decimal-pad"
-                        style={styles.textField}
-                        onChangeText={text => {
-                          const newInputs = [...inputValues];
-                          newInputs[i] = text;
-                          setInputValues(newInputs);
-                        }}
-                        onBlur={() => handleAbsoluteInputBlur(i)}
-                      />
-                    )}
+                      {/* text field for percentage/number */}
+                      {toggle ? (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <TextInput
+                            value={percentageValues[i]}
+                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            style={{
+                              ...styles.textField,
+                              width: screenWidth * 0.22,
+                              height: 45,
+                            }}
+                            onChangeText={text => {
+                              const newPercentages = [...percentageValues];
+                              newPercentages[i] = text;
+                              setPercentageValues(newPercentages);
+                            }}
+                            onBlur={() => handlePercentageInputBlur(i)}
+                          />
+                          <Text style={{ ...text.regular }}> %</Text>
+                        </View>
+                      ) : (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <TextInput
+                            value={inputValues[i]}
+                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            style={{
+                              ...styles.textField,
+                              width: screenWidth * 0.22,
+                              height: 45,
+                            }}
+                            onChangeText={text => {
+                              const newInputs = [...inputValues];
+                              newInputs[i] = text;
+                              setInputValues(newInputs);
+                            }}
+                            onBlur={() => handleAbsoluteInputBlur(i)}
+                          />
+                          <Text style={{ ...text.regular }}> €</Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
                 ))}
             </View>
