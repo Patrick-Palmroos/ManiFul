@@ -25,6 +25,7 @@ import EditBudgetModal from './EditBudgetModal';
 import { useTypes } from '../../context/TypesContext';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import GradientButton from '../../components/GradientButton/GradientButton';
+import styles from './styles';
 
 const months = [
   'January',
@@ -67,35 +68,20 @@ const BudgetsPage = () => {
   }
 
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
+    <ScrollView style={styles.wrapper}>
       {/* Top card */}
       <LinearGradient
         colors={[colors.highlight, '#861955']}
         start={{ x: 0, y: 1 }}
         end={{ x: 0.6, y: 0 }}
-        style={{
-          height: 120,
-          width: '100%',
-          borderRadius: 15,
-        }}>
+        style={styles.topCardGradient}>
         {/* Conditional render */}
         {currentBudget && (
           /* Wrapper for the whole section */
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              height: '100%',
-            }}>
+          <View style={styles.topCardWrapper}>
             {/* Display the month */}
-            <View style={{ justifyContent: 'space-evenly', marginLeft: 10 }}>
-              <Text
-                style={{
-                  ...text.regularSemiBold,
-                  color: colors.light,
-                  fontSize: 20,
-                }}>
+            <View style={styles.monthWrapper}>
+              <Text style={styles.dateText}>
                 {`${months[currentBudget.month - 1]}`}
                 <Text style={{ fontSize: 14 }}>
                   {'  '}
@@ -103,12 +89,7 @@ const BudgetsPage = () => {
                 </Text>
               </Text>
               {/* Display the amount left for the month */}
-              <Text
-                style={{
-                  ...text.moneyLight,
-                  fontSize: 24,
-                  lineHeight: 24,
-                }}>
+              <Text style={styles.amountText}>
                 {Number(
                   currentBudget.budgetTotal -
                     transactions
@@ -124,15 +105,7 @@ const BudgetsPage = () => {
                         0,
                       ),
                 ).toFixed(2)}
-                €{' '}
-                <Text
-                  style={{
-                    ...text.regularLight,
-                    color: colors.light,
-                    fontSize: 18,
-                  }}>
-                  left
-                </Text>
+                € <Text style={styles.amountLeftText}>left</Text>
               </Text>
               {/* Edit button */}
               <TouchableOpacity
@@ -148,18 +121,8 @@ const BudgetsPage = () => {
                     id: 'EditBudgetModal',
                   })
                 }
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  backgroundColor: colors.light,
-                  width: 130,
-                  height: 30,
-                  borderRadius: 8,
-                }}>
-                <Text style={{ ...text.regularMedium, color: '#861955' }}>
-                  Edit
-                </Text>
+                style={styles.editButton}>
+                <Text style={styles.editButtonText}>Edit</Text>
                 <MaterialIcons
                   name={'edit'}
                   size={20}
@@ -169,12 +132,7 @@ const BudgetsPage = () => {
               </TouchableOpacity>
             </View>
             {/* Speedometer chart wrapper */}
-            <View
-              style={{
-                position: 'relative',
-                right: 10,
-                justifyContent: 'center',
-              }}>
+            <View style={styles.speedometerWrapper}>
               {/* speedometer chart */}
               <SpeedometerChart
                 fillColor={colors.light}
@@ -194,22 +152,11 @@ const BudgetsPage = () => {
           </View>
         )}
       </LinearGradient>
+      {/* Default budget */}
       {defaultBudget && (
-        <View
-          style={{
-            backgroundColor: colors.light,
-            width: '100%',
-            marginTop: 10,
-            borderRadius: 15,
-            padding: 8,
-          }}>
+        <View style={styles.defaultBudgetWrapper}>
           {/* View for title and total */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginBottom: 10,
-            }}>
+          <View style={styles.defaultBudgetTitleAndTotalWrapper}>
             {/* Pressable title */}
             <TouchableOpacity
               onPress={() =>
@@ -224,54 +171,35 @@ const BudgetsPage = () => {
                   id: 'EditBudgetModal',
                 })
               }>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ ...text.title, fontSize: 18 }}>
-                  Default budget
-                </Text>
+              <View style={styles.defaultBudgetTitleAndTotal}>
+                <Text style={styles.defaultBudggetTitle}>Default budget</Text>
                 <MaterialIcons
                   name={'edit'}
                   size={20}
                   color={colors.textDefault}
-                  style={{ marginLeft: 5, marginBottom: 3 }}
+                  style={styles.defaultBudgetTitleIcon}
                 />
               </View>
             </TouchableOpacity>
             {/* Total */}
-            <Text style={{ ...text.regularSemiBold }}>
+            <Text style={text.regularSemiBold}>
               Total:{' '}
               <Text style={text.moneyDark}>{defaultBudget.budgetTotal}€</Text>
             </Text>
           </View>
-          <View
-            style={{
-              marginTop: 5,
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'space-evenly',
-              alignItems: 'flex-start',
-              gap: 4,
-            }}>
+          {/* Default budget allocations */}
+          <View style={styles.defaultBudgetAllocationsWrapper}>
             {defaultBudget.items.map((item, i) => (
               <View key={i} style={{ width: 100, alignItems: 'center' }}>
-                <Text
-                  style={{
-                    ...text.regular,
-                    fontSize: 14,
-                    textAlign: 'center',
-                  }}>
+                <Text style={styles.defaultBudgetCategoryName}>
                   {categories.find(c => c.id === item.categoryId)?.name}
                 </Text>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text
-                    style={{
-                      ...text.moneyDark,
-                      fontSize: 14,
-                      textAlign: 'center',
-                    }}>
+                <View style={styles.defaultAllocationTotalAndPercentage}>
+                  <Text style={styles.defaultAllocationTotal}>
                     {item.amount}€
                   </Text>
-                  <Text style={{ ...text.subtext, marginLeft: 3 }}>
+                  <Text style={styles.defaultAllocationPercentage}>
                     ({(item.amount / defaultBudget.budgetTotal) * 100}%)
                   </Text>
                 </View>
@@ -280,7 +208,7 @@ const BudgetsPage = () => {
           </View>
         </View>
       )}
-      <View style={{ alignItems: 'center', marginBottom: 10 }}>
+      <View style={styles.addBudgetWrapper}>
         <GradientButton
           text="Add a budget"
           width={'90%'}
