@@ -28,6 +28,7 @@ const TransactionContext = createContext<TransactionContextType>({
   deleteTransaction: async () => false,
 });
 
+//TODO: IMPORTANT!!! THIS DATA NEEDS TO BE CACHED!
 export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

@@ -2,8 +2,9 @@ import { useState } from 'react';
 
 interface ModalItem {
   id: string;
-  content: React.ReactNode;
+  content: React.ReactNode | (() => React.ReactNode);
   onCloseModal?: () => void;
+  title?: string;
   disableClosing?: boolean;
   closeButton?: boolean;
 }
@@ -13,6 +14,7 @@ interface UseModalResults {
   openModal: (args: ModalItem) => void;
   closeModal: (id: string) => void;
   closeAllModals: () => void;
+  title?: string;
   modals: ModalItem[];
 }
 
@@ -26,6 +28,7 @@ export default function useModal(): UseModalResults {
     id = Math.random().toString(36).substring(2, 9),
     onCloseModal,
     disableClosing,
+    title,
     closeButton,
   }: ModalItem) => {
     setModals(prev => {
@@ -37,6 +40,7 @@ export default function useModal(): UseModalResults {
           id,
           content,
           onCloseModal,
+          title,
           disableClosing,
           closeButton,
         },

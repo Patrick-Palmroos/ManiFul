@@ -26,12 +26,9 @@ export default StyleSheet.create({
     elevation: 10,
   },
   modalContent: {
-    marginTop: 30,
     padding: 10,
   },
   closeButton: {
-    alignItems: 'flex-end',
-    position: 'absolute',
     right: 0,
     width: 40,
   },
@@ -39,7 +36,18 @@ export default StyleSheet.create({
     backgroundColor: '#ff5c5c',
     borderRadius: 35,
     padding: 3,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  title: {
+    ...text.title,
+    fontSize: 20,
+  },
+  headerWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });

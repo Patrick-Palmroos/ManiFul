@@ -1,7 +1,7 @@
 const colors = {
   white: '#FFFFFF',
   light: '#F3F8FF',
-  background: '#E7EFFF',
+  background: '#ece7ffff',
   backgroundWarm: '#FFE7F5',
   backgroundLight: 'DFE5FF',
   highlight: '#EC2C96',

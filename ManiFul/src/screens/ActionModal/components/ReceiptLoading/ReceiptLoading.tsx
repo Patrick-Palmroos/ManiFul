@@ -7,11 +7,16 @@ const ReceiptLoading = () => {
   return (
     <View
       style={{
-        height: 130,
+        height: 150,
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 20,
+        }}>
         <ActivityIndicator
           size={90}
           color={colors.gradient}

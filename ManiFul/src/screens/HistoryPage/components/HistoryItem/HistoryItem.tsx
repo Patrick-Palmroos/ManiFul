@@ -2,7 +2,7 @@ import { View, Text, Button } from 'react-native';
 import { TransactionData, TransactionItem } from '../../../../types/data';
 import styles from './styles';
 import { Shadow } from 'react-native-shadow-2';
-import { formatDateToDDMMYYYY } from '../../helper';
+import { formatDateToDDMMYYYY } from '../../../../utils/date_handling';
 import text from '../../../../styles/text';
 import { useTransactions } from '../../../../context/TransactionContext';
 

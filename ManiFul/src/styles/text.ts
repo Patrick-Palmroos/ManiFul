@@ -12,6 +12,21 @@ const text = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
   },
+  regularBold: {
+    fontFamily: 'Rubik-Bold',
+    color: colors.textDefault,
+    fontSize: 16,
+  },
+  regularSemiBold: {
+    fontFamily: 'Rubik-SemiBold',
+    color: colors.textDefault,
+    fontSize: 16,
+  },
+  regularMedium: {
+    fontFamily: 'Rubik-Medium',
+    color: colors.textDefault,
+    fontSize: 16,
+  },
   title: {
     fontFamily: 'Rubik-Medium',
     color: '#89004E',

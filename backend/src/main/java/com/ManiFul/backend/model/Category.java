@@ -1,5 +1,7 @@
 package com.ManiFul.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -28,6 +30,8 @@ public class Category {
 
     private String name;
     private Long userId;
+
+    private Boolean expense;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Type> types;

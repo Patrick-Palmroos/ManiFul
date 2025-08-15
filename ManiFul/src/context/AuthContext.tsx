@@ -47,10 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         } catch (err) {
           await Keychain.resetGenericPassword();
-        } finally {
-          setInitialized(true);
         }
       }
+      setInitialized(true);
       setLoading(false);
     };
 
@@ -62,7 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password,
   }: AuthCredentials): Promise<authRes> => {
     try {
-      setLoading(true);
       const response = await axios.post(
         `${API_URL}/auth/token`,
         {
@@ -74,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             'Content-Type': 'application/json',
             'BACKEND-API-KEY': API_KEY,
           },
-          timeout: 100000,
+          timeout: 20000,
         },
       );
       console.log(response);
@@ -106,8 +104,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error('Unexpected error:', error);
         return { status: 0, message: 'Unexpected error' };
       }
-    } finally {
-      setLoading(false);
     }
   };
 
