@@ -375,7 +375,7 @@ export default function AllocationsModal({
             width: screenWidth * 0.35,
           }}>
           <Text style={{ ...text.regularLight, textAlign: 'center' }}>
-            divide evenly
+            Divide evenly
           </Text>
         </TouchableOpacity>
       </View>
