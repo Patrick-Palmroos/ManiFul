@@ -1,22 +1,16 @@
 import { Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
-import {
-  BudgetType,
-  BudgetPostType,
-  BudgetItemType,
-} from '../../../types/budgets';
+import { BudgetPostType, BudgetItemType } from '../../../types/budgets';
 import { useBudgets } from '../../../context/BudgetContext';
 import { useTypes } from '../../../context/TypesContext';
-import styles from '../../../styles/styles';
 import MonthPicker from 'react-native-month-year-picker';
 import { useState, useEffect } from 'react';
 import AllocationsModal from '../AllocationsModal';
 import { useModalContext } from '../../../context/ModalContext';
-import { Category } from '../../../types/categories';
 import { showMessage } from 'react-native-flash-message';
 import text from '../../../styles/text';
-import colors from '../../../styles/colors';
 import { Shadow } from 'react-native-shadow-2';
 import GradientButton from '../../../components/GradientButton/GradientButton';
+import styles from './styles';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -179,88 +173,58 @@ export default function AddBudgetModal({
   };
 
   return (
-    <View style={{ gap: 15 }}>
+    <View style={styles.wrapper}>
       {/* Total section */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 6,
-          justifyContent: 'center',
-        }}>
-        <Text style={{ ...text.regularSemiBold, fontSize: 18 }}>Total:</Text>
+      <View style={styles.totalWrapper}>
+        <Text style={styles.subTitleText}>Total:</Text>
         <TextInput
           value={tempInputValues}
           inputMode="numeric"
           keyboardType="decimal-pad"
-          style={{
-            ...styles.textField,
-            width: 120,
-            height: 45,
-          }}
+          style={styles.totalInput}
           onBlur={handleTotalChange}
           onChangeText={text => {
             setTempInputValues(text);
           }}
         />
-        <Text
-          style={{ ...text.moneyDark, fontSize: 20, color: colors.highlight }}>
-          €
-        </Text>
+        <Text style={styles.totalEuroSign}>€</Text>
       </View>
       {/* Date section */}
-      <View style={{ alignItems: 'center', marginTop: 10 }}>
-        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-          <Text style={{ ...text.regularSemiBold, fontSize: 18 }}>Date: </Text>
-          <Text style={{ ...text.regular }}>
+      <View style={styles.dateWrapper}>
+        <View style={styles.dateTextWrapper}>
+          <Text style={styles.subTitleText}>Date: </Text>
+          <Text style={text.regular}>
             {date.toLocaleString('default', { month: 'long' })}{' '}
             {date.getFullYear()}
           </Text>
         </View>
+        {/* Change date button */}
         <Shadow
           distance={5}
           startColor="rgba(0, 4, 29, 0.03)"
           offset={[0, 2]}
           stretch={true}>
           <TouchableOpacity
-            style={{
-              padding: 10,
-              width: 200,
-              marginTop: 5,
-              alignItems: 'center',
-              borderRadius: 15,
-              backgroundColor: colors.highlight,
-            }}
+            style={styles.changeDateButton}
             onPress={() => setDateOpen(true)}>
-            <Text style={{ ...text.regularSemiBold, color: colors.white }}>
-              Change date
-            </Text>
+            <Text style={styles.buttonText}>Change date</Text>
           </TouchableOpacity>
         </Shadow>
       </View>
-      {/* Budget categories section */}
-      <View style={{ marginTop: 20 }}>
-        <Text style={{ ...text.title, fontSize: 20 }}>Budget Allocation</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ ...text.regular, textAlign: 'center' }}>
+      {/* Budget allocations section */}
+      <View style={styles.allocationsWrapper}>
+        <Text style={styles.allocationTitle}>Budget Allocation</Text>
+        <View style={styles.allocationValuesWrapper}>
+          <Text style={styles.allocationsGeneralText}>
             {`Allocated amount\n`}
-            <Text
-              style={{
-                ...text.moneyDark,
-                fontSize: 18,
-                color: colors.gradient,
-              }}>
+            <Text style={styles.allocatedText}>
               {chosenCategories.reduce((sum, c) => sum + c.total, 0).toFixed(2)}
               €
             </Text>
           </Text>
-          <Text style={{ ...text.regular, textAlign: 'center' }}>
+          <Text style={styles.allocationsGeneralText}>
             {`Unallocated amount\n`}
-            <Text
-              style={{
-                ...text.moneyDark,
-                fontSize: 18,
-              }}>
+            <Text style={styles.unallocatedText}>
               {(
                 total - chosenCategories.reduce((sum, c) => sum + c.total, 0)
               ).toFixed(2)}
@@ -268,20 +232,14 @@ export default function AddBudgetModal({
             </Text>
           </Text>
         </View>
+        {/* Edit allocations button */}
         <Shadow
           distance={5}
           startColor="rgba(0, 4, 29, 0.03)"
           offset={[0, 2]}
           stretch={true}>
           <TouchableOpacity
-            style={{
-              padding: 10,
-              width: '100%',
-              marginTop: 10,
-              alignItems: 'center',
-              borderRadius: 15,
-              backgroundColor: colors.highlight,
-            }}
+            style={styles.editAllocationsButton}
             onPress={() =>
               openModal({
                 content: (
@@ -297,18 +255,12 @@ export default function AddBudgetModal({
                 id: 'BudgetItemModal',
               })
             }>
-            <Text
-              style={{
-                ...text.regularSemiBold,
-                color: colors.white,
-                fontSize: 18,
-              }}>
-              Edit allocations
-            </Text>
+            <Text style={styles.buttonText}>Edit allocations</Text>
           </TouchableOpacity>
         </Shadow>
       </View>
-      <View style={{ marginTop: 30 }}>
+      {/* Save button */}
+      <View style={styles.saveButtonWrapper}>
         <GradientButton text="Save budget" onClick={onSave} width={'95%'} />
       </View>
       {dateOpen && (
