@@ -54,13 +54,7 @@ const BudgetsPage = () => {
 
   if (!budgets) {
     return (
-      <View
-        style={{
-          backgroundColor: colors.background,
-          flex: 1,
-          alignItems: 'center',
-          paddingTop: 40,
-        }}>
+      <View style={styles.loadingWrapper}>
         <ActivityIndicator size={50} color={colors.highlight} />
         <Text style={text.subtext}>Loading...</Text>
       </View>

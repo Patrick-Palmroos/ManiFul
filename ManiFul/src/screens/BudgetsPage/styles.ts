@@ -105,6 +105,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
+  loadingWrapper: {
+    backgroundColor: colors.background,
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: 40,
+  },
 });
 
 export default styles;
