@@ -10,6 +10,7 @@ import EditBudgetModal from '../EditBudgetModal';
 import text from '../../../styles/text';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import colors from '../../../styles/colors';
+import styles from './styles';
 
 const months = [
   'January',
@@ -50,18 +51,10 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
       startColor="rgba(0, 4, 29, 0.01)"
       offset={[0, 2]}
       stretch={true}>
-      <View
-        style={{
-          backgroundColor: colors.light,
-          margin: 5,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          padding: 10,
-          borderRadius: 15,
-        }}>
+      <View style={styles.wrapper}>
         <View>
           {/* Date */}
-          <Text style={{ ...text.title }}>
+          <Text style={text.title}>
             {item.year} {months[item.month - 1]}
           </Text>
           {/* Months expenses */}
@@ -72,28 +65,15 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
             /{item.budgetTotal} €
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
+        {/* Delete and edit budget */}
+        <View style={styles.deleteAndEditWrapper}>
           <TouchableOpacity
-            style={{
-              backgroundColor: colors.cancelButton,
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 10,
-            }}
+            style={styles.deleteButton}
             onPress={() => deleteBudget(item.id)}>
             <MaterialIcons name={'delete'} size={20} color={colors.white} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{
-              backgroundColor: colors.highlight,
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 10,
-            }}
+            style={styles.editButton}
             onPress={() =>
               openModal({
                 content: (
