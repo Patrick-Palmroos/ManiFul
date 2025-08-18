@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   allocationsWrapper: {
-    maxHeight: screenHeight * 0.45,
+    height: '65%',
   },
   scrollView: { marginBottom: 20 },
   allocationsView: {
