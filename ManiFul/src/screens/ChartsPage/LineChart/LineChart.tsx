@@ -18,11 +18,16 @@ const LineChart = () => {
     width: 100,
   });
   const [points, setPoints] = useState<{ x: number; day: number }[]>([]);
+  const [waypoints, setWaypoints] = useState<{ y: number; value: number }[]>(
+    [],
+  );
 
   const paddingY = 20;
-  const paddingX = 20;
+  const leftPadding = 38;
+  const rightPadding = 15;
+  const paddingX = leftPadding + rightPadding;
 
-  const daysInMonth: number = new Date(2025, 8, 0).getDate();
+  const daysInMonth: number = new Date(2025, 9, 0).getDate();
   const currentDay: number = new Date().getDate();
 
   console.log(maxValue);
@@ -35,6 +40,7 @@ const LineChart = () => {
     const paddedHeight = height - paddingY;
     console.log('h and w:', paddedHeight, paddedWidth);
     setDots(paddedWidth);
+    handleWaypoints(paddedHeight);
     setSize({ height: paddedHeight, width: paddedWidth });
   };
 
@@ -51,13 +57,34 @@ const LineChart = () => {
     for (let i = 1; i <= daysInMonth; i++) {
       position += interval;
 
-      if ((even && i & 1) || (!even && (i & 1) === 0)) continue;
+      if ((even && i & 1) || (!even && (i & 1) === 0)) {
+        newList.push({ day: -1, x: position });
+        continue;
+      }
 
       newList.push({ day: i, x: position });
     }
     console.log('setting new list of: ', newList);
     setPoints(newList);
   };
+
+  const handleWaypoints = (height: number) => {
+    let newList: { y: number; value: number }[] = [];
+    const interval = height / 5;
+    let position = 0;
+    let multiplication = 0;
+    for (let i = 0; i < 5; i++) {
+      newList.push({ y: position, value: maxValue * multiplication });
+      position += interval;
+      multiplication += 0.25;
+    }
+    console.log('waypoints: ', newList);
+
+    setWaypoints(newList);
+  };
+
+  const originX = leftPadding;
+  const originY = size.height - paddingY / 2;
 
   return (
     <View
@@ -70,34 +97,68 @@ const LineChart = () => {
       onLayout={onLayout}>
       <Svg width={size.width + paddingX} height={size.height + paddingY}>
         <G>
-          <SvgText x={10} y={20} fill="black" fontSize="12">
-            LineChart
-          </SvgText>
+          {/* the guiding lines and their values */}
+          {waypoints.map((wp, i) => (
+            <G key={i}>
+              <SvgText
+                x={wp.value === maxValue ? originX + 14 : originX - 6}
+                y={
+                  wp.value === maxValue
+                    ? originY - wp.y - 10
+                    : originY - wp.y + 4
+                }
+                textAnchor="end"
+                fontFamily="Rubik-Medium"
+                fill={'black'}
+                fontSize="10">
+                {wp.value.toString().concat(wp.value === maxValue ? '€' : '')}
+              </SvgText>
+              <Line
+                x1={originX}
+                y1={originY - wp.y}
+                x2={size.width + leftPadding}
+                y2={originY - wp.y}
+                stroke="orange"
+                strokeWidth="4.5"
+                strokeLinecap="round"
+              />
+            </G>
+          ))}
+          {/* Vertical line */}
           <Line
-            x1={paddingX / 2}
-            y1={size.height - paddingY / 2}
-            x2={size.width + paddingX / 2}
-            y2={size.height - paddingY / 2}
+            x1={originX}
+            y1={originY}
+            x2={originX}
+            y2={paddingY + 12}
             stroke="red"
             strokeWidth="4.5"
+            strokeLinecap="round"
           />
+          {/* Horizontal line */}
+          <Line
+            x1={originX}
+            y1={originY}
+            x2={size.width + leftPadding}
+            y2={originY}
+            stroke="red"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+          />
+          {/* Dots on horizontal line */}
           {points.map((p, i) => (
             <G key={i}>
-              <Circle
-                cx={p.x + paddingX / 2}
-                cy={size.height - paddingY / 2}
-                r={4}
-                fill={'blue'}
-              />
-              <SvgText
-                x={p.x + paddingX / 2}
-                y={size.height + paddingY / 2}
-                fontSize={14}
-                textAnchor="middle"
-                fontFamily="Rubik-Medium"
-                fill={'red'}>
-                {p.day}
-              </SvgText>
+              <Circle cx={p.x + leftPadding} cy={originY} r={4} fill={'blue'} />
+              {p.day !== -1 && (
+                <SvgText
+                  x={p.x + leftPadding}
+                  y={size.height + paddingY / 2}
+                  fontSize={14}
+                  textAnchor="middle"
+                  fontFamily="Rubik-Medium"
+                  fill={'red'}>
+                  {p.day}
+                </SvgText>
+              )}
             </G>
           ))}
         </G>
