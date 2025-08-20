@@ -15,9 +15,22 @@ interface LineChartProps {
   chartKey: string;
   month: number;
   year: number;
+  graphColor?: string;
+  graphColorSecondary?: string;
+  graphLineColor?: string;
+  textColor?: string;
 }
 
-const LineChart = ({ data, chartKey, year, month }: LineChartProps) => {
+const LineChart = ({
+  data,
+  chartKey,
+  year,
+  month,
+  graphColor = '#2b3547ff',
+  graphColorSecondary = '#868686ff',
+  graphLineColor = '#020069ff',
+  textColor = '#1b1b1bff',
+}: LineChartProps) => {
   const filtered: LineChartValues[] = data.map((item: TransactionData) => {
     const date = new Date(item.date);
     return {
@@ -46,11 +59,6 @@ const LineChart = ({ data, chartKey, year, month }: LineChartProps) => {
   const [waypoints, setWaypoints] = useState<{ y: number; value: number }[]>(
     [],
   );
-
-  const graphColor = '#C0D7FF';
-  const graphColorSecondary = '#681060';
-  const graphLineColor = '#A8FFFE';
-  const textColor = '#FFFFFF';
 
   const paddingY = 20;
   const leftPadding = 38;
