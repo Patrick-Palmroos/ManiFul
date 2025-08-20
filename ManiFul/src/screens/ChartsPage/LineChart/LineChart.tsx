@@ -4,7 +4,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import Svg, { G, Text as SvgText, Line, Circle } from 'react-native-svg';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { TransactionData } from '../../../types/data';
 import { isCurrentMonthAndYear } from '../../../utils/date_handling';
 import Tooltip from '../ToolTip';
@@ -91,40 +91,52 @@ const LineChart = ({
     y: number;
   } | null>(null);
 
-  //convert given data to LineChartValues.
-  const filtered: LineChartValues[] = data.map((item: TransactionData) => {
-    const date = new Date(item.date);
+  // Memoize data processing
+  const { filtered, maxValue, daysInMonth, currentDay } = useMemo(() => {
+    //convert given data to LineChartValues.
+    const filteredData: LineChartValues[] = data.map(
+      (item: TransactionData) => {
+        const date = new Date(item.date);
+        return {
+          date: date.getDate(),
+          value: item.total,
+        };
+      },
+    );
+    const map = new Map<number, number>();
+
+    //map the values.
+    for (const item of filteredData) {
+      map.set(item.date, (map.get(item.date) || 0) + item.value);
+    }
+
+    //create a merged array with same date items marged together.
+    const merged = Array.from(map, ([date, value]) => ({ date, value }));
+
+    //an array of only the values.
+    const val = merged.map(merged => merged.value);
+    //gets the highest value from val.
+    const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
+    //sets a maximum value.
+    const maxValueResult: number = highestValue > 100 ? highestValue : 100;
+
+    //the amount of days in a month and the current day.
+    const daysInMonthResult: number = new Date(year, month, 0).getDate();
+    const currentDayResult: number = new Date().getDate();
+
     return {
-      date: date.getDate(),
-      value: item.total,
+      filtered: filteredData,
+      maxValue: maxValueResult,
+      daysInMonth: daysInMonthResult,
+      currentDay: currentDayResult,
     };
-  });
-  const map = new Map<number, number>();
-
-  //map the values.
-  for (const item of filtered) {
-    map.set(item.date, (map.get(item.date) || 0) + item.value);
-  }
-
-  //create a merged array with same date items marged together.
-  const merged = Array.from(map, ([date, value]) => ({ date, value }));
-
-  //an array of only the values.
-  const val = merged.map(merged => merged.value);
-  //gets the highest value from val.
-  const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
-  //sets a maximum value.
-  const maxValue: number = highestValue > 100 ? highestValue : 100;
+  }, [data, year, month]);
 
   //padding values
   const paddingY = 20;
   const leftPadding = 38;
   const rightPadding = 15;
   const paddingX = leftPadding + rightPadding;
-
-  //the amount of days in a month and the current day.
-  const daysInMonth: number = new Date(year, month, 0).getDate();
-  const currentDay: number = new Date().getDate();
 
   // Called when the component renders. Gets the height and width available and calculates padding.
   const onLayout = (event: any) => {
@@ -313,7 +325,6 @@ const LineChart = ({
                 if (v.length !== 0) {
                   jointTotal = v.reduce((sum, v) => (sum += v.value), 0);
                 }
-                console.log(`filtered = ${v}, jointTotal: ${jointTotal}`);
                 return (
                   <G key={i}>
                     {/* Line for the date position */}
