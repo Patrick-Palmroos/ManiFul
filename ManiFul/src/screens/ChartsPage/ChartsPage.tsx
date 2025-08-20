@@ -36,6 +36,7 @@ const ChartsPage = () => {
 
   return (
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
+      {/* Container for line graph component */}
       <LinearGradient
         colors={[colors.highlight, '#5C438D']}
         start={{ x: 0, y: 1 }}
@@ -46,12 +47,15 @@ const ChartsPage = () => {
           borderBottomRightRadius: 20,
           borderBottomLeftRadius: 20,
         }}>
+        {/* Month and year wrapper */}
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
+          {/* Month wrapper */}
           <View style={{ flexDirection: 'row' }}>
+            {/* Touchable opacity to be able to change date */}
             <TouchableOpacity
               onPress={() => setEditDate(true)}
               style={{
@@ -87,6 +91,7 @@ const ChartsPage = () => {
                 />
               </View>
             </TouchableOpacity>
+            {/* Conditionally rendered button to reset date */}
             {!isCurrentMonthAndYear(
               date.getMonth() + 1,
               date.getFullYear(),
@@ -109,7 +114,7 @@ const ChartsPage = () => {
               </TouchableOpacity>
             )}
           </View>
-
+          {/* Year text */}
           <Text
             style={{
               ...text.regularMedium,
@@ -122,6 +127,7 @@ const ChartsPage = () => {
             {date.getFullYear()}
           </Text>
         </View>
+        {/* Total container */}
         <View style={{ height: 30, paddingLeft: 10 }}>
           <Text
             style={{
@@ -135,6 +141,7 @@ const ChartsPage = () => {
             </Text>
           </Text>
         </View>
+        {/* Line chart container */}
         <View style={{ height: 220 }}>
           <LineChart
             chartKey={`${date.getMonth()}-${date.getFullYear()}`}
@@ -148,6 +155,7 @@ const ChartsPage = () => {
           />
         </View>
       </LinearGradient>
+      {/* date editing modal. */}
       {editDate && date && (
         <MonthPicker
           value={date}
