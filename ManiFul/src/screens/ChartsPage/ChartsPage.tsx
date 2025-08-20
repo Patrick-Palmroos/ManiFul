@@ -27,7 +27,7 @@ const ChartsPage = () => {
         style={{
           width: '100%',
           height: 250,
-          backgroundColor: 'cyan',
+          backgroundColor: 'black',
           // padding: 5,
         }}>
         <LineChart
@@ -35,6 +35,10 @@ const ChartsPage = () => {
           year={selectedYear}
           month={selectedMonth}
           data={values}
+          graphColor="#C0D7FF"
+          graphColorSecondary="#681060"
+          graphLineColor="#A8FFFE"
+          textColor="#FFFFFF"
         />
       </View>
     </View>
