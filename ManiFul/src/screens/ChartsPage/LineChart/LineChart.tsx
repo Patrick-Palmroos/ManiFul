@@ -87,7 +87,8 @@ const LineChart = () => {
 
   const todayPoint = points.find(p => p.day === currentDay);
 
-  const chartHeight = waypoints[waypoints.length - 1].y;
+  const chartHeight =
+    waypoints.length !== 0 ? waypoints[waypoints.length - 1].y : 0;
   const scaleY = (value: number) => originY - (value / maxValue) * chartHeight;
 
   return (
