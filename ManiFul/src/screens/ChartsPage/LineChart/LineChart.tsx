@@ -1,7 +1,6 @@
-import { View, Text, ActivityIndicator } from 'react-native';
-import Svg, { G, Path, Text as SvgText, Line, Circle } from 'react-native-svg';
-import * as d3Shape from 'd3-shape';
-import { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import Svg, { G, Text as SvgText, Line, Circle } from 'react-native-svg';
+import { useState } from 'react';
 import { TransactionData } from '../../../types/data';
 import { isCurrentMonthAndYear } from '../../../utils/date_handling';
 
@@ -21,6 +20,44 @@ interface LineChartProps {
   textColor?: string;
 }
 
+/**
+ * A line chart component that visualizes transaction data over a month
+ *
+ * @component
+ * @example
+ * <LineChart
+ *   data={transactionData}
+ *   chartKey="monthly-revenue"
+ *   month={3}
+ *   year={2024}
+ *   graphColor="#2b3547ff"
+ *   graphColorSecondary="#868686ff"
+ *   graphLineColor="#020069ff"
+ *   textColor="#1b1b1bff"
+ * />
+ *
+ * @param {Object} props - Component properties
+ * @param {TransactionData[]} props.data - Array of transaction data objects
+ * @param {string} props.chartKey - Unique key for the chart (used for re rendering the component)
+ * @param {number} props.month - The month to display (1-12)
+ * @param {number} props.year - The year to display
+ * @param {string} [props.graphColor='#2b3547ff'] - Primary color for chart elements (axes and grid lines)
+ * @param {string} [props.graphColorSecondary='#868686ff'] - Secondary color for chart
+ * @param {string} [props.graphLineColor='#020069ff'] - Color for the data line and points
+ * @param {string} [props.textColor='#1b1b1bff'] - Color for text labels
+ *
+ * @returns {React.ReactElement} A responsive SVG line chart component
+ *
+ * @remarks
+ * This component displays transaction data aggregated by day for a specific month and year.
+ *
+ * The chart automatically scales to show values from 0 to the nearest multiple of 10 above the maximum value,
+ * with a minimum range of 0-100.
+ *
+ * @see {@link TransactionData} for the data structure format
+ * @see {@link isCurrentMonthAndYear} for the current month detection logic
+ * @author Patrick Palmroos
+ */
 const LineChart = ({
   data,
   chartKey,
@@ -31,24 +68,6 @@ const LineChart = ({
   graphLineColor = '#020069ff',
   textColor = '#1b1b1bff',
 }: LineChartProps) => {
-  const filtered: LineChartValues[] = data.map((item: TransactionData) => {
-    const date = new Date(item.date);
-    return {
-      date: date.getDate(),
-      value: item.total,
-    };
-  });
-  const map = new Map<number, number>();
-
-  for (const item of filtered) {
-    map.set(item.date, (map.get(item.date) || 0) + item.value);
-  }
-
-  const merged = Array.from(map, ([date, value]) => ({ date, value }));
-
-  const val = merged.map(merged => merged.value);
-  const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
-  const maxValue: number = highestValue > 100 ? highestValue : 100;
   const [size, setSize] = useState<{ height: number; width: number }>({
     height: 0,
     width: 0,
@@ -60,38 +79,64 @@ const LineChart = ({
     [],
   );
 
+  //convert given data to LineChartValues.
+  const filtered: LineChartValues[] = data.map((item: TransactionData) => {
+    const date = new Date(item.date);
+    return {
+      date: date.getDate(),
+      value: item.total,
+    };
+  });
+  const map = new Map<number, number>();
+
+  //map the values.
+  for (const item of filtered) {
+    map.set(item.date, (map.get(item.date) || 0) + item.value);
+  }
+
+  //create a merged array with same date items marged together.
+  const merged = Array.from(map, ([date, value]) => ({ date, value }));
+
+  //an array of only the values.
+  const val = merged.map(merged => merged.value);
+  //gets the highest value from val.
+  const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
+  //sets a maximum value.
+  const maxValue: number = highestValue > 100 ? highestValue : 100;
+
+  //padding values
   const paddingY = 20;
   const leftPadding = 38;
   const rightPadding = 15;
   const paddingX = leftPadding + rightPadding;
 
+  //the amount of days in a month and the current day.
   const daysInMonth: number = new Date(year, month, 0).getDate();
   const currentDay: number = new Date().getDate();
 
-  console.log(maxValue);
-  console.log('days: ', daysInMonth);
-  console.log('current day: ', currentDay);
-
+  // Called when the component renders. Gets the height and width available and calculates padding.
   const onLayout = (event: any) => {
     const { height, width } = event.nativeEvent.layout;
     const paddedWidth = width - paddingX;
     const paddedHeight = height - paddingY;
-    console.log('h and w:', paddedHeight, paddedWidth);
+
     setDots(paddedWidth);
     handleWaypoints(paddedHeight);
     setSize({ height: paddedHeight, width: paddedWidth });
   };
 
+  // Sets the horizontal gridline values and their locations on the X axes.
   const setDots = (width: number) => {
     let newList: { x: number; day: number; hidden: boolean }[] = [];
     const interval = width / daysInMonth;
     let position = 0;
+
+    //Checks if the months final day is even or odd.
     let even = true;
     if (daysInMonth & 1) {
       even = false;
     }
-    console.log('interval of: ', interval);
-    console.log('even: ', even);
+    //Creates the new list.
     for (let i = 1; i <= daysInMonth; i++) {
       position += interval;
       let hidden = false;
@@ -102,28 +147,33 @@ const LineChart = ({
 
       newList.push({ day: i, x: position, hidden: hidden });
     }
-    console.log('setting new list of: ', newList);
+
     setPoints(newList);
   };
 
+  // Sets the lines that help in reading what value a line represents along their labels.
   const handleWaypoints = (height: number) => {
     let newList: { y: number; value: number }[] = [];
     const interval = height / 5;
     for (let i = 0; i <= 4; i++) {
       newList.push({ y: interval * i, value: maxValue * (i / 4) });
     }
-    console.log('waypoints: ', newList);
 
     setWaypoints(newList);
   };
 
+  //origin point on X axes.
   const originX = leftPadding;
+  //origin point on Y axes.
   const originY = size.height - paddingY / 2;
 
+  //The point where the current day is.
   const todayPoint = points.find(p => p.day === currentDay);
 
+  // gets the chart height
   const chartHeight =
     waypoints.length !== 0 ? waypoints[waypoints.length - 1].y : 0;
+  //To get the Y axes scale for graph values.
   const scaleY = (value: number) => originY - (value / maxValue) * chartHeight;
 
   //Check for if the component is ready yet.
@@ -264,6 +314,7 @@ const LineChart = ({
         </Svg>
       ) : (
         <View style={{ justifyContent: 'center', height: '100%' }}>
+          {/* Loading indicator */}
           <ActivityIndicator color={graphColor} size={50} />
         </View>
       )}
