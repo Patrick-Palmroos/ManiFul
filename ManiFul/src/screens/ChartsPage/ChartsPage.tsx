@@ -172,7 +172,14 @@ const ChartsPage = () => {
           borderRadius: 15,
           padding: 10,
         }}>
-        <IndicatorBar />
+        <View style={{ height: 50 }}>
+          <IndicatorBar
+            total={100}
+            value={99}
+            title="Test"
+            barKey={`${'test'}-${100}-${99}`}
+          />
+        </View>
       </View>
     </View>
   );
