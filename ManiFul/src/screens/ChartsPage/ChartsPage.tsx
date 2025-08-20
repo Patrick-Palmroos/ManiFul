@@ -7,23 +7,27 @@ import { useState } from 'react';
 import { monthToTextFormat } from '../../utils/date_handling';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import text from '../../styles/text';
+import MonthPicker from 'react-native-month-year-picker';
 
 const ChartsPage = () => {
   const { transactions } = useTransactions();
-  const [selectedMonth, setSelectedMonth] = useState<number>(
-    new Date().getMonth() + 1,
-  );
-  const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear(),
-  );
+  const [date, setDate] = useState<Date>(new Date());
   const [editDate, setEditDate] = useState<boolean>(false);
 
   const values = transactions.filter(t => {
     const d = new Date(t.date);
-    const month = d.getMonth() + 1;
+    const month = d.getMonth();
     const year = d.getFullYear();
-    return month === selectedMonth && year === selectedYear;
+    return month === date.getMonth() && year === date.getFullYear();
   });
+
+  const handleChange = (event: any, newDate?: Date) => {
+    setEditDate(false);
+
+    if (newDate) {
+      setDate(newDate);
+    }
+  };
 
   return (
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
@@ -37,46 +41,61 @@ const ChartsPage = () => {
           borderBottomRightRadius: 20,
           borderBottomLeftRadius: 20,
         }}>
-        <View
-          style={{
-            height: 50,
-            flexDirection: 'row',
-            padding: 10,
-            alignItems: 'center',
-          }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity onPress={() => setEditDate(true)}>
+            <View
+              style={{
+                height: 30,
+                flexDirection: 'row',
+                margin: 10,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  ...text.regularMedium,
+                  color: colors.light,
+                  fontSize: 18,
+                }}>
+                {monthToTextFormat(date.getMonth())}
+              </Text>
+              <View
+                style={{
+                  height: 30,
+                  width: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: 5,
+                }}>
+                <MaterialIcons
+                  name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
+                  size={40}
+                  onPress={() => setEditDate(true)}
+                  color={'#ffffffff'}
+                  style={{
+                    textAlign: 'center',
+                    position: 'absolute',
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
           <Text
             style={{
               ...text.regularMedium,
               color: colors.light,
-              fontSize: 18,
-            }}>
-            {monthToTextFormat(selectedMonth - 1)}
-          </Text>
-          <TouchableOpacity
-            style={{
+              fontSize: 14,
               height: 30,
-              width: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginLeft: 5,
+              margin: 10,
+              textAlign: 'center',
             }}>
-            <MaterialIcons
-              name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
-              size={40}
-              onPress={() => setEditDate(!editDate)}
-              color={'#ffffffff'}
-              style={{
-                textAlign: 'center',
-                position: 'absolute',
-              }}
-            />
-          </TouchableOpacity>
+            {date.getFullYear()}
+          </Text>
         </View>
         <View style={{ height: 220 }}>
           <LineChart
-            chartKey={`${selectedMonth}-${selectedYear}`}
-            year={selectedYear}
-            month={selectedMonth}
+            chartKey={`${date.getMonth()}-${date.getFullYear()}`}
+            year={date.getFullYear()}
+            month={date.getMonth() + 1}
             data={values}
             graphColor="#C0D7FF"
             graphColorSecondary="#681060"
@@ -85,6 +104,13 @@ const ChartsPage = () => {
           />
         </View>
       </LinearGradient>
+      {editDate && date && (
+        <MonthPicker
+          value={date}
+          onChange={handleChange}
+          locale="en" // change to fi for finnish
+        />
+      )}
     </View>
   );
 };
