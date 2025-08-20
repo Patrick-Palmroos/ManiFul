@@ -12,10 +12,10 @@ interface LineChartValues {
 
 interface LineChartProps {
   data: TransactionData[];
-  key: string;
+  chartKey: string;
 }
 
-const LineChart = ({ data, key }: LineChartProps) => {
+const LineChart = ({ data, chartKey }: LineChartProps) => {
   const filtered: LineChartValues[] = data.map((item: TransactionData) => {
     const date = new Date(item.date);
     return {
@@ -118,7 +118,7 @@ const LineChart = ({ data, key }: LineChartProps) => {
 
   return (
     <View
-      key={key}
+      key={chartKey}
       style={{
         flex: 1,
         height: size.height + paddingY,

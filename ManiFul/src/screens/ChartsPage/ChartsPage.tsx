@@ -30,7 +30,10 @@ const ChartsPage = () => {
           backgroundColor: 'cyan',
           // padding: 5,
         }}>
-        <LineChart key={`${selectedMonth}-${selectedYear}`} data={values} />
+        <LineChart
+          chartKey={`${selectedMonth}-${selectedYear}`}
+          data={values}
+        />
       </View>
     </View>
   );
