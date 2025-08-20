@@ -1,18 +1,37 @@
 import { View, Text } from 'react-native';
 import Svg, { G, Path, Text as SvgText, Line, Circle } from 'react-native-svg';
 import * as d3Shape from 'd3-shape';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { TransactionData } from '../../../types/data';
+import { isCurrentMonthAndYear } from '../../../utils/date_handling';
 
-const values = [
-  { date: 9, value: 75 },
-  { date: 3, value: 90 },
-  { date: 4, value: 30 },
-  { date: 1, value: 50 },
-  { date: 12, value: 25 },
-];
+interface LineChartValues {
+  date: number;
+  value: number;
+}
 
-const LineChart = () => {
-  const val = values.map(v => v.value);
+interface LineChartProps {
+  data: TransactionData[];
+  key: string;
+}
+
+const LineChart = ({ data, key }: LineChartProps) => {
+  const filtered: LineChartValues[] = data.map((item: TransactionData) => {
+    const date = new Date(item.date);
+    return {
+      date: date.getDate(),
+      value: item.total,
+    };
+  });
+  const map = new Map<number, number>();
+
+  for (const item of filtered) {
+    map.set(item.date, (map.get(item.date) || 0) + item.value);
+  }
+
+  const merged = Array.from(map, ([date, value]) => ({ date, value }));
+
+  const val = merged.map(merged => merged.value);
   const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
   const maxValue: number = highestValue > 100 ? highestValue : 100;
   const [size, setSize] = useState<{ height: number; width: number }>({
@@ -99,6 +118,7 @@ const LineChart = () => {
 
   return (
     <View
+      key={key}
       style={{
         flex: 1,
         height: size.height + paddingY,
@@ -170,7 +190,7 @@ const LineChart = () => {
           />
           {/* Dots on horizontal line */}
           {points.map((p, i) => {
-            const v = values.filter(v => v.date === p.day);
+            const v = filtered.filter(v => v.date === p.day);
             let jointTotal: number = 0;
             if (v.length !== 0) {
               jointTotal = v.reduce((sum, v) => (sum += v.value), 0);
