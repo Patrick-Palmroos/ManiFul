@@ -9,6 +9,7 @@ interface IndicatorBarProps {
   barColor?: string;
   lineColor?: string;
   title?: string;
+  errorColor?: string;
 }
 
 const IndicatorBar = ({
@@ -16,6 +17,7 @@ const IndicatorBar = ({
   value,
   barColor = '#89004E',
   lineColor = '#EC2C96',
+  errorColor = '#970000ff',
   title = '',
 }: IndicatorBarProps) => {
   const [size, setSize] = useState<{ height: number; width: number }>({
@@ -23,8 +25,6 @@ const IndicatorBar = ({
     width: 0,
   });
   const [lineValue, setLineValue] = useState<number>(0);
-
-  const errorColor = '#970000ff';
 
   const paddingY = 10;
   const paddingX = 20;
