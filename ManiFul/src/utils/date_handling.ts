@@ -15,3 +15,22 @@ export const formatDateToDDMMYYYY = (isoDate: string): string => {
 
   return `${day}.${month}.${year}`;
 };
+
+export const monthToTextFormat = (month: number): string | null => {
+  if (month <= 0 || month > 12) return null;
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return months[month];
+};
