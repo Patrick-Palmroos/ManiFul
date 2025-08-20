@@ -79,7 +79,6 @@ const ChartsPage = () => {
                 <MaterialIcons
                   name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
                   size={40}
-                  onPress={() => setEditDate(true)}
                   color={'#ffffffff'}
                   style={{
                     textAlign: 'center',
@@ -104,7 +103,6 @@ const ChartsPage = () => {
                 <MaterialIcons
                   name={'cached'}
                   size={25}
-                  onPress={() => setEditDate(true)}
                   color={'#ffffffff'}
                   style={{}}
                 />
