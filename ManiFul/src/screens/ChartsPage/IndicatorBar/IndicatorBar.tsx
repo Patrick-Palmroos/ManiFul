@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { View, Text } from 'react-native';
-import Svg, { G, Text as SvgText, Line, Circle } from 'react-native-svg';
+import Svg, { G, Text as SvgText, Line, Circle, TSpan } from 'react-native-svg';
+import colors from '../../../styles/colors';
 
 interface IndicatorBarProps {
   total: number;
   value: number;
   barColor?: string;
   lineColor?: string;
+  title?: string;
 }
 
 const IndicatorBar = ({
@@ -14,6 +16,7 @@ const IndicatorBar = ({
   value,
   barColor = '#89004E',
   lineColor = '#EC2C96',
+  title = '',
 }: IndicatorBarProps) => {
   const [size, setSize] = useState<{ height: number; width: number }>({
     height: 0,
@@ -38,6 +41,33 @@ const IndicatorBar = ({
   return (
     <View onLayout={onLayout} style={{ flex: 1 }}>
       <Svg width={size.width + paddingX} height={size.height + paddingY}>
+        {/* number value */}
+        <SvgText
+          x={paddingX / 2}
+          y={size.height - paddingY - 5}
+          fontSize={14}
+          fontFamily="Rubik-Medium"
+          fill={barColor}>
+          {title ? `${title}: ` : ''}
+          <TSpan fill={colors.moneyDark} fontSize={14}>
+            {value.toFixed(2)}
+          </TSpan>
+          <TSpan fill={barColor} fontSize={14}>
+            {` / ${total.toFixed(2)}€`}
+          </TSpan>
+        </SvgText>
+
+        {/* percentage value */}
+        <SvgText
+          x={size.width - 10}
+          y={size.height - paddingY - 5}
+          fontSize={14}
+          textAnchor="middle"
+          fontFamily="Rubik-Medium"
+          fill={barColor}>
+          {`${((value / total) * 100).toFixed(2)}%`}
+        </SvgText>
+
         {/* whole bar */}
         <Line
           x1={paddingX / 2}
@@ -48,6 +78,7 @@ const IndicatorBar = ({
           strokeWidth="12"
           strokeLinecap="round"
         />
+
         {/* progress bar */}
         {lineValue !== 0 && (
           <Line
