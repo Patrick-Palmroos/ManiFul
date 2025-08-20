@@ -6,6 +6,7 @@ import { useState } from 'react';
 const values = [
   { date: 9, value: 75 },
   { date: 3, value: 90 },
+  { date: 4, value: 30 },
   { date: 1, value: 50 },
   { date: 12, value: 25 },
 ];
@@ -24,6 +25,11 @@ const LineChart = () => {
   const [waypoints, setWaypoints] = useState<{ y: number; value: number }[]>(
     [],
   );
+
+  const graphColor = '#C0D7FF';
+  const graphColorSecondary = '#681060';
+  const graphLineColor = '#A8FFFE';
+  const textColor = '#FFFFFF';
 
   const paddingY = 20;
   const leftPadding = 38;
@@ -97,7 +103,7 @@ const LineChart = () => {
         flex: 1,
         height: size.height + paddingY,
         //margin: 10,
-        backgroundColor: 'pink',
+        backgroundColor: 'black',
       }}
       onLayout={onLayout}>
       <Svg width={size.width + paddingX} height={size.height + paddingY}>
@@ -106,7 +112,7 @@ const LineChart = () => {
           {waypoints.map((wp, i) => (
             <G key={i}>
               <SvgText
-                x={wp.value === maxValue ? originX + 14 : originX - 6}
+                x={wp.value === maxValue ? originX + 15 : originX - 6}
                 y={
                   wp.value === maxValue
                     ? originY - wp.y - 10
@@ -114,8 +120,8 @@ const LineChart = () => {
                 }
                 textAnchor="end"
                 fontFamily="Rubik-Medium"
-                fill={'black'}
-                fontSize="10">
+                fill={textColor}
+                fontSize={wp.value === maxValue ? '11' : '10'}>
                 {wp.value.toString().concat(wp.value === maxValue ? '€' : '')}
               </SvgText>
               <Line
@@ -123,8 +129,8 @@ const LineChart = () => {
                 y1={originY - wp.y}
                 x2={size.width + leftPadding}
                 y2={originY - wp.y}
-                stroke="orange"
-                strokeWidth="4.5"
+                stroke={graphColorSecondary}
+                strokeWidth="2"
                 strokeLinecap="round"
               />
             </G>
@@ -133,13 +139,13 @@ const LineChart = () => {
           {todayPoint && (
             <Line
               x1={todayPoint.x + leftPadding}
-              y1={originY}
+              y1={originY - 10}
               x2={todayPoint.x + leftPadding}
-              y2={paddingY + 12}
-              stroke="red"
-              strokeWidth={4.5}
-              strokeDasharray="9"
-              strokeLinecap="round"
+              y2={paddingY}
+              stroke={textColor}
+              strokeWidth={2}
+              strokeDasharray="7"
+              //strokeLinecap="round"
             />
           )}
           {/* Vertical line */}
@@ -148,8 +154,8 @@ const LineChart = () => {
             y1={originY}
             x2={originX}
             y2={paddingY + 12}
-            stroke="red"
-            strokeWidth="4.5"
+            stroke={graphColor}
+            strokeWidth="3"
             strokeLinecap="round"
           />
           {/* Horizontal line */}
@@ -158,8 +164,8 @@ const LineChart = () => {
             y1={originY}
             x2={size.width + leftPadding}
             y2={originY}
-            stroke="red"
-            strokeWidth="4.5"
+            stroke={graphColor}
+            strokeWidth="3"
             strokeLinecap="round"
           />
           {/* Dots on horizontal line */}
@@ -173,22 +179,25 @@ const LineChart = () => {
             return (
               <G key={i}>
                 {/* Line for the date position */}
-                <Circle
-                  cx={p.x + leftPadding}
-                  cy={originY}
-                  r={4}
-                  fill={'blue'}
+                <Line
+                  x1={p.x + leftPadding}
+                  y1={originY - 5}
+                  x2={p.x + leftPadding}
+                  y2={originY + 7}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  stroke={graphColor}
                 />
                 {/* date text */}
                 {!p.hidden && (
                   <SvgText
                     x={p.x + leftPadding}
-                    y={size.height + paddingY / 2}
-                    fontSize={14}
+                    y={size.height + paddingY / 1.8}
+                    fontSize={12}
                     textAnchor="middle"
                     fontFamily="Rubik-Medium"
-                    fill={'red'}>
-                    {p.day}
+                    fill={textColor}>
+                    {String(p.day).padStart(2, '0')}
                   </SvgText>
                 )}
                 {/* Value for amount */}
@@ -196,19 +205,19 @@ const LineChart = () => {
                   <G>
                     <Line
                       x1={p.x + leftPadding}
-                      y1={originY - 2}
+                      y1={originY - 1.5}
                       x2={p.x + leftPadding}
-                      y2={scaleY(jointTotal)}
-                      stroke="red"
-                      strokeWidth="4.5"
+                      y2={scaleY(jointTotal) + 3}
+                      stroke={graphLineColor}
+                      strokeWidth="8.5"
                       strokeLinecap="butt"
                     />
                     <Circle
                       cx={p.x + leftPadding}
-                      cy={scaleY(jointTotal)}
-                      r={2.25}
+                      cy={scaleY(jointTotal) + 3}
+                      r={4.25}
                       opacity={1}
-                      fill="red"
+                      fill={graphLineColor}
                     />
                   </G>
                 )}
