@@ -11,6 +11,7 @@ import {
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import text from '../../styles/text';
 import MonthPicker from 'react-native-month-year-picker';
+import IndicatorBar from './IndicatorBar';
 
 const ChartsPage = () => {
   const { transactions } = useTransactions();
@@ -163,6 +164,16 @@ const ChartsPage = () => {
           locale="en" // change to fi for finnish
         />
       )}
+      <View
+        style={{
+          backgroundColor: 'white',
+          height: 200,
+          margin: 15,
+          borderRadius: 15,
+          padding: 10,
+        }}>
+        <IndicatorBar />
+      </View>
     </View>
   );
 };
