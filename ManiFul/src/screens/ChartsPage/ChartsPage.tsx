@@ -21,6 +21,8 @@ const ChartsPage = () => {
     return month === date.getMonth() && year === date.getFullYear();
   });
 
+  const total = values.reduce((sum, v) => (sum += v.total), 0);
+
   const handleChange = (event: any, newDate?: Date) => {
     setEditDate(false);
 
@@ -41,12 +43,17 @@ const ChartsPage = () => {
           borderBottomRightRadius: 20,
           borderBottomLeftRadius: 20,
         }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
           <TouchableOpacity onPress={() => setEditDate(true)}>
             <View
               style={{
                 height: 30,
                 flexDirection: 'row',
+
                 margin: 10,
                 alignItems: 'center',
               }}>
@@ -89,6 +96,19 @@ const ChartsPage = () => {
               textAlign: 'center',
             }}>
             {date.getFullYear()}
+          </Text>
+        </View>
+        <View style={{ height: 30, paddingLeft: 10 }}>
+          <Text
+            style={{
+              ...text.regularMedium,
+              fontSize: 18,
+              color: colors.light,
+            }}>
+            Total.{' '}
+            <Text style={{ color: colors.moneyLight }}>
+              {total.toFixed(2)}€
+            </Text>
           </Text>
         </View>
         <View style={{ height: 220 }}>
