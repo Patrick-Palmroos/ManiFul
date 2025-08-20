@@ -24,6 +24,8 @@ const IndicatorBar = ({
   });
   const [lineValue, setLineValue] = useState<number>(0);
 
+  const errorColor = '#970000ff';
+
   const paddingY = 10;
   const paddingX = 20;
 
@@ -33,7 +35,7 @@ const IndicatorBar = ({
     const paddedHeight = height - paddingY;
 
     //calculates the value for the progress bar.
-    setLineValue((value / total) * paddedWidth);
+    setLineValue(value < total ? (value / total) * paddedWidth : paddedWidth);
     //sets the component size.
     setSize({ height: paddedHeight, width: paddedWidth });
   };
@@ -49,7 +51,9 @@ const IndicatorBar = ({
           fontFamily="Rubik-Medium"
           fill={barColor}>
           {title ? `${title}: ` : ''}
-          <TSpan fill={colors.moneyDark} fontSize={14}>
+          <TSpan
+            fill={value <= total ? colors.moneyDark : errorColor}
+            fontSize={14}>
             {value.toFixed(2)}
           </TSpan>
           <TSpan fill={barColor} fontSize={14}>
@@ -64,7 +68,7 @@ const IndicatorBar = ({
           fontSize={14}
           textAnchor="middle"
           fontFamily="Rubik-Medium"
-          fill={barColor}>
+          fill={value <= total ? barColor : errorColor}>
           {`${((value / total) * 100).toFixed(2)}%`}
         </SvgText>
 
@@ -86,7 +90,7 @@ const IndicatorBar = ({
             y1={size.height - paddingY / 2}
             x2={lineValue + paddingX / 2}
             y2={size.height - paddingY / 2}
-            stroke={lineColor}
+            stroke={value <= total ? lineColor : errorColor}
             strokeWidth="12"
             strokeLinecap="round"
           />
