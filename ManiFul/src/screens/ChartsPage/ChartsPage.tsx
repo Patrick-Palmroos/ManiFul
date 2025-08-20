@@ -4,7 +4,10 @@ import LineChart from './LineChart';
 import { useTransactions } from '../../context/TransactionContext';
 import LinearGradient from 'react-native-linear-gradient';
 import { useState } from 'react';
-import { monthToTextFormat } from '../../utils/date_handling';
+import {
+  isCurrentMonthAndYear,
+  monthToTextFormat,
+} from '../../utils/date_handling';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import text from '../../styles/text';
 import MonthPicker from 'react-native-month-year-picker';
@@ -48,12 +51,12 @@ const ChartsPage = () => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <TouchableOpacity onPress={() => setEditDate(true)}>
-            <View
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              onPress={() => setEditDate(true)}
               style={{
                 height: 30,
                 flexDirection: 'row',
-
                 margin: 10,
                 alignItems: 'center',
               }}>
@@ -84,8 +87,31 @@ const ChartsPage = () => {
                   }}
                 />
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+            {!isCurrentMonthAndYear(
+              date.getMonth() + 1,
+              date.getFullYear(),
+            ) && (
+              <TouchableOpacity
+                style={{
+                  marginLeft: 15,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+                onPress={() => setDate(new Date())}>
+                <Text style={{ ...text.regularLight }}>Reset</Text>
+                <MaterialIcons
+                  name={'cached'}
+                  size={25}
+                  onPress={() => setEditDate(true)}
+                  color={'#ffffffff'}
+                  style={{}}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+
           <Text
             style={{
               ...text.regularMedium,
