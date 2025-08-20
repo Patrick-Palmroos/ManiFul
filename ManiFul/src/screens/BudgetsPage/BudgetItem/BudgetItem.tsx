@@ -11,21 +11,7 @@ import text from '../../../styles/text';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import colors from '../../../styles/colors';
 import styles from './styles';
-
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import { monthToTextFormat } from '../../../utils/date_handling';
 
 const BudgetItem = ({ item }: { item: BudgetType }) => {
   const { transactions } = useTransactions();
@@ -55,7 +41,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
         <View>
           {/* Date */}
           <Text style={text.title}>
-            {item.year} {months[item.month - 1]}
+            {item.year} {monthToTextFormat(item.month - 1)}
           </Text>
           {/* Months expenses */}
           <Text style={text.regular}>
