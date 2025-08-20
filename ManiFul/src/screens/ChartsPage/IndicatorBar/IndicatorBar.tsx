@@ -10,6 +10,7 @@ interface IndicatorBarProps {
   lineColor?: string;
   title?: string;
   errorColor?: string;
+  barKey: string;
 }
 
 const IndicatorBar = ({
@@ -19,6 +20,7 @@ const IndicatorBar = ({
   lineColor = '#EC2C96',
   errorColor = '#970000ff',
   title = '',
+  barKey,
 }: IndicatorBarProps) => {
   const [size, setSize] = useState<{ height: number; width: number }>({
     height: 0,
@@ -41,7 +43,7 @@ const IndicatorBar = ({
   };
 
   return (
-    <View onLayout={onLayout} style={{ flex: 1 }}>
+    <View onLayout={onLayout} style={{ flex: 1 }} key={barKey}>
       <Svg width={size.width + paddingX} height={size.height + paddingY}>
         {/* number value */}
         <SvgText
