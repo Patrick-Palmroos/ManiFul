@@ -1,8 +1,13 @@
-import { View, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Svg, { G, Text as SvgText, Line, Circle } from 'react-native-svg';
 import { useState } from 'react';
 import { TransactionData } from '../../../types/data';
 import { isCurrentMonthAndYear } from '../../../utils/date_handling';
+import Tooltip from '../ToolTip';
 
 interface LineChartValues {
   date: number;
@@ -78,6 +83,13 @@ const LineChart = ({
   const [waypoints, setWaypoints] = useState<{ y: number; value: number }[]>(
     [],
   );
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltipData, setTooltipData] = useState<{
+    value: number;
+    day: number;
+    x: number;
+    y: number;
+  } | null>(null);
 
   //convert given data to LineChartValues.
   const filtered: LineChartValues[] = data.map((item: TransactionData) => {
@@ -162,6 +174,32 @@ const LineChart = ({
     setWaypoints(newList);
   };
 
+  //handle presses to show the tooltip
+  const handleDataPointPress = (
+    jointTotal: number,
+    day: number,
+    x: number,
+    y: number,
+  ) => {
+    setTooltipData({
+      value: jointTotal,
+      day: day,
+      x: x + leftPadding,
+      y: scaleY(jointTotal) + 15,
+    });
+    setTooltipVisible(true);
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setTooltipVisible(false);
+    }, 10000);
+  };
+
+  // Handle press outside to close the tooltip
+  const handleBackgroundPress = () => {
+    setTooltipVisible(false);
+  };
+
   //origin point on X axes.
   const originX = leftPadding;
   //origin point on Y axes.
@@ -184,141 +222,172 @@ const LineChart = ({
     waypoints.length > 0;
 
   return (
-    <View
-      key={chartKey}
-      style={{
-        flex: 1,
-        height: size.height + paddingY,
-      }}
-      onLayout={onLayout}>
-      {isReady ? (
-        <Svg width={size.width + paddingX} height={size.height + paddingY}>
-          <G>
-            {/* the guiding lines and their values */}
-            {waypoints.map((wp, i) => (
-              <G key={i}>
-                <SvgText
-                  x={wp.value === maxValue ? originX + 15 : originX - 6}
-                  y={
-                    wp.value === maxValue
-                      ? originY - wp.y - 10
-                      : originY - wp.y + 4
-                  }
-                  textAnchor="end"
-                  fontFamily="Rubik-Medium"
-                  fill={textColor}
-                  fontSize={wp.value === maxValue ? '11' : '10'}>
-                  {wp.value.toString().concat(wp.value === maxValue ? '€' : '')}
-                </SvgText>
-                <Line
-                  x1={originX}
-                  y1={originY - wp.y}
-                  x2={size.width + leftPadding}
-                  y2={originY - wp.y}
-                  stroke={graphColorSecondary}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </G>
-            ))}
-            {/* Current day line */}
-            {isCurrentMonthAndYear(month, year) && todayPoint && (
-              <Line
-                x1={todayPoint.x + leftPadding}
-                y1={originY - 10}
-                x2={todayPoint.x + leftPadding}
-                y2={paddingY}
-                stroke={textColor}
-                strokeWidth={2}
-                strokeDasharray="7"
-                //strokeLinecap="round"
-              />
-            )}
-            {/* Vertical line */}
-            <Line
-              x1={originX}
-              y1={originY}
-              x2={originX}
-              y2={paddingY + 12}
-              stroke={graphColor}
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            {/* Horizontal line */}
-            <Line
-              x1={originX}
-              y1={originY}
-              x2={size.width + leftPadding}
-              y2={originY}
-              stroke={graphColor}
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            {/* Dots on horizontal line */}
-            {points.map((p, i) => {
-              const v = filtered.filter(v => v.date === p.day);
-              let jointTotal: number = 0;
-              if (v.length !== 0) {
-                jointTotal = v.reduce((sum, v) => (sum += v.value), 0);
-              }
-              console.log(`filtered = ${v}, jointTotal: ${jointTotal}`);
-              return (
+    <TouchableWithoutFeedback onPress={handleBackgroundPress}>
+      <View
+        key={chartKey}
+        style={{
+          flex: 1,
+          height: size.height + paddingY,
+        }}
+        onLayout={onLayout}>
+        {/* Tooltip */}
+        {tooltipVisible && tooltipData && (
+          <Tooltip
+            visible={tooltipVisible}
+            value={tooltipData.value}
+            day={tooltipData.day}
+            x={tooltipData.x}
+            y={tooltipData.y}
+          />
+        )}
+
+        {isReady ? (
+          <Svg width={size.width + paddingX} height={size.height + paddingY}>
+            <G>
+              {/* the guiding lines and their values */}
+              {waypoints.map((wp, i) => (
                 <G key={i}>
-                  {/* Line for the date position */}
+                  <SvgText
+                    x={wp.value === maxValue ? originX + 15 : originX - 6}
+                    y={
+                      wp.value === maxValue
+                        ? originY - wp.y - 10
+                        : originY - wp.y + 4
+                    }
+                    textAnchor="end"
+                    fontFamily="Rubik-Medium"
+                    fill={textColor}
+                    fontSize={wp.value === maxValue ? '11' : '10'}>
+                    {wp.value
+                      .toString()
+                      .concat(wp.value === maxValue ? '€' : '')}
+                  </SvgText>
                   <Line
-                    x1={p.x + leftPadding}
-                    y1={originY - 5}
-                    x2={p.x + leftPadding}
-                    y2={originY + 7}
+                    x1={originX}
+                    y1={originY - wp.y}
+                    x2={size.width + leftPadding}
+                    y2={originY - wp.y}
+                    stroke={graphColorSecondary}
                     strokeWidth="2"
                     strokeLinecap="round"
-                    stroke={graphColor}
                   />
-                  {/* date text */}
-                  {!p.hidden && (
-                    <SvgText
-                      x={p.x + leftPadding}
-                      y={size.height + paddingY / 1.8}
-                      fontSize={12}
-                      textAnchor="middle"
-                      fontFamily="Rubik-Medium"
-                      fill={textColor}>
-                      {String(p.day).padStart(2, '0')}
-                    </SvgText>
-                  )}
-                  {/* Value for amount */}
-                  {jointTotal !== 0 && (
-                    <G>
-                      <Line
-                        x1={p.x + leftPadding}
-                        y1={originY - 1.5}
-                        x2={p.x + leftPadding}
-                        y2={scaleY(jointTotal) + 3}
-                        stroke={graphLineColor}
-                        strokeWidth="8.5"
-                        strokeLinecap="butt"
-                      />
-                      <Circle
-                        cx={p.x + leftPadding}
-                        cy={scaleY(jointTotal) + 3}
-                        r={4.25}
-                        opacity={1}
-                        fill={graphLineColor}
-                      />
-                    </G>
-                  )}
                 </G>
-              );
-            })}
-          </G>
-        </Svg>
-      ) : (
-        <View style={{ justifyContent: 'center', height: '100%' }}>
-          {/* Loading indicator */}
-          <ActivityIndicator color={graphColor} size={50} />
-        </View>
-      )}
-    </View>
+              ))}
+              {/* Current day line */}
+              {isCurrentMonthAndYear(month, year) && todayPoint && (
+                <Line
+                  x1={todayPoint.x + leftPadding}
+                  y1={originY - 10}
+                  x2={todayPoint.x + leftPadding}
+                  y2={paddingY}
+                  stroke={textColor}
+                  strokeWidth={2}
+                  strokeDasharray="7"
+                  //strokeLinecap="round"
+                />
+              )}
+              {/* Vertical line */}
+              <Line
+                x1={originX}
+                y1={originY}
+                x2={originX}
+                y2={paddingY + 12}
+                stroke={graphColor}
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+              {/* Horizontal line */}
+              <Line
+                x1={originX}
+                y1={originY}
+                x2={size.width + leftPadding}
+                y2={originY}
+                stroke={graphColor}
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+              {/* Dots on horizontal line */}
+              {points.map((p, i) => {
+                const v = filtered.filter(v => v.date === p.day);
+                let jointTotal: number = 0;
+                if (v.length !== 0) {
+                  jointTotal = v.reduce((sum, v) => (sum += v.value), 0);
+                }
+                console.log(`filtered = ${v}, jointTotal: ${jointTotal}`);
+                return (
+                  <G key={i}>
+                    {/* Line for the date position */}
+                    <Line
+                      x1={p.x + leftPadding}
+                      y1={originY - 5}
+                      x2={p.x + leftPadding}
+                      y2={originY + 7}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      stroke={graphColor}
+                    />
+                    {/* date text */}
+                    {!p.hidden && (
+                      <SvgText
+                        x={p.x + leftPadding}
+                        y={size.height + paddingY / 1.8}
+                        fontSize={12}
+                        textAnchor="middle"
+                        fontFamily="Rubik-Medium"
+                        fill={textColor}>
+                        {String(p.day).padStart(2, '0')}
+                      </SvgText>
+                    )}
+                    {/* Value for amount */}
+                    {jointTotal !== 0 && (
+                      <G>
+                        <Line
+                          x1={p.x + leftPadding}
+                          y1={originY - 1.5}
+                          x2={p.x + leftPadding}
+                          y2={scaleY(jointTotal) + 3}
+                          stroke={graphLineColor}
+                          strokeWidth="8.5"
+                          strokeLinecap="butt"
+                          onPress={() =>
+                            handleDataPointPress(
+                              jointTotal,
+                              p.day,
+                              p.x,
+                              scaleY(jointTotal) + 3,
+                            )
+                          }
+                        />
+                        <Circle
+                          cx={p.x + leftPadding}
+                          cy={scaleY(jointTotal) + 3}
+                          r={4.25}
+                          opacity={1}
+                          fill={graphLineColor}
+                          onPress={() =>
+                            handleDataPointPress(
+                              jointTotal,
+                              p.day,
+                              p.x,
+                              scaleY(jointTotal) + 3,
+                            )
+                          }
+                        />
+                      </G>
+                    )}
+                  </G>
+                );
+              })}
+            </G>
+          </Svg>
+        ) : (
+          <View style={{ justifyContent: 'center', height: '100%' }}>
+            {/* Loading indicator */}
+            <ActivityIndicator color={graphColor} size={50} />
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
