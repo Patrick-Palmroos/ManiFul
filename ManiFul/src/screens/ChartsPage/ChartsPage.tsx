@@ -32,6 +32,8 @@ const ChartsPage = () => {
         }}>
         <LineChart
           chartKey={`${selectedMonth}-${selectedYear}`}
+          year={selectedYear}
+          month={selectedMonth}
           data={values}
         />
       </View>

@@ -13,9 +13,11 @@ interface LineChartValues {
 interface LineChartProps {
   data: TransactionData[];
   chartKey: string;
+  month: number;
+  year: number;
 }
 
-const LineChart = ({ data, chartKey }: LineChartProps) => {
+const LineChart = ({ data, chartKey, year, month }: LineChartProps) => {
   const filtered: LineChartValues[] = data.map((item: TransactionData) => {
     const date = new Date(item.date);
     return {
@@ -55,7 +57,7 @@ const LineChart = ({ data, chartKey }: LineChartProps) => {
   const rightPadding = 15;
   const paddingX = leftPadding + rightPadding;
 
-  const daysInMonth: number = new Date(2025, 9, 0).getDate();
+  const daysInMonth: number = new Date(year, month, 0).getDate();
   const currentDay: number = new Date().getDate();
 
   console.log(maxValue);
@@ -156,7 +158,7 @@ const LineChart = ({ data, chartKey }: LineChartProps) => {
             </G>
           ))}
           {/* Current day line */}
-          {todayPoint && (
+          {isCurrentMonthAndYear(month, year) && todayPoint && (
             <Line
               x1={todayPoint.x + leftPadding}
               y1={originY - 10}
