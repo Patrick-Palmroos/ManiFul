@@ -4,9 +4,10 @@ import * as d3Shape from 'd3-shape';
 import { useState } from 'react';
 
 const values = [
-  { date: 9, value: 15 },
-  { date: 3, value: 31 },
-  { date: 1, value: 5 },
+  { date: 9, value: 75 },
+  { date: 3, value: 90 },
+  { date: 1, value: 50 },
+  { date: 12, value: 25 },
 ];
 
 const LineChart = () => {
@@ -14,10 +15,12 @@ const LineChart = () => {
   const highestValue = Math.round(Math.max(...val) / 10.0 + 1) * 10.0;
   const maxValue: number = highestValue > 100 ? highestValue : 100;
   const [size, setSize] = useState<{ height: number; width: number }>({
-    height: 100,
-    width: 100,
+    height: 0,
+    width: 0,
   });
-  const [points, setPoints] = useState<{ x: number; day: number }[]>([]);
+  const [points, setPoints] = useState<
+    { x: number; day: number; hidden: boolean }[]
+  >([]);
   const [waypoints, setWaypoints] = useState<{ y: number; value: number }[]>(
     [],
   );
@@ -45,7 +48,7 @@ const LineChart = () => {
   };
 
   const setDots = (width: number) => {
-    let newList: { x: number; day: number }[] = [];
+    let newList: { x: number; day: number; hidden: boolean }[] = [];
     const interval = width / daysInMonth;
     let position = 0;
     let even = true;
@@ -56,13 +59,13 @@ const LineChart = () => {
     console.log('even: ', even);
     for (let i = 1; i <= daysInMonth; i++) {
       position += interval;
+      let hidden = false;
 
       if ((even && i & 1) || (!even && (i & 1) === 0)) {
-        newList.push({ day: -1, x: position });
-        continue;
+        hidden = true;
       }
 
-      newList.push({ day: i, x: position });
+      newList.push({ day: i, x: position, hidden: hidden });
     }
     console.log('setting new list of: ', newList);
     setPoints(newList);
@@ -71,12 +74,8 @@ const LineChart = () => {
   const handleWaypoints = (height: number) => {
     let newList: { y: number; value: number }[] = [];
     const interval = height / 5;
-    let position = 0;
-    let multiplication = 0;
-    for (let i = 0; i < 5; i++) {
-      newList.push({ y: position, value: maxValue * multiplication });
-      position += interval;
-      multiplication += 0.25;
+    for (let i = 0; i <= 4; i++) {
+      newList.push({ y: interval * i, value: maxValue * (i / 4) });
     }
     console.log('waypoints: ', newList);
 
@@ -85,6 +84,11 @@ const LineChart = () => {
 
   const originX = leftPadding;
   const originY = size.height - paddingY / 2;
+
+  const todayPoint = points.find(p => p.day === currentDay);
+
+  const chartHeight = waypoints[waypoints.length - 1].y;
+  const scaleY = (value: number) => originY - (value / maxValue) * chartHeight;
 
   return (
     <View
@@ -124,6 +128,19 @@ const LineChart = () => {
               />
             </G>
           ))}
+          {/* Current day line */}
+          {todayPoint && (
+            <Line
+              x1={todayPoint.x + leftPadding}
+              y1={originY}
+              x2={todayPoint.x + leftPadding}
+              y2={paddingY + 12}
+              stroke="red"
+              strokeWidth={4.5}
+              strokeDasharray="9"
+              strokeLinecap="round"
+            />
+          )}
           {/* Vertical line */}
           <Line
             x1={originX}
@@ -145,22 +162,58 @@ const LineChart = () => {
             strokeLinecap="round"
           />
           {/* Dots on horizontal line */}
-          {points.map((p, i) => (
-            <G key={i}>
-              <Circle cx={p.x + leftPadding} cy={originY} r={4} fill={'blue'} />
-              {p.day !== -1 && (
-                <SvgText
-                  x={p.x + leftPadding}
-                  y={size.height + paddingY / 2}
-                  fontSize={14}
-                  textAnchor="middle"
-                  fontFamily="Rubik-Medium"
-                  fill={'red'}>
-                  {p.day}
-                </SvgText>
-              )}
-            </G>
-          ))}
+          {points.map((p, i) => {
+            const v = values.filter(v => v.date === p.day);
+            let jointTotal: number = 0;
+            if (v.length !== 0) {
+              jointTotal = v.reduce((sum, v) => (sum += v.value), 0);
+            }
+            console.log(`filtered = ${v}, jointTotal: ${jointTotal}`);
+            return (
+              <G key={i}>
+                {/* Line for the date position */}
+                <Circle
+                  cx={p.x + leftPadding}
+                  cy={originY}
+                  r={4}
+                  fill={'blue'}
+                />
+                {/* date text */}
+                {!p.hidden && (
+                  <SvgText
+                    x={p.x + leftPadding}
+                    y={size.height + paddingY / 2}
+                    fontSize={14}
+                    textAnchor="middle"
+                    fontFamily="Rubik-Medium"
+                    fill={'red'}>
+                    {p.day}
+                  </SvgText>
+                )}
+                {/* Value for amount */}
+                {jointTotal !== 0 && (
+                  <G>
+                    <Line
+                      x1={p.x + leftPadding}
+                      y1={originY - 2}
+                      x2={p.x + leftPadding}
+                      y2={scaleY(jointTotal)}
+                      stroke="red"
+                      strokeWidth="4.5"
+                      strokeLinecap="butt"
+                    />
+                    <Circle
+                      cx={p.x + leftPadding}
+                      cy={scaleY(jointTotal)}
+                      r={2.25}
+                      opacity={1}
+                      fill="red"
+                    />
+                  </G>
+                )}
+              </G>
+            );
+          })}
         </G>
       </Svg>
     </View>
