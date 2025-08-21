@@ -9,7 +9,7 @@ import colors from '../../styles/colors';
 import LineChart from './LineChart';
 import { useTransactions } from '../../context/TransactionContext';
 import LinearGradient from 'react-native-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   isCurrentMonthAndYear,
   monthToTextFormat,
@@ -56,6 +56,14 @@ const ChartsPage = () => {
     return month === date.getMonth() && year === date.getFullYear();
   });
 
+  const { budget } = useMemo(() => {
+    const newBudget: BudgetType | undefined = budgets.find(
+      b => b.month === date.getMonth() + 1 && b.year === date.getFullYear(),
+    );
+
+    return { budget: newBudget };
+  }, [date]);
+
   const handleJoiningItems = () => {
     //get all categories and their types
     const list: BudgetCategoryTypeValues[] = categories
@@ -77,9 +85,6 @@ const ChartsPage = () => {
       })
       .filter(i => i !== null);
 
-    const budget: BudgetType | undefined = budgets.find(
-      b => b.month === date.getMonth() + 1 && b.year === date.getFullYear(),
-    );
     //check if budget even exists
     if (budget) {
       list.forEach(item => {
@@ -304,6 +309,7 @@ const ChartsPage = () => {
           {/* View for largest expense and statistics */}
           <View
             style={{ flexDirection: 'row', gap: 5, justifyContent: 'center' }}>
+            {/* Largest expenses */}
             <View
               style={{
                 backgroundColor: 'white',
@@ -328,6 +334,7 @@ const ChartsPage = () => {
                 </View>
               ))}
             </View>
+            {/* Statistics */}
             <View
               style={{
                 backgroundColor: 'white',
