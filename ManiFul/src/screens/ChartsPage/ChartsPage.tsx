@@ -319,7 +319,7 @@ const ChartsPage = () => {
                 borderRadius: 15,
                 height: '100%',
               }}>
-              <Text>Largest expenses</Text>
+              <Text style={text.title}>Largest expenses</Text>
               {largest.map((item, i) => (
                 <View
                   key={i}
@@ -329,9 +329,14 @@ const ChartsPage = () => {
                     flexWrap: 'wrap',
                     marginBottom: 5,
                   }}>
-                  <Text>{`${i + 1}.`}</Text>
-                  <Text>{item.name}</Text>
-                  <Text>{`${item.total.toFixed(2)}€`}</Text>
+                  <Text style={text.regularMedium}>{`${i + 1}.`}</Text>
+                  <Text style={text.regular}>{item.name}</Text>
+                  <Text
+                    style={{
+                      ...text.moneyDark,
+                      marginLeft: 2,
+                      fontSize: 16,
+                    }}>{`${item.total.toFixed(2)}€`}</Text>
                 </View>
               ))}
             </View>
@@ -341,23 +346,25 @@ const ChartsPage = () => {
                 backgroundColor: 'white',
                 height: '100%',
                 width: '45%',
+                padding: 10,
+                borderRadius: 15,
               }}>
-              <View>
-                <Text>
+              <View style={{ gap: 4 }}>
+                <Text style={{ ...text.regular, fontSize: 15 }}>
                   {budget
                     ? `${((total / budget?.budgetTotal) * 100).toFixed(
                         2,
                       )}% of total monthly budget spent.`
                     : 'No budget selected'}
                 </Text>
-                <Text>
+                <Text style={{ ...text.regular, fontSize: 15 }}>
                   {budget
                     ? `${(100 - (total / budget?.budgetTotal) * 100).toFixed(
                         2,
                       )}% of total budget left.`
                     : 'No budget selected'}
                 </Text>
-                <Text>
+                <Text style={{ ...text.regular, fontSize: 15 }}>
                   {budget
                     ? `Average money spent per day: ${(
                         total / currentDate
