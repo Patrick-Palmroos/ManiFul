@@ -43,6 +43,7 @@ const ChartsPage = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [editDate, setEditDate] = useState<boolean>(false);
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
+  const [largest, setLargest] = useState<{ name: string; total: number }[]>([]);
 
   console.log('transactions: ', transactions);
   console.log('budgets: ', budgets);
@@ -112,6 +113,7 @@ const ChartsPage = () => {
       });
     }
     console.log(list);
+    handleLargest(list);
     setItems(list);
   };
 
@@ -127,6 +129,20 @@ const ChartsPage = () => {
     if (newDate) {
       setDate(newDate);
     }
+  };
+
+  const handleLargest = (list: BudgetCategoryTypeValues[]) => {
+    const listOfAll: { name: string; total: number }[] = list
+      .flatMap(l => {
+        return l.types.map(type => {
+          return { name: type.name, total: type.total };
+        });
+      })
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+
+    console.log('list of all items:', listOfAll);
+    setLargest(listOfAll);
   };
 
   return (
@@ -290,9 +306,11 @@ const ChartsPage = () => {
             <View
               style={{
                 backgroundColor: 'white',
-                height: 50,
+                height: 150,
                 width: '45%',
-              }}></View>
+              }}>
+              <Text>Largest expenses</Text>
+            </View>
             <View
               style={{
                 backgroundColor: 'white',
