@@ -4,7 +4,8 @@ import { Type } from './categories';
 export type PieData = {
   name: String;
   value: number;
-  color: ColorValue;
+  color?: ColorValue;
+  gap: boolean;
 };
 
 export type TransactionData = {
