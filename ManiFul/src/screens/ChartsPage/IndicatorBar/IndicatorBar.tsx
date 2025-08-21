@@ -71,7 +71,9 @@ const IndicatorBar = ({
           textAnchor="middle"
           fontFamily="Rubik-Medium"
           fill={value <= total ? barColor : errorColor}>
-          {`${((value / total) * 100).toFixed(2)}%`}
+          {value !== 0 && total !== 0
+            ? `${((value / total) * 100).toFixed(2)}%`
+            : '0.00%'}
         </SvgText>
 
         {/* whole bar */}
