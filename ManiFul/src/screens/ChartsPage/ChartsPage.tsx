@@ -44,6 +44,7 @@ const ChartsPage = () => {
   const [editDate, setEditDate] = useState<boolean>(false);
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
   const [largest, setLargest] = useState<{ name: string; total: number }[]>([]);
+  const [currentDate] = useState<number>(new Date().getDate());
 
   console.log('transactions: ', transactions);
   console.log('budgets: ', budgets);
@@ -340,7 +341,31 @@ const ChartsPage = () => {
                 backgroundColor: 'white',
                 height: '100%',
                 width: '45%',
-              }}></View>
+              }}>
+              <View>
+                <Text>
+                  {budget
+                    ? `${((total / budget?.budgetTotal) * 100).toFixed(
+                        2,
+                      )}% of total monthly budget spent.`
+                    : 'No budget selected'}
+                </Text>
+                <Text>
+                  {budget
+                    ? `${(100 - (total / budget?.budgetTotal) * 100).toFixed(
+                        2,
+                      )}% of total budget left.`
+                    : 'No budget selected'}
+                </Text>
+                <Text>
+                  {budget
+                    ? `Average money spent per day: ${(
+                        total / currentDate
+                      ).toFixed(2)}€`
+                    : 'No budget selected'}
+                </Text>
+              </View>
+            </View>
           </View>
           {/* Bottom padding. */}
           <View style={{ paddingBottom: 150 }} />
