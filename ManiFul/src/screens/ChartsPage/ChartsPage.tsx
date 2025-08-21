@@ -139,7 +139,8 @@ const ChartsPage = () => {
         });
       })
       .sort((a, b) => b.total - a.total)
-      .slice(0, 5);
+      .slice(0, 5)
+      .filter(i => i.total !== 0);
 
     console.log('list of all items:', listOfAll);
     setLargest(listOfAll);
@@ -306,15 +307,31 @@ const ChartsPage = () => {
             <View
               style={{
                 backgroundColor: 'white',
-                height: 150,
                 width: '45%',
+                padding: 10,
+                borderRadius: 15,
+                height: '100%',
               }}>
               <Text>Largest expenses</Text>
+              {largest.map((item, i) => (
+                <View
+                  key={i}
+                  style={{
+                    flexDirection: 'row',
+                    gap: 3,
+                    flexWrap: 'wrap',
+                    marginBottom: 5,
+                  }}>
+                  <Text>{`${i + 1}.`}</Text>
+                  <Text>{item.name}</Text>
+                  <Text>{`${item.total.toFixed(2)}€`}</Text>
+                </View>
+              ))}
             </View>
             <View
               style={{
                 backgroundColor: 'white',
-                height: 50,
+                height: '100%',
                 width: '45%',
               }}></View>
           </View>
