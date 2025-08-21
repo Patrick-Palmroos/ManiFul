@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import colors from '../../styles/colors';
 import LineChart from './LineChart';
 import { useTransactions } from '../../context/TransactionContext';
@@ -124,165 +130,181 @@ const ChartsPage = () => {
   };
 
   return (
-    <View style={{ backgroundColor: colors.background, flex: 1 }}>
-      {/* Container for line graph component */}
-      <LinearGradient
-        colors={[colors.highlight, '#5C438D']}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 0, y: 0 }}
-        style={{
-          width: '100%',
-          paddingBottom: 15,
-          borderBottomRightRadius: 20,
-          borderBottomLeftRadius: 20,
-        }}>
-        {/* Month and year wrapper */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          {/* Month wrapper */}
-          <View style={{ flexDirection: 'row' }}>
-            {/* Touchable opacity to be able to change date */}
-            <TouchableOpacity
-              onPress={() => setEditDate(true)}
+    <ScrollView
+      scrollEnabled
+      style={{
+        flex: 1,
+        backgroundColor: colors.background,
+      }}>
+      <TouchableWithoutFeedback>
+        <View>
+          {/* Container for line graph component */}
+          <LinearGradient
+            colors={[colors.highlight, '#5C438D']}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 0, y: 0 }}
+            style={{
+              width: '100%',
+              paddingBottom: 15,
+              borderBottomRightRadius: 20,
+              borderBottomLeftRadius: 20,
+            }}>
+            {/* Month and year wrapper */}
+            <View
               style={{
-                height: 30,
                 flexDirection: 'row',
-                margin: 10,
-                alignItems: 'center',
+                justifyContent: 'space-between',
               }}>
+              {/* Month wrapper */}
+              <View style={{ flexDirection: 'row' }}>
+                {/* Touchable opacity to be able to change date */}
+                <TouchableOpacity
+                  onPress={() => setEditDate(true)}
+                  style={{
+                    height: 30,
+                    flexDirection: 'row',
+                    margin: 10,
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      ...text.regularMedium,
+                      color: colors.light,
+                      fontSize: 18,
+                    }}>
+                    {monthToTextFormat(date.getMonth())}
+                  </Text>
+                  <View
+                    style={{
+                      height: 30,
+                      width: 30,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: 5,
+                    }}>
+                    <MaterialIcons
+                      name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
+                      size={40}
+                      color={'#ffffffff'}
+                      style={{
+                        textAlign: 'center',
+                        position: 'absolute',
+                      }}
+                    />
+                  </View>
+                </TouchableOpacity>
+                {/* Conditionally rendered button to reset date */}
+                {!isCurrentMonthAndYear(
+                  date.getMonth() + 1,
+                  date.getFullYear(),
+                ) && (
+                  <TouchableOpacity
+                    style={{
+                      marginLeft: 15,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 5,
+                    }}
+                    onPress={() => setDate(new Date())}>
+                    <Text style={{ ...text.regularLight }}>Reset</Text>
+                    <MaterialIcons
+                      name={'cached'}
+                      size={25}
+                      color={'#ffffffff'}
+                      style={{}}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {/* Year text */}
               <Text
                 style={{
                   ...text.regularMedium,
                   color: colors.light,
-                  fontSize: 18,
-                }}>
-                {monthToTextFormat(date.getMonth())}
-              </Text>
-              <View
-                style={{
+                  fontSize: 14,
                   height: 30,
-                  width: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: 5,
+                  margin: 10,
+                  textAlign: 'center',
                 }}>
-                <MaterialIcons
-                  name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
-                  size={40}
-                  color={'#ffffffff'}
-                  style={{
-                    textAlign: 'center',
-                    position: 'absolute',
-                  }}
+                {date.getFullYear()}
+              </Text>
+            </View>
+            {/* Total container */}
+            <View style={{ height: 30, paddingLeft: 10 }}>
+              <Text
+                style={{
+                  ...text.regularMedium,
+                  fontSize: 18,
+                  color: colors.light,
+                }}>
+                Total.{' '}
+                <Text style={{ color: colors.moneyLight }}>
+                  {total.toFixed(2)}€
+                </Text>
+              </Text>
+            </View>
+            {/* Line chart container */}
+            <View style={{ height: 220 }}>
+              <LineChart
+                chartKey={`${date.getMonth()}-${date.getFullYear()}`}
+                year={date.getFullYear()}
+                month={date.getMonth() + 1}
+                data={values}
+                graphColor="#C0D7FF"
+                graphColorSecondary="#681060"
+                graphLineColor="#A8FFFE"
+                textColor="#FFFFFF"
+              />
+            </View>
+          </LinearGradient>
+          {/* date editing modal. */}
+          {editDate && date && (
+            <MonthPicker
+              value={date}
+              onChange={handleChange}
+              locale="en" // change to fi for finnish
+            />
+          )}
+          {/* View for Indicator bars */}
+          <View
+            style={{
+              backgroundColor: 'white',
+              margin: 15,
+              borderRadius: 15,
+              padding: 10,
+            }}>
+            {items.map((item, i) => (
+              <View style={{ height: 50 }} key={i}>
+                <IndicatorBar
+                  total={item.total}
+                  value={item.used}
+                  title={item.name}
+                  barKey={`${item.name + item.id}-${item.total}-${item.used}`}
                 />
               </View>
-            </TouchableOpacity>
-            {/* Conditionally rendered button to reset date */}
-            {!isCurrentMonthAndYear(
-              date.getMonth() + 1,
-              date.getFullYear(),
-            ) && (
-              <TouchableOpacity
-                style={{
-                  marginLeft: 15,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 5,
-                }}
-                onPress={() => setDate(new Date())}>
-                <Text style={{ ...text.regularLight }}>Reset</Text>
-                <MaterialIcons
-                  name={'cached'}
-                  size={25}
-                  color={'#ffffffff'}
-                  style={{}}
-                />
-              </TouchableOpacity>
-            )}
+            ))}
           </View>
-          {/* Year text */}
-          <Text
-            style={{
-              ...text.regularMedium,
-              color: colors.light,
-              fontSize: 14,
-              height: 30,
-              margin: 10,
-              textAlign: 'center',
-            }}>
-            {date.getFullYear()}
-          </Text>
-        </View>
-        {/* Total container */}
-        <View style={{ height: 30, paddingLeft: 10 }}>
-          <Text
-            style={{
-              ...text.regularMedium,
-              fontSize: 18,
-              color: colors.light,
-            }}>
-            Total.{' '}
-            <Text style={{ color: colors.moneyLight }}>
-              {total.toFixed(2)}€
-            </Text>
-          </Text>
-        </View>
-        {/* Line chart container */}
-        <View style={{ height: 220 }}>
-          <LineChart
-            chartKey={`${date.getMonth()}-${date.getFullYear()}`}
-            year={date.getFullYear()}
-            month={date.getMonth() + 1}
-            data={values}
-            graphColor="#C0D7FF"
-            graphColorSecondary="#681060"
-            graphLineColor="#A8FFFE"
-            textColor="#FFFFFF"
-          />
-        </View>
-      </LinearGradient>
-      {/* date editing modal. */}
-      {editDate && date && (
-        <MonthPicker
-          value={date}
-          onChange={handleChange}
-          locale="en" // change to fi for finnish
-        />
-      )}
-      {/* View for Indicator bars */}
-      <View
-        style={{
-          backgroundColor: 'white',
-          margin: 15,
-          borderRadius: 15,
-          padding: 10,
-        }}>
-        {items.map((item, i) => (
-          <View style={{ height: 50 }} key={i}>
-            <IndicatorBar
-              total={item.total}
-              value={item.used}
-              title={item.name}
-              barKey={`${item.name + item.id}-${item.total}-${item.used}`}
-            />
+          {/* View for largest expense and statistics */}
+          <View
+            style={{ flexDirection: 'row', gap: 5, justifyContent: 'center' }}>
+            <View
+              style={{
+                backgroundColor: 'white',
+                height: 50,
+                width: '45%',
+              }}></View>
+            <View
+              style={{
+                backgroundColor: 'white',
+                height: 50,
+                width: '45%',
+              }}></View>
           </View>
-        ))}
-      </View>
-      {/* View for largest expense and statistics */}
-      <View style={{ flexDirection: 'row', gap: 5, justifyContent: 'center' }}>
-        <View
-          style={{ backgroundColor: 'white', height: 50, width: '45%' }}></View>
-        <View
-          style={{
-            backgroundColor: 'white',
-            height: 50,
-            width: '45%',
-          }}></View>
-      </View>
-    </View>
+          {/* Bottom padding. */}
+          <View style={{ paddingBottom: 150 }} />
+        </View>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
