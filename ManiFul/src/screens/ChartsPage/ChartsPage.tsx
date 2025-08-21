@@ -252,6 +252,7 @@ const ChartsPage = () => {
           locale="en" // change to fi for finnish
         />
       )}
+      {/* View for Indicator bars */}
       <View
         style={{
           backgroundColor: 'white',
@@ -269,6 +270,17 @@ const ChartsPage = () => {
             />
           </View>
         ))}
+      </View>
+      {/* View for largest expense and statistics */}
+      <View style={{ flexDirection: 'row', gap: 5, justifyContent: 'center' }}>
+        <View
+          style={{ backgroundColor: 'white', height: 50, width: '45%' }}></View>
+        <View
+          style={{
+            backgroundColor: 'white',
+            height: 50,
+            width: '45%',
+          }}></View>
       </View>
     </View>
   );
