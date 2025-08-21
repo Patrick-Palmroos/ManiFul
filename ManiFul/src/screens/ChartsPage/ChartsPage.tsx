@@ -21,7 +21,12 @@ import IndicatorBar from './IndicatorBar';
 import { useBudgets } from '../../context/BudgetContext';
 import { useTypes } from '../../context/TypesContext';
 import { BudgetType } from '../../types/budgets';
-
+import PieChart from '../../components/PieChart/PieChart';
+import { generateDescendingColors } from '../../utils/color_generation';
+import { PieData } from '../../types/data';
+//baseHue: number;
+//    baseSaturation: number;
+//    startLightness: number;
 interface BudgetCategoryTypeValues {
   name: string;
   id: number;
@@ -35,6 +40,14 @@ interface Types {
   id: number;
   total: number;
 }
+
+const baseColors = [
+  { hue: 0, saturation: 100, lightness: 80, hex: '#FF9898' },
+  { hue: 87, saturation: 100, lightness: 72, hex: '#BFFF71' },
+  { hue: 210, saturation: 100, lightness: 76, hex: '#85C2FF' },
+  { hue: 315, saturation: 100, lightness: 82, hex: '#FFA3E8' },
+  { hue: 108, saturation: 67, lightness: 76, hex: '#a9eb98' },
+];
 
 const ChartsPage = () => {
   const { transactions } = useTransactions();
@@ -150,6 +163,45 @@ const ChartsPage = () => {
 
     console.log('list of all items:', listOfAll);
     setLargest(listOfAll);
+  };
+
+  const piedataHandling = (): PieData[] => {
+    let globalIndex = 0;
+    const totalItems = items.reduce((total, item) => {
+      const filtered = item.types.filter(i => i.total !== 0);
+      return total + filtered.length;
+    }, 0);
+
+    const newList = items.flatMap((item, i) => {
+      const colors = generateDescendingColors({
+        count: item.types.length,
+        baseHue: baseColors[i].hue,
+        baseSaturation: baseColors[i].saturation,
+        startLightness: baseColors[i].lightness,
+        step: 10,
+      });
+
+      const filteredAndSorted = item.types
+        .sort((a, b) => b.total - a.total)
+        .filter(i => i.total !== 0);
+
+      const typesWithColors = filteredAndSorted.map((type, localIndex) => {
+        const isLastItemGlobally = globalIndex === totalItems - 1;
+        const result = {
+          name: type.name,
+          value: type.total,
+          gap: isLastItemGlobally,
+          color: colors[localIndex],
+        };
+        globalIndex++;
+        return result;
+      });
+
+      return typesWithColors;
+    });
+
+    console.log('pie data!!!!: ', newList);
+    return newList;
   };
 
   return (
@@ -373,6 +425,38 @@ const ChartsPage = () => {
                 </Text>
               </View>
             </View>
+          </View>
+          <View style={{ margin: 20 }}>
+            <LinearGradient
+              colors={[colors.highlight, '#5C438D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                width: '100%',
+                height: 400,
+                paddingBottom: 15,
+                borderRadius: 20,
+              }}>
+              <PieChart
+                pie_rad={70}
+                data={items
+                  .map((item, i) => {
+                    if (item.used === 0) return null;
+                    return {
+                      name: item.name,
+                      value: item.used,
+                      gap: true,
+                      color: baseColors[i].hex,
+                    };
+                  })
+                  .filter(i => i !== null)}
+              />
+              <PieChart
+                pie_rad={70}
+                data={piedataHandling()}
+                gap_angle={0.08}
+              />
+            </LinearGradient>
           </View>
           {/* Bottom padding. */}
           <View style={{ paddingBottom: 150 }} />
