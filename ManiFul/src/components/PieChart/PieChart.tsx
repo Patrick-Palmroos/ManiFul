@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import Svg, { G, Path } from 'react-native-svg';
+import Svg, { G, Path, Text as SvgText } from 'react-native-svg';
 import * as d3Shape from 'd3-shape';
 import { PieData } from '../../types/data';
 
@@ -44,6 +44,12 @@ const PieChart = ({
     .padAngle(gap_angle) // Apply gap to all slices
     .sort(null);
 
+  const customArcGenerator = d3Shape
+    .arc<d3Shape.PieArcDatum<number>>()
+    .outerRadius(pie_rad)
+    .innerRadius(pie_rad / 1.75)
+    .padAngle(0); // No gap
+
   const arcs = pieGenerator(values);
 
   // Create arc generator
@@ -60,12 +66,6 @@ const PieChart = ({
             // For slices that shouldn't have gaps, manually adjust
             // by creating a custom arc without padding
             if (!gapInfo[index]) {
-              const customArcGenerator = d3Shape
-                .arc<d3Shape.PieArcDatum<number>>()
-                .outerRadius(pie_rad)
-                .innerRadius(pie_rad / 1.75)
-                .padAngle(0); // No gap
-
               return (
                 <Path
                   key={`arc-${index}`}
@@ -91,6 +91,16 @@ const PieChart = ({
               />
             );
           })}
+
+          {/* Center text */}
+          <SvgText
+            textAnchor="middle"
+            alignmentBaseline="middle"
+            fontSize={pie_rad / 5.5}
+            fontFamily="Rubik-Medium"
+            fill="white">
+            {`${values.reduce((sum, v) => (sum += v), 0).toFixed(2)}€`}
+          </SvgText>
         </G>
       </Svg>
     </View>
