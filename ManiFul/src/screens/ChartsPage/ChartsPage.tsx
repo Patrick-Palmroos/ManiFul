@@ -59,10 +59,6 @@ const ChartsPage = () => {
   const [currentDate] = useState<number>(new Date().getDate());
   const [pieData, setPieData] = useState<PieData[]>([]);
 
-  console.log('transactions: ', transactions);
-  console.log('budgets: ', budgets);
-  console.log('categories: ', categories);
-
   const values = transactions.filter(t => {
     const d = new Date(t.date);
     const month = d.getMonth();
@@ -131,7 +127,6 @@ const ChartsPage = () => {
         );
       });
     }
-    console.log(list);
     handleLargest(list);
     piedataHandling(list);
     setItems(list);
@@ -162,7 +157,6 @@ const ChartsPage = () => {
       .slice(0, 5)
       .filter(i => i.total !== 0);
 
-    console.log('list of all items:', listOfAll);
     setLargest(listOfAll);
   };
 
@@ -202,7 +196,6 @@ const ChartsPage = () => {
       return typesWithColors;
     });
 
-    console.log('pie data!!!!: ', newList);
     setPieData(newList);
   };
 
