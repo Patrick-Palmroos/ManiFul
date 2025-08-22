@@ -58,6 +58,7 @@ const ChartsPage = () => {
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
   const [largest, setLargest] = useState<{ name: string; total: number }[]>([]);
   const [currentDate] = useState<number>(new Date().getDate());
+  const [pieData, setPieData] = useState<PieData[]>([]);
 
   console.log('transactions: ', transactions);
   console.log('budgets: ', budgets);
@@ -133,6 +134,7 @@ const ChartsPage = () => {
     }
     console.log(list);
     handleLargest(list);
+    piedataHandling(list);
     setItems(list);
   };
 
@@ -165,14 +167,14 @@ const ChartsPage = () => {
     setLargest(listOfAll);
   };
 
-  const piedataHandling = (): PieData[] => {
+  const piedataHandling = (list: BudgetCategoryTypeValues[]) => {
     let globalIndex = 0;
-    const totalItems = items.reduce((total, item) => {
+    const totalItems = list.reduce((total, item) => {
       const filtered = item.types.filter(i => i.total !== 0);
       return total + filtered.length;
     }, 0);
 
-    const newList = items.flatMap((item, i) => {
+    const newList = list.flatMap((item, i) => {
       const colors = generateDescendingColors({
         count: item.types.length,
         baseHue: baseColors[i].hue,
@@ -201,7 +203,7 @@ const ChartsPage = () => {
     });
 
     console.log('pie data!!!!: ', newList);
-    return newList;
+    setPieData(newList);
   };
 
   return (
@@ -439,21 +441,29 @@ const ChartsPage = () => {
               }}>
               <PieChart
                 pie_rad={70}
-                data={items
-                  .map((item, i) => {
-                    if (item.used === 0) return null;
-                    return {
-                      name: item.name,
-                      value: item.used,
-                      gap: true,
-                      color: baseColors[i].hex,
-                    };
-                  })
-                  .filter(i => i !== null)}
+                data={
+                  pieData.length !== 0
+                    ? items
+                        .map((item, i) => {
+                          if (item.used === 0) return null;
+                          return {
+                            name: item.name,
+                            value: item.used,
+                            gap: true,
+                            color: baseColors[i].hex,
+                          };
+                        })
+                        .filter(i => i !== null)
+                    : [{ name: 'none', value: 1, gap: true, color: '#9e9e9e' }]
+                }
               />
               <PieChart
                 pie_rad={70}
-                data={piedataHandling()}
+                data={
+                  pieData.length === 0
+                    ? [{ name: 'none', value: 1, gap: true, color: '#9e9e9e' }]
+                    : pieData
+                }
                 gap_angle={0.08}
               />
             </LinearGradient>
