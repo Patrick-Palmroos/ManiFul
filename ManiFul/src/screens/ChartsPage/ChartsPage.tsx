@@ -180,7 +180,7 @@ const ChartsPage = () => {
         baseHue: baseColors[i].hue,
         baseSaturation: baseColors[i].saturation,
         startLightness: baseColors[i].lightness,
-        step: 8,
+        step: 10,
       }).slice(1);
 
       const filteredAndSorted = item.types
@@ -444,7 +444,7 @@ const ChartsPage = () => {
                 justifyContent: 'space-between',
               }}>
               {/* PieChart wrapper */}
-              <View style={{ backgroundColor: 'white' }}>
+              <View style={{ maxWidth: '50%' }}>
                 {pieData.length !== 0 ? (
                   items.map((item, i) => {
                     //if category has 0 spent then dont render it.
@@ -452,13 +452,63 @@ const ChartsPage = () => {
 
                     return (
                       <View key={i}>
-                        {/* Item title */}
-                        <Text
+                        {/* Item title wrapper */}
+                        <View
                           style={{
-                            backgroundColor: baseColors[i].hex || 'grey',
+                            flexWrap: 'wrap',
+                            gap: 5,
                           }}>
-                          {item.name}
-                        </Text>
+                          {/* title and ball wrapper */}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            {/* title */}
+                            <Text
+                              style={{
+                                ...text.title,
+                                color: colors.light,
+                                fontSize: 18,
+                              }}>
+                              {item.name}
+                            </Text>
+                            {/* color ball */}
+                            <View
+                              style={{
+                                backgroundColor: baseColors[i].hex || 'grey',
+                                borderRadius: 35,
+                                marginLeft: 5,
+                                borderColor: colors.light,
+                                borderWidth: 1.2,
+                                height: 20,
+                                width: 20,
+                              }}
+                            />
+                          </View>
+                          {/* total and percentage display wrapper */}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              gap: 7,
+                              flexWrap: 'wrap',
+                              top: -10,
+                            }}>
+                            {/* total used value */}
+                            <Text style={{ ...text.moneyLight, fontSize: 16 }}>
+                              {item.used.toFixed(2)}€
+                            </Text>
+                            {/* percentage value */}
+                            <Text
+                              style={{
+                                ...text.regular,
+                                fontSize: 15,
+                                color: colors.textDefault,
+                              }}>
+                              {((item.used / item.total) * 100).toFixed(2)}%
+                            </Text>
+                          </View>
+                        </View>
                         {/* category types */}
                         {item.types.map((type, i) => {
                           {
