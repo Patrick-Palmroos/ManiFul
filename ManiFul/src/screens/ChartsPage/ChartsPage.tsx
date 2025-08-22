@@ -436,7 +436,7 @@ const ChartsPage = () => {
               end={{ x: 1, y: 1 }}
               style={{
                 width: '100%',
-                height: 400,
+                minHeight: 350,
                 paddingBottom: 15,
                 borderRadius: 20,
                 flexDirection: 'row',
@@ -445,42 +445,48 @@ const ChartsPage = () => {
               }}>
               {/* PieChart wrapper */}
               <View style={{ backgroundColor: 'white' }}>
-                {items.map((item, i) => {
-                  //if category has 0 spent then dont render it.
-                  if (item.used === 0) return null;
+                {pieData.length !== 0 ? (
+                  items.map((item, i) => {
+                    //if category has 0 spent then dont render it.
+                    if (item.used === 0) return null;
 
-                  return (
-                    <View key={i}>
-                      {/* Item title */}
-                      <Text
-                        style={{
-                          backgroundColor: baseColors[i].hex || 'grey',
-                        }}>
-                        {item.name}
-                      </Text>
-                      {/* category types */}
-                      {item.types.map((type, i) => {
-                        {
-                          /* If type doesnt exist in piedata dont render it */
-                        }
-                        if (!pieData.find(p => p.id === type.id)) return null;
+                    return (
+                      <View key={i}>
+                        {/* Item title */}
+                        <Text
+                          style={{
+                            backgroundColor: baseColors[i].hex || 'grey',
+                          }}>
+                          {item.name}
+                        </Text>
+                        {/* category types */}
+                        {item.types.map((type, i) => {
+                          {
+                            /* If type doesnt exist in piedata dont render it */
+                          }
+                          if (!pieData.find(p => p.id === type.id)) return null;
 
-                        return (
-                          <View key={i}>
-                            <Text
-                              style={{
-                                backgroundColor: pieData.find(
-                                  p => type.id === p.id,
-                                )?.color,
-                              }}>
-                              {type.name}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  );
-                })}
+                          return (
+                            <View key={i}>
+                              <Text
+                                style={{
+                                  backgroundColor: pieData.find(
+                                    p => type.id === p.id,
+                                  )?.color,
+                                }}>
+                                {type.name}
+                              </Text>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    );
+                  })
+                ) : (
+                  <View>
+                    <Text>No budget found</Text>
+                  </View>
+                )}
               </View>
               <View
                 style={{
