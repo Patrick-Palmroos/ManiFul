@@ -42,7 +42,7 @@ interface Types {
 }
 
 const baseColors = [
-  { hue: 0, saturation: 100, lightness: 80, hex: '#FF9898' },
+  { hue: 0, saturation: 72, lightness: 62, hex: '#E45959' },
   { hue: 87, saturation: 100, lightness: 72, hex: '#BFFF71' },
   { hue: 210, saturation: 100, lightness: 76, hex: '#85C2FF' },
   { hue: 315, saturation: 100, lightness: 82, hex: '#FFA3E8' },
@@ -180,8 +180,8 @@ const ChartsPage = () => {
         baseHue: baseColors[i].hue,
         baseSaturation: baseColors[i].saturation,
         startLightness: baseColors[i].lightness,
-        step: 10,
-      });
+        step: 8,
+      }).slice(1);
 
       const filteredAndSorted = item.types
         .sort((a, b) => b.total - a.total)
@@ -192,6 +192,7 @@ const ChartsPage = () => {
         const result = {
           name: type.name,
           value: type.total,
+          id: type.id,
           gap: isLastItemGlobally,
           color: colors[localIndex],
         };
@@ -438,34 +439,98 @@ const ChartsPage = () => {
                 height: 400,
                 paddingBottom: 15,
                 borderRadius: 20,
+                flexDirection: 'row',
+                padding: 10,
+                justifyContent: 'space-between',
               }}>
-              <PieChart
-                pie_rad={70}
-                data={
-                  pieData.length !== 0
-                    ? items
-                        .map((item, i) => {
-                          if (item.used === 0) return null;
-                          return {
-                            name: item.name,
-                            value: item.used,
+              {/* PieChart wrapper */}
+              <View style={{ backgroundColor: 'white' }}>
+                {items.map((item, i) => {
+                  //if category has 0 spent then dont render it.
+                  if (item.used === 0) return null;
+
+                  return (
+                    <View key={i}>
+                      {/* Item title */}
+                      <Text
+                        style={{
+                          backgroundColor: baseColors[i].hex || 'grey',
+                        }}>
+                        {item.name}
+                      </Text>
+                      {/* category types */}
+                      {item.types.map((type, i) => {
+                        {
+                          /* If type doesnt exist in piedata dont render it */
+                        }
+                        if (!pieData.find(p => p.id === type.id)) return null;
+
+                        return (
+                          <View key={i}>
+                            <Text
+                              style={{
+                                backgroundColor: pieData.find(
+                                  p => type.id === p.id,
+                                )?.color,
+                              }}>
+                              {type.name}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  );
+                })}
+              </View>
+              <View
+                style={{
+                  backgroundColor: 'black',
+                  justifyContent: 'space-evenly',
+                }}>
+                {/* PieChart for category totals */}
+                <PieChart
+                  pie_rad={70}
+                  data={
+                    pieData.length !== 0
+                      ? items
+                          .map((item, i) => {
+                            if (item.used === 0) return null;
+                            return {
+                              name: item.name,
+                              value: item.used,
+                              gap: true,
+                              color: baseColors[i].hex,
+                            };
+                          })
+                          .filter(i => i !== null)
+                      : [
+                          {
+                            name: 'none',
+                            value: 1,
                             gap: true,
-                            color: baseColors[i].hex,
-                          };
-                        })
-                        .filter(i => i !== null)
-                    : [{ name: 'none', value: 1, gap: true, color: '#9e9e9e' }]
-                }
-              />
-              <PieChart
-                pie_rad={70}
-                data={
-                  pieData.length === 0
-                    ? [{ name: 'none', value: 1, gap: true, color: '#9e9e9e' }]
-                    : pieData
-                }
-                gap_angle={0.08}
-              />
+                            color: '#9e9e9e',
+                          },
+                        ]
+                  }
+                />
+                {/* PieChart for type totals */}
+                <PieChart
+                  pie_rad={70}
+                  data={
+                    pieData.length === 0
+                      ? [
+                          {
+                            name: 'none',
+                            value: 1,
+                            gap: true,
+                            color: '#9e9e9e',
+                          },
+                        ]
+                      : pieData
+                  }
+                  gap_angle={0.08}
+                />
+              </View>
             </LinearGradient>
           </View>
           {/* Bottom padding. */}
