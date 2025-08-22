@@ -24,9 +24,8 @@ import { BudgetType } from '../../types/budgets';
 import PieChart from '../../components/PieChart/PieChart';
 import { generateDescendingColors } from '../../utils/color_generation';
 import { PieData } from '../../types/data';
-//baseHue: number;
-//    baseSaturation: number;
-//    startLightness: number;
+import styles from './styles';
+
 interface BudgetCategoryTypeValues {
   name: string;
   id: number;
@@ -208,12 +207,7 @@ const ChartsPage = () => {
   };
 
   return (
-    <ScrollView
-      scrollEnabled
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-      }}>
+    <ScrollView scrollEnabled style={styles.scrollView}>
       <TouchableWithoutFeedback>
         <View>
           {/* Container for line graph component */}
@@ -221,53 +215,26 @@ const ChartsPage = () => {
             colors={[colors.highlight, '#5C438D']}
             start={{ x: 0, y: 1 }}
             end={{ x: 0, y: 0 }}
-            style={{
-              width: '100%',
-              paddingBottom: 15,
-              borderBottomRightRadius: 20,
-              borderBottomLeftRadius: 20,
-            }}>
+            style={styles.lineGraphContainer}>
             {/* Month and year wrapper */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
+            <View style={styles.monthYearWrapper}>
               {/* Month wrapper */}
-              <View style={{ flexDirection: 'row' }}>
+              <View style={styles.monthWrapper}>
                 {/* Touchable opacity to be able to change date */}
                 <TouchableOpacity
                   onPress={() => setEditDate(true)}
-                  style={{
-                    height: 30,
-                    flexDirection: 'row',
-                    margin: 10,
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      ...text.regularMedium,
-                      color: colors.light,
-                      fontSize: 18,
-                    }}>
+                  style={styles.changeDateButton}>
+                  {/* Month text */}
+                  <Text style={styles.monthText}>
                     {monthToTextFormat(date.getMonth())}
                   </Text>
-                  <View
-                    style={{
-                      height: 30,
-                      width: 30,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginLeft: 5,
-                    }}>
+                  {/* arrow container */}
+                  <View style={styles.arrowContainer}>
                     <MaterialIcons
                       name={editDate ? 'arrow-drop-up' : 'arrow-drop-down'}
                       size={40}
                       color={'#ffffffff'}
-                      style={{
-                        textAlign: 'center',
-                        position: 'absolute',
-                      }}
+                      style={styles.arrow}
                     />
                   </View>
                 </TouchableOpacity>
@@ -276,45 +243,25 @@ const ChartsPage = () => {
                   date.getMonth() + 1,
                   date.getFullYear(),
                 ) && (
+                  //reset button.
                   <TouchableOpacity
-                    style={{
-                      marginLeft: 15,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 5,
-                    }}
+                    style={styles.resetButton}
                     onPress={() => setDate(new Date())}>
-                    <Text style={{ ...text.regularLight }}>Reset</Text>
+                    <Text style={text.regularLight}>Reset</Text>
                     <MaterialIcons
                       name={'cached'}
                       size={25}
                       color={'#ffffffff'}
-                      style={{}}
                     />
                   </TouchableOpacity>
                 )}
               </View>
               {/* Year text */}
-              <Text
-                style={{
-                  ...text.regularMedium,
-                  color: colors.light,
-                  fontSize: 14,
-                  height: 30,
-                  margin: 10,
-                  textAlign: 'center',
-                }}>
-                {date.getFullYear()}
-              </Text>
+              <Text style={styles.yearText}>{date.getFullYear()}</Text>
             </View>
             {/* Total container */}
-            <View style={{ height: 30, paddingLeft: 10 }}>
-              <Text
-                style={{
-                  ...text.regularMedium,
-                  fontSize: 18,
-                  color: colors.light,
-                }}>
+            <View style={styles.totalContainer}>
+              <Text style={styles.totalText}>
                 Total.{' '}
                 <Text style={{ color: colors.moneyLight }}>
                   {total.toFixed(2)}€
@@ -322,7 +269,7 @@ const ChartsPage = () => {
               </Text>
             </View>
             {/* Line chart container */}
-            <View style={{ height: 220 }}>
+            <View style={styles.lineChartContainer}>
               <LineChart
                 chartKey={`${date.getMonth()}-${date.getFullYear()}`}
                 year={date.getFullYear()}
@@ -344,15 +291,9 @@ const ChartsPage = () => {
             />
           )}
           {/* View for Indicator bars */}
-          <View
-            style={{
-              backgroundColor: 'white',
-              margin: 15,
-              borderRadius: 15,
-              padding: 10,
-            }}>
+          <View style={styles.indicatorsContainer}>
             {items.map((item, i) => (
-              <View style={{ height: 50 }} key={i}>
+              <View style={styles.indicator} key={i}>
                 <IndicatorBar
                   total={item.total}
                   value={item.used}
@@ -363,63 +304,38 @@ const ChartsPage = () => {
             ))}
           </View>
           {/* View for largest expense and statistics */}
-          <View
-            style={{ flexDirection: 'row', gap: 5, justifyContent: 'center' }}>
+          <View style={styles.largestAndStatisticsContainer}>
             {/* Largest expenses */}
-            <View
-              style={{
-                backgroundColor: 'white',
-                width: '45%',
-                padding: 10,
-                borderRadius: 15,
-                height: '100%',
-              }}>
+            <View style={styles.largestContainer}>
               <Text style={text.title}>Largest expenses</Text>
               {largest.map((item, i) => (
-                <View
-                  key={i}
-                  style={{
-                    flexDirection: 'row',
-                    gap: 3,
-                    flexWrap: 'wrap',
-                    marginBottom: 5,
-                  }}>
+                <View key={i} style={styles.largestTextsContainer}>
                   <Text style={text.regularMedium}>{`${i + 1}.`}</Text>
                   <Text style={text.regular}>{item.name}</Text>
-                  <Text
-                    style={{
-                      ...text.moneyDark,
-                      marginLeft: 2,
-                      fontSize: 16,
-                    }}>{`${item.total.toFixed(2)}€`}</Text>
+                  <Text style={styles.largestMoneyText}>{`${item.total.toFixed(
+                    2,
+                  )}€`}</Text>
                 </View>
               ))}
             </View>
             {/* Statistics */}
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: '100%',
-                width: '45%',
-                padding: 10,
-                borderRadius: 15,
-              }}>
+            <View style={styles.statisticsContainer}>
               <View style={{ gap: 4 }}>
-                <Text style={{ ...text.regular, fontSize: 15 }}>
+                <Text style={styles.statisticsText}>
                   {budget
                     ? `${((total / budget?.budgetTotal) * 100).toFixed(
                         2,
                       )}% of total monthly budget spent.`
                     : 'No budget selected'}
                 </Text>
-                <Text style={{ ...text.regular, fontSize: 15 }}>
+                <Text style={styles.statisticsText}>
                   {budget
                     ? `${(100 - (total / budget?.budgetTotal) * 100).toFixed(
                         2,
                       )}% of total budget left.`
                     : 'No budget selected'}
                 </Text>
-                <Text style={{ ...text.regular, fontSize: 15 }}>
+                <Text style={styles.statisticsText}>
                   {budget
                     ? `Average money spent per day: ${(
                         total / currentDate
@@ -429,83 +345,44 @@ const ChartsPage = () => {
               </View>
             </View>
           </View>
-          <View style={{ margin: 20 }}>
+          {/* piecharts container */}
+          <View style={styles.pieContainer}>
             <LinearGradient
               colors={[colors.highlight, '#5C438D']}
               start={{ x: 0, y: 1 }}
               end={{ x: 1, y: 1 }}
-              style={{
-                width: '100%',
-                minHeight: 350,
-                paddingBottom: 15,
-                borderRadius: 20,
-                flexDirection: 'row',
-                padding: 10,
-                justifyContent: 'space-between',
-              }}>
+              style={styles.pieLinearGradient}>
               {/* PieChart wrapper */}
-              <View style={{ maxWidth: '50%' }}>
+              <View style={styles.pieWrapper}>
                 {pieData.length !== 0 ? (
                   items.map((item, i) => {
                     //if category has 0 spent then dont render it.
                     if (item.used === 0) return null;
 
                     return (
-                      <View key={i} style={{ marginBottom: 10 }}>
+                      <View key={i} style={styles.pieTitleAndTotalContainer}>
                         {/* Item title wrapper */}
-                        <View
-                          style={{
-                            flexWrap: 'wrap',
-                            gap: 5,
-                          }}>
+                        <View style={styles.pieTitleAndTotalWrapper}>
                           {/* title and ball wrapper */}
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}>
+                          <View style={styles.pieTitleContainer}>
                             {/* title */}
-                            <Text
-                              style={{
-                                ...text.title,
-                                color: colors.light,
-                                fontSize: 18,
-                              }}>
-                              {item.name}
-                            </Text>
+                            <Text style={styles.pieTitle}>{item.name}</Text>
                             {/* color ball */}
                             <View
                               style={{
+                                ...styles.titleColor,
                                 backgroundColor: baseColors[i].hex || 'grey',
-                                borderRadius: 35,
-                                marginLeft: 5,
-                                borderColor: colors.light,
-                                borderWidth: 1.2,
-                                height: 20,
-                                width: 20,
                               }}
                             />
                           </View>
                           {/* total and percentage display wrapper */}
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              gap: 7,
-                              flexWrap: 'wrap',
-                              top: -10,
-                              height: 16,
-                            }}>
+                          <View style={styles.pieTotalContainer}>
                             {/* total used value */}
-                            <Text style={{ ...text.moneyLight, fontSize: 16 }}>
+                            <Text style={styles.pieTotalText}>
                               {item.used.toFixed(2)}€
                             </Text>
                             {/* percentage value */}
-                            <Text
-                              style={{
-                                ...text.regular,
-                                fontSize: 15,
-                                color: colors.light,
-                              }}>
+                            <Text style={styles.piePercentage}>
                               {((item.used / item.total) * 100).toFixed(2)}%
                             </Text>
                           </View>
@@ -521,63 +398,29 @@ const ChartsPage = () => {
                             // Wrapper for data color, name and values
                             <View
                               key={i}
-                              style={{
-                                flexDirection: 'row',
-                                flexWrap: 'wrap',
-                                marginBottom: 5,
-                              }}>
+                              style={styles.dataColorNameValuesWrapper}>
                               {/* Color and name wrapper */}
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                  gap: 3,
-                                  alignItems: 'center',
-                                }}>
+                              <View style={styles.dataColorNameWrapper}>
                                 {/* Color */}
                                 <View
                                   style={{
                                     backgroundColor: pieData.find(
                                       p => type.id === p.id,
                                     )?.color,
-                                    width: 15,
-                                    height: 15,
-                                    borderRadius: 35,
-                                    borderColor: colors.light,
-                                    borderWidth: 1,
+                                    ...styles.dataColor,
                                   }}
                                 />
                                 {/* name */}
-                                <Text
-                                  style={{
-                                    ...text.regular,
-                                    fontSize: 14,
-                                    color: colors.light,
-                                  }}>
-                                  {type.name}
-                                </Text>
+                                <Text style={styles.dataName}>{type.name}</Text>
                               </View>
                               {/* Wrapper for values */}
-                              <View
-                                style={{
-                                  marginLeft: 5,
-                                  flexDirection: 'row',
-                                  gap: 8,
-                                }}>
+                              <View style={styles.dataValuesWrapper}>
                                 {/* Euro amount */}
-                                <Text
-                                  style={{
-                                    ...text.moneyLight,
-                                    fontSize: 13,
-                                  }}>
+                                <Text style={styles.dataEuroText}>
                                   {type.total.toFixed(2)}€
                                 </Text>
                                 {/* Percentage amount */}
-                                <Text
-                                  style={{
-                                    ...text.regular,
-                                    fontSize: 13,
-                                    color: '#dbdbdbff',
-                                  }}>
+                                <Text style={styles.dataPercentageText}>
                                   (
                                   {((type.total / item.total) * 100).toFixed(2)}
                                   %)
@@ -595,10 +438,7 @@ const ChartsPage = () => {
                   </View>
                 )}
               </View>
-              <View
-                style={{
-                  justifyContent: 'space-evenly',
-                }}>
+              <View style={styles.pieChartWrapper}>
                 {/* PieChart for category totals */}
                 <PieChart
                   pie_rad={70}
