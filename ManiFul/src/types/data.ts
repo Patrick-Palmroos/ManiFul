@@ -5,6 +5,7 @@ export type PieData = {
   name: String;
   value: number;
   color?: ColorValue;
+  id?: number;
   gap: boolean;
 };
 
