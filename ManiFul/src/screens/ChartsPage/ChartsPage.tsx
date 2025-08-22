@@ -591,7 +591,7 @@ const ChartsPage = () => {
                   })
                 ) : (
                   <View>
-                    <Text>No budget found</Text>
+                    <Text style={text.regularLight}>No budget found</Text>
                   </View>
                 )}
               </View>
