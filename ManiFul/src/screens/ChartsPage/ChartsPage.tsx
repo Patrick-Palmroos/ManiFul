@@ -432,7 +432,7 @@ const ChartsPage = () => {
           <View style={{ margin: 20 }}>
             <LinearGradient
               colors={[colors.highlight, '#5C438D']}
-              start={{ x: 0, y: 0 }}
+              start={{ x: 0, y: 1 }}
               end={{ x: 1, y: 1 }}
               style={{
                 width: '100%',
@@ -451,7 +451,7 @@ const ChartsPage = () => {
                     if (item.used === 0) return null;
 
                     return (
-                      <View key={i}>
+                      <View key={i} style={{ marginBottom: 10 }}>
                         {/* Item title wrapper */}
                         <View
                           style={{
@@ -493,6 +493,7 @@ const ChartsPage = () => {
                               gap: 7,
                               flexWrap: 'wrap',
                               top: -10,
+                              height: 16,
                             }}>
                             {/* total used value */}
                             <Text style={{ ...text.moneyLight, fontSize: 16 }}>
@@ -503,7 +504,7 @@ const ChartsPage = () => {
                               style={{
                                 ...text.regular,
                                 fontSize: 15,
-                                color: colors.textDefault,
+                                color: colors.light,
                               }}>
                               {((item.used / item.total) * 100).toFixed(2)}%
                             </Text>
@@ -517,15 +518,71 @@ const ChartsPage = () => {
                           if (!pieData.find(p => p.id === type.id)) return null;
 
                           return (
-                            <View key={i}>
-                              <Text
+                            // Wrapper for data color, name and values
+                            <View
+                              key={i}
+                              style={{
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                marginBottom: 5,
+                              }}>
+                              {/* Color and name wrapper */}
+                              <View
                                 style={{
-                                  backgroundColor: pieData.find(
-                                    p => type.id === p.id,
-                                  )?.color,
+                                  flexDirection: 'row',
+                                  gap: 3,
+                                  alignItems: 'center',
                                 }}>
-                                {type.name}
-                              </Text>
+                                {/* Color */}
+                                <View
+                                  style={{
+                                    backgroundColor: pieData.find(
+                                      p => type.id === p.id,
+                                    )?.color,
+                                    width: 15,
+                                    height: 15,
+                                    borderRadius: 35,
+                                    borderColor: colors.light,
+                                    borderWidth: 1,
+                                  }}
+                                />
+                                {/* name */}
+                                <Text
+                                  style={{
+                                    ...text.regular,
+                                    fontSize: 14,
+                                    color: colors.light,
+                                  }}>
+                                  {type.name}
+                                </Text>
+                              </View>
+                              {/* Wrapper for values */}
+                              <View
+                                style={{
+                                  marginLeft: 5,
+                                  flexDirection: 'row',
+                                  gap: 8,
+                                }}>
+                                {/* Euro amount */}
+                                <Text
+                                  style={{
+                                    ...text.moneyLight,
+                                    fontSize: 13,
+                                  }}>
+                                  {type.total.toFixed(2)}€
+                                </Text>
+                                {/* Percentage amount */}
+                                <Text
+                                  style={{
+                                    ...text.regular,
+                                    fontSize: 13,
+                                    color: '#dbdbdbff',
+                                  }}>
+                                  (
+                                  {((type.total / item.total) * 100).toFixed(2)}
+                                  %)
+                                </Text>
+                              </View>
                             </View>
                           );
                         })}
@@ -540,7 +597,6 @@ const ChartsPage = () => {
               </View>
               <View
                 style={{
-                  backgroundColor: 'black',
                   justifyContent: 'space-evenly',
                 }}>
                 {/* PieChart for category totals */}
