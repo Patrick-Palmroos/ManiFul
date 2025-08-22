@@ -26,21 +26,7 @@ import { useTypes } from '../../context/TypesContext';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import GradientButton from '../../components/GradientButton/GradientButton';
 import styles from './styles';
-
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import { monthToTextFormat } from '../../utils/date_handling';
 
 const BudgetsPage = () => {
   const { budgets, refreshBudgets, defaultBudget, currentBudget } =
@@ -76,7 +62,7 @@ const BudgetsPage = () => {
             {/* Display the month */}
             <View style={styles.monthWrapper}>
               <Text style={styles.dateText}>
-                {`${months[currentBudget.month - 1]}`}
+                {`${monthToTextFormat(currentBudget.month - 1)}`}
                 <Text style={{ fontSize: 14 }}>
                   {'  '}
                   (Current)

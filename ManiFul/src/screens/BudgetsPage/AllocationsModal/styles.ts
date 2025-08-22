@@ -8,7 +8,7 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  wrapper: { height: screenHeight * 0.7 },
+  wrapper: { height: screenHeight * 0.7, justifyContent: 'space-between' },
   toggleWrapper: {
     alignItems: 'center',
   },
@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   allocationsWrapper: {
-    maxHeight: screenHeight * 0.45,
+    flex: 1,
+    minHeight: 0,
   },
   scrollView: { marginBottom: 20 },
   allocationsView: {

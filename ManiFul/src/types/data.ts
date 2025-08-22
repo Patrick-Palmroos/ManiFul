@@ -1,9 +1,12 @@
 import { ColorValue } from 'react-native';
+import { Type } from './categories';
 
 export type PieData = {
   name: String;
   value: number;
-  color: ColorValue;
+  color?: ColorValue;
+  id?: number;
+  gap: boolean;
 };
 
 export type TransactionData = {
@@ -19,6 +22,7 @@ export type TransactionItem = {
   typeId: number;
   name: string;
   total: number;
+  type: Type;
 };
 
 export type transactionPost = {
