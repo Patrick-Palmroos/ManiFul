@@ -216,6 +216,7 @@ const Loginpage = () => {
                   }}>
                   Don't have an account yet?{' '}
                   <Text
+                    onPress={() => navigation.navigate('signup')}
                     style={{
                       ...text.subtext,
                       color: '#0047A3',
