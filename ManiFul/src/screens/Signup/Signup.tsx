@@ -12,6 +12,7 @@ import { validateEmail, validatePassword } from '../../utils/validation';
 import { useAuth } from '../../context/AuthContext';
 import { useModalContext } from '../../context/ModalContext';
 import EULAModal from './EULAModal';
+import text from '../../styles/text';
 
 type inputProps = {
   username: string;
@@ -120,91 +121,102 @@ const Signup = () => {
         height: '100%',
         paddingTop: 100,
         paddingHorizontal: 20,
+        alignItems: 'center',
       }}>
-      <Text style={{ color: 'black', fontSize: 22, marginBottom: 20 }}>
+      <Text
+        style={{
+          ...text.title,
+          fontSize: 24,
+          marginBottom: 20,
+        }}>
         Signup
       </Text>
+      <View style={{ width: '80%' }}>
+        {/* username */}
+        <Text style={text.regular}>Username</Text>
+        <TextInput
+          onFocus={() => handleFocus('username')}
+          onBlur={handleBlur}
+          autoCapitalize="none"
+          placeholder="Username"
+          placeholderTextColor={colors.subText}
+          value={input.username}
+          onChangeText={text => setInput({ ...input, username: text })}
+          style={[
+            generalStyles.textField,
+            focusedInput === 'username' && generalStyles.textFieldFocused,
+            error?.some(e => e.type === 'username') &&
+              generalStyles.textFieldError,
+          ]}
+        />
+        <Text style={generalStyles.errorCode}>
+          {error?.find(e => e.type === 'username')?.message}
+        </Text>
 
-      {/* username */}
-      <TextInput
-        onFocus={() => handleFocus('username')}
-        onBlur={handleBlur}
-        autoCapitalize="none"
-        placeholder="Username"
-        placeholderTextColor={colors.subText}
-        value={input.username}
-        onChangeText={text => setInput({ ...input, username: text })}
-        style={[
-          generalStyles.textField,
-          focusedInput === 'username' && generalStyles.textFieldFocused,
-          error?.some(e => e.type === 'username') &&
-            generalStyles.textFieldError,
-        ]}
-      />
-      <Text style={generalStyles.errorCode}>
-        {error?.find(e => e.type === 'username')?.message}
-      </Text>
+        {/* email */}
+        <Text style={text.regular}>Email</Text>
+        <TextInput
+          onFocus={() => handleFocus('email')}
+          onBlur={handleBlur}
+          autoCapitalize="none"
+          placeholder="Email"
+          placeholderTextColor={colors.subText}
+          value={input.email}
+          onChangeText={text => setInput({ ...input, email: text })}
+          style={[
+            generalStyles.textField,
+            focusedInput === 'email' && generalStyles.textFieldFocused,
+            error?.some(e => e.type === 'email') &&
+              generalStyles.textFieldError,
+          ]}
+        />
+        <Text style={generalStyles.errorCode}>
+          {error?.find(e => e.type === 'email')?.message}
+        </Text>
 
-      {/* email */}
-      <TextInput
-        onFocus={() => handleFocus('email')}
-        onBlur={handleBlur}
-        autoCapitalize="none"
-        placeholder="Email"
-        placeholderTextColor={colors.subText}
-        value={input.email}
-        onChangeText={text => setInput({ ...input, email: text })}
-        style={[
-          generalStyles.textField,
-          focusedInput === 'email' && generalStyles.textFieldFocused,
-          error?.some(e => e.type === 'email') && generalStyles.textFieldError,
-        ]}
-      />
-      <Text style={generalStyles.errorCode}>
-        {error?.find(e => e.type === 'email')?.message}
-      </Text>
+        {/* password */}
+        <Text style={text.regular}>Password</Text>
+        <TextInput
+          onFocus={() => handleFocus('password')}
+          onBlur={handleBlur}
+          autoCapitalize="none"
+          secureTextEntry
+          placeholder="Password"
+          placeholderTextColor={colors.subText}
+          value={input.password}
+          onChangeText={text => setInput({ ...input, password: text })}
+          style={[
+            generalStyles.textField,
+            focusedInput === 'password' && generalStyles.textFieldFocused,
+            error?.some(e => e.type === 'password') &&
+              generalStyles.textFieldError,
+          ]}
+        />
+        <Text style={generalStyles.errorCode}>
+          {error?.find(e => e.type === 'password')?.message}
+        </Text>
 
-      {/* password */}
-      <TextInput
-        onFocus={() => handleFocus('password')}
-        onBlur={handleBlur}
-        autoCapitalize="none"
-        secureTextEntry
-        placeholder="Password"
-        placeholderTextColor={colors.subText}
-        value={input.password}
-        onChangeText={text => setInput({ ...input, password: text })}
-        style={[
-          generalStyles.textField,
-          focusedInput === 'password' && generalStyles.textFieldFocused,
-          error?.some(e => e.type === 'password') &&
-            generalStyles.textFieldError,
-        ]}
-      />
-      <Text style={generalStyles.errorCode}>
-        {error?.find(e => e.type === 'password')?.message}
-      </Text>
-
-      {/* repeat Password */}
-      <TextInput
-        onFocus={() => handleFocus('repeatPassword')}
-        onBlur={handleBlur}
-        autoCapitalize="none"
-        secureTextEntry
-        placeholder="Repeat password"
-        placeholderTextColor={colors.subText}
-        value={input.repeatPassword}
-        onChangeText={text => setInput({ ...input, repeatPassword: text })}
-        style={[
-          generalStyles.textField,
-          focusedInput === 'repeatPassword' && generalStyles.textFieldFocused,
-          error?.some(e => e.type === 'repeatPassword') &&
-            generalStyles.textFieldError,
-        ]}
-      />
-      <Text style={generalStyles.errorCode}>
-        {error?.find(e => e.type === 'repeatPassword')?.message}
-      </Text>
+        {/* repeat Password */}
+        <TextInput
+          onFocus={() => handleFocus('repeatPassword')}
+          onBlur={handleBlur}
+          autoCapitalize="none"
+          secureTextEntry
+          placeholder="Repeat password"
+          placeholderTextColor={colors.subText}
+          value={input.repeatPassword}
+          onChangeText={text => setInput({ ...input, repeatPassword: text })}
+          style={[
+            generalStyles.textField,
+            focusedInput === 'repeatPassword' && generalStyles.textFieldFocused,
+            error?.some(e => e.type === 'repeatPassword') &&
+              generalStyles.textFieldError,
+          ]}
+        />
+        <Text style={generalStyles.errorCode}>
+          {error?.find(e => e.type === 'repeatPassword')?.message}
+        </Text>
+      </View>
 
       {/* submit button */}
       <TouchableOpacity
