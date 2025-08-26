@@ -39,6 +39,7 @@ const Signup = () => {
   const handleFocus = (field: string) => setFocusedInput(field);
   const handleBlur = () => setFocusedInput(null);
   const { openModal, closeModal } = useModalContext();
+  const [hasAgreed, setHasAgreed] = useState<boolean>(false);
 
   const onSignup = async () => {
     Keyboard.dismiss();
@@ -64,14 +65,22 @@ const Signup = () => {
     }
 
     setError(validations);
-
-    if (validations.length > 0) {
-      setLoading(false);
+    setLoading(false);
+    if (validations.length > 0 || hasAgreed) {
       return;
     }
-    setLoading(false);
     openModal({
-      content: <EULAModal />,
+      content: (
+        <EULAModal
+          onConfirm={() => {
+            setHasAgreed(true);
+            closeModal('EULA');
+          }}
+          onCancel={() => {
+            closeModal('EULA');
+          }}
+        />
+      ),
       title: 'EULA',
       id: 'EULA',
     });
