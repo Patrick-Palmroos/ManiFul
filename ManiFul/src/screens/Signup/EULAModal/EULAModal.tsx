@@ -8,15 +8,25 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import { useState } from 'react';
 
-const EULAModal = () => {
+const EULAModal = ({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => {
   const [toggle, setToggle] = useState<boolean>(false);
 
   return (
-    <View style={{ height: '100%' }}>
-      <Text>Eula</Text>
+    <View style={{ height: '97%', justifyContent: 'space-between' }}>
       <ScrollView
         scrollEnabled
-        style={{ backgroundColor: 'white', maxHeight: '70%', padding: 10 }}>
+        style={{
+          backgroundColor: 'white',
+          maxHeight: '75%',
+          padding: 10,
+          flexGrow: 1,
+        }}>
         <TouchableWithoutFeedback>
           <View>
             <Text
@@ -175,13 +185,39 @@ const EULAModal = () => {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <CheckBox
-        disabled={false}
-        value={toggle}
-        onValueChange={v => setToggle(v)}
-      />
-      <Button disabled={!toggle} title="confirm" />
-      <Button title="cancel" />
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 20,
+            marginBottom: 20,
+          }}>
+          <CheckBox
+            disabled={false}
+            value={toggle}
+            onValueChange={v => setToggle(v)}
+          />
+          <View style={{ flexShrink: 1 }}>
+            <Text style={{ color: 'black', fontSize: 15 }}>
+              I have read and agree to the End User License Agreement (EULA).
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            marginBottom: 20,
+          }}>
+          <View style={{ width: '45%' }}>
+            <Button title="Cancel" onPress={onCancel} />
+          </View>
+          <View style={{ width: '45%' }}>
+            <Button disabled={!toggle} title="Confirm" onPress={onConfirm} />
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
