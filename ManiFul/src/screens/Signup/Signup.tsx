@@ -244,9 +244,13 @@ const Signup = () => {
           style={{
             marginTop: 20,
             opacity: loading ? 0.5 : 1,
-            backgroundColor: 'pink',
+            backgroundColor: colors.highlight,
+            padding: 5,
+            width: '70%',
+            alignItems: 'center',
+            borderRadius: 20,
           }}>
-          <Text style={{ color: 'black', fontSize: 16 }}>
+          <Text style={{ ...text.regular, color: 'white', fontSize: 20 }}>
             {loading ? 'Signing up...' : 'Signup'}
           </Text>
         </TouchableOpacity>
