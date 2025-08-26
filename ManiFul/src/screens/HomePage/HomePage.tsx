@@ -1,5 +1,5 @@
 import { Text, View, Button, ActivityIndicator } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import * as Keychain from 'react-native-keychain';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -12,26 +12,116 @@ import styles from '../HomePage/styles';
 import text from '../../styles/text';
 import PieChart from '../../components/PieChart/PieChart';
 import ChartPointList from '../../components/ChartPointList';
+import { useBudgets } from '../../context/BudgetContext';
+import { useTypes } from '../../context/TypesContext';
+import { useTransactions } from '../../context/TransactionContext';
+import { BudgetType } from '../../types/budgets';
 
-const data = {
-  test1: [
-    { value: 4, title: 'groceries' },
-    { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' },
-  ],
-  test2: [
-    { value: 4, title: 'groceries' },
-    { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' },
-  ],
-  test3: [
-    { value: 4, title: 'groceries' },
-    { value: 2, title: 'Bills' },
-    { value: 2, title: 'Snacks' },
-  ],
-};
+interface BudgetCategoryTypeValues {
+  name: string;
+  id: number;
+  total: number;
+  used: number;
+  types: Types[];
+}
+
+interface Types {
+  name: string;
+  id: number;
+  total: number;
+}
+
+const baseColors = [
+  { hue: 0, saturation: 72, lightness: 62, hex: '#E45959' },
+  { hue: 87, saturation: 100, lightness: 72, hex: '#BFFF71' },
+  { hue: 210, saturation: 100, lightness: 76, hex: '#85C2FF' },
+  { hue: 315, saturation: 100, lightness: 82, hex: '#FFA3E8' },
+  { hue: 108, saturation: 67, lightness: 76, hex: '#a9eb98' },
+  { hue: 264, saturation: 72, lightness: 62, hex: '#9159e4' },
+];
 
 const HomePage = () => {
+  const { transactions } = useTransactions();
+  const { categories } = useTypes();
+  const { budgets } = useBudgets();
+  const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
+  const [date] = useState<Date>(new Date());
+
+  const values = transactions.filter(t => {
+    const d = new Date(t.date);
+    const month = d.getMonth();
+    const year = d.getFullYear();
+    return month === date.getMonth() && year === date.getFullYear();
+  });
+
+  const { budget } = useMemo(() => {
+    const newBudget: BudgetType | undefined = budgets.find(
+      b => b.month === date.getMonth() + 1 && b.year === date.getFullYear(),
+    );
+
+    return { budget: newBudget };
+  }, [transactions, categories, budgets]);
+
+  const handleJoiningItems = () => {
+    //get all categories and their types
+    const list: BudgetCategoryTypeValues[] = categories
+      .map(cat => {
+        // skip if the category isnt an expense
+        if (!cat.expense) return null;
+
+        return {
+          name: cat.name,
+          id: cat.id,
+          total: 0,
+          used: 0,
+          types: cat.types.map(type => ({
+            name: type.name,
+            id: type.id,
+            total: 0,
+          })),
+        };
+      })
+      .filter(i => i !== null);
+
+    //check if budget even exists
+    if (budget) {
+      list.forEach(item => {
+        item.total =
+          budget.items.find(bi => bi.categoryId === item.id)?.amount || 0;
+      });
+
+      list.forEach(category => {
+        category.types.forEach(type => {
+          // for each transaction
+          type.total = values.reduce((typeSum, transaction) => {
+            // find items in transaction that match the type
+            const matchingItems =
+              transaction.items?.filter(item => item.type.id === type.id) || [];
+
+            // sum only the amounts of the matching items
+            const itemsTotal = matchingItems.reduce(
+              (sum, item) => sum + item.total,
+              0,
+            );
+
+            return typeSum + itemsTotal;
+          }, 0);
+        });
+
+        // Calculate total used for the entire category
+        category.used = category.types.reduce(
+          (sum, type) => sum + type.total,
+          0,
+        );
+      });
+    }
+    setItems(list);
+  };
+
+  useEffect(() => {
+    handleJoiningItems();
+  }, [transactions, categories, budgets]);
+
   return (
     <View style={styles.container}>
       {/* Displays the money left for the month */}
@@ -98,22 +188,31 @@ const HomePage = () => {
               //justifyContent: 'center',
             }}>
             <PieChart
-              pie_rad={80}
-              data={[
-                { value: 3, color: '#BFFF71', name: '' },
-                { value: 1, color: '#FF9898', name: '' },
-                { value: 1, color: '#85C2FF', name: '' },
-              ]}
+              pie_rad={70}
+              data={
+                items.length !== 0
+                  ? items
+                      .map((item, i) => {
+                        if (item.used === 0) return null;
+                        return {
+                          name: item.name,
+                          value: item.used,
+                          gap: true,
+                          color: baseColors[i].hex,
+                        };
+                      })
+                      .filter(i => i !== null)
+                  : [
+                      {
+                        name: 'none',
+                        value: 1,
+                        gap: true,
+                        color: '#9e9e9e',
+                      },
+                    ]
+              }
             />
-            <View style={{ marginLeft: 20, marginTop: 20 }}>
-              <ChartPointList
-                data={[
-                  { value: 1, color: '#BFFF71', name: 'Test1' },
-                  { value: 1, color: '#FF9898', name: 'Test2' },
-                  { value: 1, color: '#85C2FF', name: 'Test3' },
-                ]}
-              />
-            </View>
+            <View style={{ marginLeft: 20, marginTop: 20 }}></View>
           </View>
         </View>
       </View>
