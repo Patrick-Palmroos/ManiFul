@@ -1,4 +1,11 @@
-import { Text, View, Button, ActivityIndicator } from 'react-native';
+import {
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import * as Keychain from 'react-native-keychain';
 import LinearGradient from 'react-native-linear-gradient';
@@ -46,6 +53,9 @@ const HomePage = () => {
   const { budgets } = useBudgets();
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
   const [date] = useState<Date>(new Date());
+
+  const screenWidth = Dimensions.get('window').width;
+  const chartRadius = screenWidth * 0.18;
 
   const values = transactions.filter(t => {
     const d = new Date(t.date);
@@ -123,100 +133,103 @@ const HomePage = () => {
   }, [transactions, categories, budgets]);
 
   return (
-    <View style={styles.container}>
-      {/* Displays the money left for the month */}
-      <LinearGradient
-        colors={[colors.highlight, colors.gradient]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.topView}>
-        <Text style={{ ...text.regularLight, lineHeight: 20 }}>
-          Left for the month:
-        </Text>
-        <Text style={{ ...text.moneyLight, fontSize: 36, lineHeight: 50 }}>
-          600,37€
-        </Text>
-        <Text style={{ ...text.regularLight, fontSize: 14, lineHeight: 20 }}>
-          <Text style={{ ...text.moneyLight, fontSize: 14, lineHeight: 20 }}>
-            47%
-          </Text>{' '}
-          of the monthly budget spent.
-        </Text>
-      </LinearGradient>
-      {/* View for the data */}
-      <View style={styles.contentView}>
-        {/* View for the data items */}
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: 20,
-            flexWrap: 'wrap',
-          }}>
-          {/* View for the data blocks ontop of each other */}
+    <ScrollView style={styles.container}>
+      <View>
+        {/* Displays the money left for the month */}
+        <LinearGradient
+          colors={[colors.highlight, colors.gradient]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.topView}>
+          <Text style={{ ...text.regularLight, lineHeight: 20 }}>
+            Left for the month:
+          </Text>
+          <Text style={{ ...text.moneyLight, fontSize: 36, lineHeight: 50 }}>
+            600,37€
+          </Text>
+          <Text style={{ ...text.regularLight, fontSize: 14, lineHeight: 20 }}>
+            <Text style={{ ...text.moneyLight, fontSize: 14, lineHeight: 20 }}>
+              47%
+            </Text>{' '}
+            of the monthly budget spent.
+          </Text>
+        </LinearGradient>
+        {/* View for the data */}
+        <View style={styles.contentView}>
+          {/* View for the data items */}
           <View
             style={{
-              width: '45%',
-              height: 300,
-              justifyContent: 'space-between',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              gap: 20,
+              flexWrap: 'wrap',
             }}>
-            {/* Item 1 */}
+            {/* View for the data blocks ontop of each other */}
+            <View
+              style={{
+                width: '45%',
+                height: 300,
+                justifyContent: 'space-between',
+              }}>
+              {/* Item 1 */}
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  //width: '45%',
+                  height: 100,
+                }}></View>
+              {/* Item 2 */}
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  //width: '45%',
+                  height: 150,
+                }}></View>
+            </View>
+            {/* PieChart View */}
             <View
               style={{
                 backgroundColor: 'white',
-                //width: '45%',
-                height: 100,
-              }}></View>
-            {/* Item 2 */}
-            <View
-              style={{
-                backgroundColor: 'white',
-                //width: '45%',
-                height: 150,
-              }}></View>
-          </View>
-          {/* PieChart View */}
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 20,
-              //display: 'flex',
+                padding: 20,
+                //display: 'flex',
 
-              height: 300,
-              width: '45%',
-              //justifyContent: 'center',
-            }}>
-            <PieChart
-              pie_rad={70}
-              data={
-                items.length !== 0
-                  ? items
-                      .map((item, i) => {
-                        if (item.used === 0) return null;
-                        return {
-                          name: item.name,
-                          value: item.used,
+                height: 300,
+                width: '45%',
+                //justifyContent: 'center',
+              }}>
+              <PieChart
+                pie_rad={chartRadius}
+                data={
+                  items.length !== 0
+                    ? items
+                        .map((item, i) => {
+                          if (item.used === 0) return null;
+                          return {
+                            name: item.name,
+                            value: item.used,
+                            gap: true,
+                            color: baseColors[i].hex,
+                          };
+                        })
+                        .filter(i => i !== null)
+                    : [
+                        {
+                          name: 'none',
+                          value: 1,
                           gap: true,
-                          color: baseColors[i].hex,
-                        };
-                      })
-                      .filter(i => i !== null)
-                  : [
-                      {
-                        name: 'none',
-                        value: 1,
-                        gap: true,
-                        color: '#9e9e9e',
-                      },
-                    ]
-              }
-            />
-            <View style={{ marginLeft: 20, marginTop: 20 }}></View>
+                          color: '#9e9e9e',
+                        },
+                      ]
+                }
+              />
+              <View style={{ marginLeft: 20, marginTop: 20 }}></View>
+            </View>
           </View>
         </View>
+        <View style={{ marginTop: 50 }} />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

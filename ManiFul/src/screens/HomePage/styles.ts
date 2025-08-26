@@ -8,14 +8,14 @@ const styles = StyleSheet.create({
   },
   topView: {
     width: '100%',
-    flex: 1,
+    height: 200,
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     paddingBottom: 25,
   },
   contentView: {
-    flex: 4,
+    flex: 1,
     marginTop: -25,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
