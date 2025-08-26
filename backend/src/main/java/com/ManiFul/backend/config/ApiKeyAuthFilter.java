@@ -23,6 +23,13 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        String path = request.getRequestURI();
+        // Skip API key check for public endpoints
+        if (path.startsWith("/auth/") || path.equals("/users/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String requestApiKey = request.getHeader("BACKEND-API-KEY");
 
         if (apiKey.equals(requestApiKey)) {
