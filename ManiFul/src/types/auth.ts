@@ -3,6 +3,12 @@ export type AuthCredentials = {
   password: string;
 };
 
+export type SignupCredentials = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 export type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
@@ -10,6 +16,7 @@ export type AuthContextType = {
   login: (credentials: AuthCredentials) => Promise<authRes>;
   logout: () => Promise<void>;
   loading: boolean;
+  signup: (credentials: SignupCredentials) => Promise<authRes>;
   initialized: boolean;
 };
 

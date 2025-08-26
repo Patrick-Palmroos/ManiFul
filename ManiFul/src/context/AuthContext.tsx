@@ -1,6 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as Keychain from 'react-native-keychain';
-import { AuthContextType, AuthCredentials } from '../types/auth';
+import {
+  AuthContextType,
+  AuthCredentials,
+  SignupCredentials,
+} from '../types/auth';
 import { authRes } from '../types/auth';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
@@ -118,6 +122,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const signup = async ({
+    username,
+    email,
+    password,
+  }: SignupCredentials): Promise<authRes> => {
+    try {
+      // register the user
+      const registerResponse = await axios.post(
+        `${API_URL}/users/register`,
+        { username, email, password, google: false },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'BACKEND-API-KEY': API_KEY,
+          },
+          timeout: 20000,
+        },
+      );
+
+      if (registerResponse.status !== 200) {
+        return {
+          status: registerResponse.status,
+          message: 'Registration failed',
+        };
+      }
+
+      // log in the user
+      const loginResponse = await axios.post(
+        `${API_URL}/auth/token`,
+        { email, password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'BACKEND-API-KEY': API_KEY,
+          },
+          timeout: 20000,
+        },
+      );
+
+      const token = loginResponse.data?.token;
+
+      await Keychain.setGenericPassword(email, token);
+      setIsAuthenticated(true);
+      setToken(token);
+      const decoded = jwtDecode(token);
+      setUser(decoded as User);
+
+      return { status: loginResponse.status, message: 'Signup successful' };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const status = error.response.status;
+          const message = error.response.data?.message ?? error.message;
+
+          return { status, message };
+        } else if (error.request) {
+          return { status: 0, message: 'No response from server' };
+        } else {
+          return { status: 0, message: error.message };
+        }
+      } else {
+        return { status: 0, message: 'Unexpected error' };
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -125,6 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated,
         login,
         logout,
+        signup,
         loading,
         token,
         initialized,

@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-evenly',
     alignItems: 'flex-start',
-    gap: 4,
+    gap: 8,
   },
   defaultBudgetCategoryName: {
     ...text.regular,

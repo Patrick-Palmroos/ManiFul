@@ -177,10 +177,14 @@ const BudgetsPage = () => {
 
                 <View style={styles.defaultAllocationTotalAndPercentage}>
                   <Text style={styles.defaultAllocationTotal}>
-                    {item.amount}€
+                    {item.amount.toFixed(2)}€
                   </Text>
                   <Text style={styles.defaultAllocationPercentage}>
-                    ({(item.amount / defaultBudget.budgetTotal) * 100}%)
+                    (
+                    {((item.amount / defaultBudget.budgetTotal) * 100).toFixed(
+                      2,
+                    )}
+                    %)
                   </Text>
                 </View>
               </View>
