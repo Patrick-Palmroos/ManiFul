@@ -64,6 +64,8 @@ const HomePage = () => {
     return month === date.getMonth() && year === date.getFullYear();
   });
 
+  const total = values.reduce((sum, v) => (sum += v.total), 0);
+
   const { budget } = useMemo(() => {
     const newBudget: BudgetType | undefined = budgets.find(
       b => b.month === date.getMonth() + 1 && b.year === date.getFullYear(),
@@ -145,11 +147,14 @@ const HomePage = () => {
             Left for the month:
           </Text>
           <Text style={{ ...text.moneyLight, fontSize: 36, lineHeight: 50 }}>
-            600,37€
+            {budget ? budget.budgetTotal - total : '0.00'}€
           </Text>
           <Text style={{ ...text.regularLight, fontSize: 14, lineHeight: 20 }}>
             <Text style={{ ...text.moneyLight, fontSize: 14, lineHeight: 20 }}>
-              47%
+              {budget
+                ? ((total / budget.budgetTotal) * 100).toFixed(2)
+                : '0.00'}
+              %
             </Text>{' '}
             of the monthly budget spent.
           </Text>
@@ -200,6 +205,7 @@ const HomePage = () => {
               }}>
               <PieChart
                 pie_rad={chartRadius}
+                textColor="black"
                 data={
                   items.length !== 0
                     ? items
