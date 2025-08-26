@@ -201,6 +201,7 @@ const BudgetsPage = () => {
               content: (
                 <AddBudgetModal
                   onConfirm={() => closeModal('addBudgetModal')}
+                  typeCategories={categories}
                 />
               ),
               title: 'Add a budget',
