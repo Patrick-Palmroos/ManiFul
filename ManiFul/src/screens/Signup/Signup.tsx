@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import colors from '../../styles/colors';
 import generalStyles from '../../styles/styles';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validation';
 import { useAuth } from '../../context/AuthContext';
 import { useModalContext } from '../../context/ModalContext';
@@ -37,10 +37,15 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const { signup } = useAuth();
-  const handleFocus = (field: string) => setFocusedInput(field);
-  const handleBlur = () => setFocusedInput(null);
   const { openModal, closeModal } = useModalContext();
   const [hasAgreed, setHasAgreed] = useState<boolean>(false);
+
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const repeatPasswordRef = useRef<TextInput>(null);
+
+  const handleFocus = (field: string) => setFocusedInput(field);
+  const handleBlur = () => setFocusedInput(null);
 
   const onSignup = async () => {
     Keyboard.dismiss();
@@ -139,6 +144,8 @@ const Signup = () => {
           onBlur={handleBlur}
           autoCapitalize="none"
           placeholder="Username"
+          returnKeyType="next"
+          onSubmitEditing={() => emailRef.current?.focus()}
           placeholderTextColor={colors.subText}
           value={input.username}
           onChangeText={text => setInput({ ...input, username: text })}
@@ -156,11 +163,14 @@ const Signup = () => {
         {/* email */}
         <Text style={text.regular}>Email</Text>
         <TextInput
+          ref={emailRef}
           onFocus={() => handleFocus('email')}
           onBlur={handleBlur}
           autoCapitalize="none"
           placeholder="Email"
           placeholderTextColor={colors.subText}
+          returnKeyType="next"
+          onSubmitEditing={() => passwordRef.current?.focus()}
           value={input.email}
           onChangeText={text => setInput({ ...input, email: text })}
           style={[
@@ -177,12 +187,15 @@ const Signup = () => {
         {/* password */}
         <Text style={text.regular}>Password</Text>
         <TextInput
+          ref={passwordRef}
           onFocus={() => handleFocus('password')}
           onBlur={handleBlur}
           autoCapitalize="none"
           secureTextEntry
           placeholder="Password"
           placeholderTextColor={colors.subText}
+          returnKeyType="next"
+          onSubmitEditing={() => repeatPasswordRef.current?.focus()}
           value={input.password}
           onChangeText={text => setInput({ ...input, password: text })}
           style={[
@@ -198,12 +211,15 @@ const Signup = () => {
 
         {/* repeat Password */}
         <TextInput
+          ref={repeatPasswordRef}
           onFocus={() => handleFocus('repeatPassword')}
           onBlur={handleBlur}
           autoCapitalize="none"
           secureTextEntry
           placeholder="Repeat password"
           placeholderTextColor={colors.subText}
+          returnKeyType="done"
+          onSubmitEditing={onSignup}
           value={input.repeatPassword}
           onChangeText={text => setInput({ ...input, repeatPassword: text })}
           style={[
