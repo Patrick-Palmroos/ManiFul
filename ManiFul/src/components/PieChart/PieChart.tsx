@@ -12,6 +12,7 @@ const colors = ['#BECFCD', '#4D4D50', '#B8B8B6', '#E0CFB0', '#A67C52'];
  * @param {Object} props - Props for the PieChart component.
  * @param {number} props.pie_rad - The radius of the pie chart.
  * @param {number[]} props.data - Array of numbers for the chart slices.
+ * @param {string} props.textColor - Text color for total display in chart center.
  * @returns {JSX.Element} The rendered pie chart.
  *
  * @example
@@ -28,10 +29,12 @@ const PieChart = ({
   pie_rad,
   data,
   gap_angle = 0.04,
+  textColor = 'white',
 }: {
   pie_rad: number;
   data: PieData[];
   gap_angle?: number;
+  textColor?: string;
 }) => {
   const values = data.map(item => item.value);
   const gapInfo = data.map(item => item.gap || false);
@@ -98,7 +101,7 @@ const PieChart = ({
             alignmentBaseline="middle"
             fontSize={pie_rad / 5.5}
             fontFamily="Rubik-Medium"
-            fill="white">
+            fill={textColor}>
             {`${values.reduce((sum, v) => (sum += v), 0).toFixed(2)}€`}
           </SvgText>
         </G>

@@ -51,15 +51,15 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <ModalProvider>
-        <TypesProvider>
-          <TransactionProvider>
-            <BudgetProvider>
+      <TypesProvider>
+        <TransactionProvider>
+          <BudgetProvider>
+            <ModalProvider>
               <AppContent />
-            </BudgetProvider>
-          </TransactionProvider>
-        </TypesProvider>
-      </ModalProvider>
+            </ModalProvider>
+          </BudgetProvider>
+        </TransactionProvider>
+      </TypesProvider>
     </AuthProvider>
   );
 }

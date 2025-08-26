@@ -11,6 +11,7 @@ import text from '../../../styles/text';
 import { Shadow } from 'react-native-shadow-2';
 import GradientButton from '../../../components/GradientButton/GradientButton';
 import styles from './styles';
+import { Category } from '../../../types/categories';
 
 type ChosenCategoryValues = {
   categoryId: number;
@@ -20,11 +21,12 @@ type ChosenCategoryValues = {
 
 export default function AddBudgetModal({
   onConfirm,
+  typeCategories,
 }: {
   onConfirm: () => void;
+  typeCategories: Category[]; // for some god forsaken reason this NEEDS to be passed down or else types arent accessible...
 }) {
   const { createBudget, budgets } = useBudgets();
-  const { categories: typeCategories } = useTypes();
   const categories = typeCategories.filter(c => c.expense);
   const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
