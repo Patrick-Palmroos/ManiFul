@@ -229,6 +229,28 @@ const HomePage = () => {
                       ]
                 }
               />
+              {/* Dots with names and values */}
+              {items.length !== 0
+                ? items.map((item, i) => {
+                    if (item.used === 0) return null;
+
+                    return (
+                      <View key={i}>
+                        <View
+                          style={{
+                            backgroundColor: baseColors[i].hex,
+                            height: 20,
+                            width: 20,
+                            borderRadius: 34,
+                          }}
+                        />
+                        <Text style={{ backgroundColor: baseColors[i].hex }}>
+                          {item.name}
+                        </Text>
+                      </View>
+                    );
+                  })
+                : null}
               <View style={{ marginLeft: 20, marginTop: 20 }}></View>
             </View>
           </View>
