@@ -10,6 +10,8 @@ import generalStyles from '../../styles/styles';
 import { useState } from 'react';
 import { validateEmail, validatePassword } from '../../utils/validation';
 import { useAuth } from '../../context/AuthContext';
+import { useModalContext } from '../../context/ModalContext';
+import EULAModal from './EULAModal';
 
 type inputProps = {
   username: string;
@@ -36,6 +38,7 @@ const Signup = () => {
   const { signup } = useAuth();
   const handleFocus = (field: string) => setFocusedInput(field);
   const handleBlur = () => setFocusedInput(null);
+  const { openModal, closeModal } = useModalContext();
 
   const onSignup = async () => {
     Keyboard.dismiss();
@@ -66,7 +69,15 @@ const Signup = () => {
       setLoading(false);
       return;
     }
+    setLoading(false);
+    openModal({
+      content: <EULAModal />,
+      title: 'EULA',
+      id: 'EULA',
+    });
+  };
 
+  const signUserUp = async () => {
     try {
       // sign the user up
       const res = await signup({
