@@ -46,6 +46,7 @@ const baseColors = [
   { hue: 210, saturation: 100, lightness: 76, hex: '#85C2FF' },
   { hue: 315, saturation: 100, lightness: 82, hex: '#FFA3E8' },
   { hue: 108, saturation: 67, lightness: 76, hex: '#a9eb98' },
+  { hue: 264, saturation: 72, lightness: 62, hex: '#9159e4' },
 ];
 
 const ChartsPage = () => {
@@ -161,6 +162,8 @@ const ChartsPage = () => {
   };
 
   const piedataHandling = (list: BudgetCategoryTypeValues[]) => {
+    if (list.length === 0) return;
+
     let globalIndex = 0;
     const totalItems = list.reduce((total, item) => {
       const filtered = item.types.filter(i => i.total !== 0);
