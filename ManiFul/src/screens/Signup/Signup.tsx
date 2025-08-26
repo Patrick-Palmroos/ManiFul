@@ -65,25 +65,33 @@ const Signup = () => {
     }
 
     setError(validations);
-    setLoading(false);
-    if (validations.length > 0 || hasAgreed) {
+    if (validations.length > 0) {
+      setLoading(false);
       return;
     }
-    openModal({
-      content: (
-        <EULAModal
-          onConfirm={() => {
-            setHasAgreed(true);
-            closeModal('EULA');
-          }}
-          onCancel={() => {
-            closeModal('EULA');
-          }}
-        />
-      ),
-      title: 'EULA',
-      id: 'EULA',
-    });
+
+    if (hasAgreed) {
+      signUserUp();
+    } else {
+      setLoading(false);
+      openModal({
+        content: (
+          <EULAModal
+            onConfirm={() => {
+              setHasAgreed(true);
+              closeModal('EULA');
+              setLoading(true);
+              signUserUp();
+            }}
+            onCancel={() => {
+              closeModal('EULA');
+            }}
+          />
+        ),
+        title: 'EULA',
+        id: 'EULA',
+      });
+    }
   };
 
   const signUserUp = async () => {
