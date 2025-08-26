@@ -35,8 +35,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
   const { isAuthenticated, token, user } = useAuth();
 
   const fetchData = async (isInitialLoad = false): Promise<boolean> => {
-    console.log('fetch types called');
-    if (!user) return false;
+    if (!token) return false;
 
     if (isInitialLoad) {
       console.log('initial types loading');
@@ -57,20 +56,19 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Fetch both categories and types in parallel
       const [categoriesRes, typesRes] = await Promise.all([
-        axios.get(`${API_URL}/api/categories/getAll`, {
+        axios.get(`${API_URL}/categories/getAll`, {
           headers: {
             Authorization: `Bearer ${creds.password}`,
             'BACKEND-API-KEY': API_KEY,
           },
         }),
-        axios.get(`${API_URL}/api/types/getAll`, {
+        axios.get(`${API_URL}/types/getAll`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${creds.password}`,
             'BACKEND-API-KEY': API_KEY,
           },
         }),
       ]);
-
       setCategories(categoriesRes.data);
       setTypes(typesRes.data);
 
@@ -90,8 +88,10 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initial fetch on mount and when user changess
   useEffect(() => {
-    fetchData(true);
-  }, [user]);
+    if (token && API_KEY && isAuthenticated) {
+      fetchData(true);
+    }
+  }, [user, token, isAuthenticated]);
 
   return (
     <TypeContext.Provider
