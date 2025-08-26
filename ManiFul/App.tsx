@@ -36,9 +36,7 @@ const AppContent = () => {
 
   return (
     <>
-      <ModalProvider>
-        <RootNavigation />
-      </ModalProvider>
+      <RootNavigation />
       <FlashMessage position="top" style={{ zIndex: 1000 }} />
     </>
   );
@@ -53,13 +51,15 @@ function App(): React.JSX.Element {
 
   return (
     <AuthProvider>
-      <TypesProvider>
-        <TransactionProvider>
-          <BudgetProvider>
-            <AppContent />
-          </BudgetProvider>
-        </TransactionProvider>
-      </TypesProvider>
+      <ModalProvider>
+        <TypesProvider>
+          <TransactionProvider>
+            <BudgetProvider>
+              <AppContent />
+            </BudgetProvider>
+          </TransactionProvider>
+        </TypesProvider>
+      </ModalProvider>
     </AuthProvider>
   );
 }
