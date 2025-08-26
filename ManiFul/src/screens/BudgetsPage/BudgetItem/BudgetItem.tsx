@@ -12,8 +12,10 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 import colors from '../../../styles/colors';
 import styles from './styles';
 import { monthToTextFormat } from '../../../utils/date_handling';
+import { useTypes } from '../../../context/TypesContext';
 
 const BudgetItem = ({ item }: { item: BudgetType }) => {
+  const { categories } = useTypes();
   const { transactions } = useTransactions();
   const { deleteBudget } = useBudgets();
   const { openModal, closeModal } = useModalContext();
@@ -66,6 +68,7 @@ const BudgetItem = ({ item }: { item: BudgetType }) => {
                   <EditBudgetModal
                     onConfirm={() => closeModal('editBudgetModal')}
                     item={item}
+                    categories={categories}
                   />
                 ),
                 title: 'Edit budget',

@@ -95,6 +95,7 @@ const BudgetsPage = () => {
                       <EditBudgetModal
                         item={currentBudget}
                         onConfirm={() => closeModal('EditBudgetModal')}
+                        categories={categories}
                       />
                     ),
                     title: 'Edit current budget',
@@ -144,6 +145,7 @@ const BudgetsPage = () => {
                   content: (
                     <EditBudgetModal
                       item={defaultBudget}
+                      categories={categories}
                       onConfirm={() => closeModal('EditBudgetModal')}
                     />
                   ),

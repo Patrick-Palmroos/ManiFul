@@ -33,13 +33,14 @@ function isRepeatingBudget(budget: AnyBudget): budget is RepeatingBudget {
 
 export default function EditBudgetModal({
   onConfirm,
+  categories,
   item,
 }: {
   onConfirm: () => void;
+  categories: Category[];
   item: AnyBudget;
 }) {
   const { updateBudget } = useBudgets();
-  const { categories } = useTypes();
   const { openModal, closeModal } = useModalContext();
   const [dateOpen, setDateOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(
