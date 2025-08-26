@@ -53,7 +53,8 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log('fetching data...');
       const creds = await Keychain.getGenericPassword();
 
-      if (!creds) return false;
+      if (!creds || !API_KEY) return false;
+
       // Fetch both categories and types in parallel
       const [categoriesRes, typesRes] = await Promise.all([
         axios.get(`${API_URL}/api/categories/getAll`, {

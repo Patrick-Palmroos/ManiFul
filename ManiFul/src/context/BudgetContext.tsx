@@ -108,7 +108,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const creds = await Keychain.getGenericPassword();
-      if (!creds) throw new Error('No credentials found');
+      if (!creds || !API_KEY) throw new Error('No credentials found');
 
       const response = await axios.get(`${API_URL}/budgets/getAll`, {
         headers: {
