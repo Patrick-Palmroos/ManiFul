@@ -176,20 +176,54 @@ const HomePage = () => {
             <View
               style={{
                 width: '45%',
-                height: 300,
+                //height: 300,
                 justifyContent: 'space-between',
               }}>
-              {/* Item 1 */}
+              {/* Total spending */}
               <View
                 style={{
                   backgroundColor: 'white',
+                  borderRadius: 20,
+                  padding: 10,
                   //width: '45%',
                   height: 100,
-                }}></View>
+                }}>
+                {budget ? (
+                  <View>
+                    {/* Title */}
+                    <Text style={text.title}>Total spending</Text>
+                    {/* total used */}
+                    <Text style={{ ...text.moneyDark, lineHeight: 18 }}>
+                      {total}
+                      {'€ '}
+                      <Text
+                        style={{
+                          color: colors.highlight,
+                        }}>
+                        /
+                      </Text>
+                    </Text>
+                    {/* total budget */}
+                    <Text
+                      style={{
+                        ...text.regular,
+                        color: colors.highlight,
+                        fontSize: 18,
+                      }}>
+                      {budget?.budgetTotal}€
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={text.regular}>No budget found</Text>
+                  </View>
+                )}
+              </View>
               {/* Item 2 */}
               <View
                 style={{
                   backgroundColor: 'white',
+                  borderRadius: 20,
                   //width: '45%',
                   height: 150,
                 }}></View>
@@ -198,10 +232,11 @@ const HomePage = () => {
             <View
               style={{
                 backgroundColor: 'white',
-                padding: 20,
+                padding: 12,
+                borderRadius: 20,
                 //display: 'flex',
 
-                height: 300,
+                //height: 300,
                 width: '45%',
                 //justifyContent: 'center',
               }}>
@@ -232,27 +267,48 @@ const HomePage = () => {
                 }
               />
               {/* Dots with names and values */}
-              {items.length !== 0
-                ? items.map((item, i) => {
-                    if (item.used === 0) return null;
+              <View style={{ marginTop: 5 }}>
+                {items.length !== 0
+                  ? items.map((item, i) => {
+                      if (item.used === 0) return null;
 
-                    return (
-                      <View key={i}>
+                      return (
                         <View
+                          key={i}
                           style={{
-                            backgroundColor: baseColors[i].hex,
-                            height: 20,
-                            width: 20,
-                            borderRadius: 34,
-                          }}
-                        />
-                        <Text style={{ backgroundColor: baseColors[i].hex }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    );
-                  })
-                : null}
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                          }}>
+                          <View
+                            style={{
+                              backgroundColor: baseColors[i].hex,
+                              height: 16,
+                              width: 16,
+                              borderRadius: 34,
+                            }}
+                          />
+                          <Text
+                            style={{
+                              ...text.regular,
+                              fontSize: 15,
+                              marginLeft: 4,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              marginLeft: 4,
+                              ...text.moneyDark,
+                              fontSize: 15,
+                            }}>
+                            {item.used.toFixed(2)}€
+                          </Text>
+                        </View>
+                      );
+                    })
+                  : null}
+              </View>
               <View style={{ marginLeft: 20, marginTop: 20 }}></View>
             </View>
           </View>
