@@ -348,7 +348,7 @@ const HomePage = () => {
             </View>
           </View>
         </View>
-        <View style={{ marginTop: 50 }} />
+        <View style={{ marginTop: 150 }} />
       </View>
     </ScrollView>
   );
