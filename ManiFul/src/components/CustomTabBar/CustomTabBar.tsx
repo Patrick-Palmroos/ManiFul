@@ -1,5 +1,5 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { View, TouchableOpacity, Text, Platform } from 'react-native';
+import { View, TouchableOpacity, Text, Dimensions } from 'react-native';
 import styles from './styles';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,6 +12,32 @@ import {
   runMiddleButtonPressAnimation,
   useTabIconAnimations,
 } from './animations';
+import Svg, { Path } from 'react-native-svg';
+
+const { width: screenWidth } = Dimensions.get('window');
+
+const TabBarBackground = ({ height = 80, notchRadius = 45 }) => {
+  const center = screenWidth / 2;
+
+  const d = `
+    M0 0
+    H${center - notchRadius}
+    A ${notchRadius / 2} ${notchRadius / 2} 0 0 0 ${center + notchRadius} 0
+    H${screenWidth}
+    V${height}
+    H0
+    Z
+  `;
+
+  return (
+    <Svg
+      width={screenWidth}
+      height={height}
+      style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
+      <Path d={d} fill={colors.highlight} />
+    </Svg>
+  );
+};
 
 const CustomTabBar = ({
   state,
@@ -30,6 +56,7 @@ const CustomTabBar = ({
 
   return (
     <View style={styles.container}>
+      <TabBarBackground />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -64,9 +91,6 @@ const CustomTabBar = ({
             <View>
               {isMiddle ? (
                 <View style={styles.middleView}>
-                  <View style={styles.middleButtonBgWrapper}>
-                    <View style={styles.middleButtonBg} />
-                  </View>
                   <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                     <LinearGradient
                       colors={[colors.highlight, colors.gradient]}
