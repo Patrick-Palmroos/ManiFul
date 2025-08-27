@@ -11,6 +11,7 @@ interface TransactionContextType {
   loading: boolean;
   initialLoading: boolean; // only for first load
   error: string | null;
+  clear: () => void;
   refreshTransactions: () => Promise<void>;
   getTransactionById: (id: number) => TransactionData | undefined;
   createTransaction: (data: transactionPost) => Promise<boolean>;
@@ -22,6 +23,7 @@ const TransactionContext = createContext<TransactionContextType>({
   loading: false,
   initialLoading: false,
   error: null,
+  clear: () => null,
   refreshTransactions: async () => {},
   getTransactionById: () => undefined,
   createTransaction: async () => false,
@@ -135,12 +137,17 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchTransactions(true);
   }, [user]);
 
+  const clear = () => {
+    setTransactions([]);
+  };
+
   return (
     <TransactionContext.Provider
       value={{
         transactions,
         loading,
         error,
+        clear,
         refreshTransactions: fetchTransactions,
         getTransactionById,
         createTransaction,

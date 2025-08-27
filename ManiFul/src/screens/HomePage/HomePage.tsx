@@ -1,24 +1,10 @@
-import {
-  Text,
-  View,
-  Button,
-  ActivityIndicator,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { Text, View, ScrollView, Dimensions } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
-import * as Keychain from 'react-native-keychain';
 import LinearGradient from 'react-native-linear-gradient';
-import axios from 'axios';
-import { HomePageNavigationProp } from '../../types/navigation';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../context/AuthContext';
-import { UserCredentials } from 'react-native-keychain';
 import colors from '../../styles/colors';
 import styles from '../HomePage/styles';
 import text from '../../styles/text';
 import PieChart from '../../components/PieChart/PieChart';
-import ChartPointList from '../../components/ChartPointList';
 import { useBudgets } from '../../context/BudgetContext';
 import { useTypes } from '../../context/TypesContext';
 import { useTransactions } from '../../context/TransactionContext';
@@ -53,6 +39,7 @@ const HomePage = () => {
   const { budgets } = useBudgets();
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
   const [date] = useState<Date>(new Date());
+  const [largest, setLargest] = useState<{ name: string; total: number }[]>([]);
 
   const screenWidth = Dimensions.get('window').width;
   const chartRadius = screenWidth * 0.18;
@@ -73,6 +60,20 @@ const HomePage = () => {
 
     return { budget: newBudget };
   }, [transactions, categories, budgets]);
+
+  const handleLargest = (list: BudgetCategoryTypeValues[]) => {
+    const listOfAll: { name: string; total: number }[] = list
+      .flatMap(l => {
+        return l.types.map(type => {
+          return { name: type.name, total: type.total };
+        });
+      })
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5)
+      .filter(i => i.total !== 0);
+
+    setLargest(listOfAll);
+  };
 
   const handleJoiningItems = () => {
     //get all categories and their types
@@ -127,12 +128,16 @@ const HomePage = () => {
         );
       });
     }
+
+    handleLargest(list);
     setItems(list);
   };
 
   useEffect(() => {
     handleJoiningItems();
   }, [transactions, categories, budgets]);
+
+  console.log('iotems: ', items);
 
   return (
     <ScrollView style={styles.container}>
@@ -174,32 +179,109 @@ const HomePage = () => {
             <View
               style={{
                 width: '45%',
-                height: 300,
+                gap: 10,
+                //height: 300,
                 justifyContent: 'space-between',
               }}>
-              {/* Item 1 */}
+              {/* Total spending */}
               <View
                 style={{
                   backgroundColor: 'white',
+                  borderRadius: 20,
+                  padding: 10,
                   //width: '45%',
                   height: 100,
-                }}></View>
+                }}>
+                {budget ? (
+                  <View>
+                    {/* Title */}
+                    <Text style={text.title}>Total spending</Text>
+                    {/* total used */}
+                    <Text style={{ ...text.moneyDark, lineHeight: 18 }}>
+                      {total}
+                      {'€ '}
+                      <Text
+                        style={{
+                          color: colors.highlight,
+                        }}>
+                        /
+                      </Text>
+                    </Text>
+                    {/* total budget */}
+                    <Text
+                      style={{
+                        ...text.regular,
+                        color: colors.highlight,
+                        fontSize: 18,
+                      }}>
+                      {budget?.budgetTotal}€
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={text.regular}>No budget found</Text>
+                  </View>
+                )}
+              </View>
               {/* Item 2 */}
               <View
                 style={{
                   backgroundColor: 'white',
+                  borderRadius: 20,
                   //width: '45%',
-                  height: 150,
-                }}></View>
+                  gap: 2,
+                  padding: 12,
+                }}>
+                <Text style={text.title}>Largest expenses</Text>
+                {largest.length !== 0 ? (
+                  largest.map((item, i) => (
+                    <View
+                      key={i}
+                      style={{
+                        flexDirection: 'row',
+                        gap: 3,
+                        flexWrap: 'wrap',
+                        marginBottom: 5,
+                      }}>
+                      <Text
+                        style={{
+                          ...text.regularMedium,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>{`${i + 1}.`}</Text>
+                      <Text
+                        style={{
+                          ...text.regular,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>
+                        {item.name}
+                      </Text>
+                      <Text
+                        style={{
+                          ...text.moneyDark,
+                          marginLeft: 2,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>{`${item.total.toFixed(2)}€`}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <View>
+                    <Text style={text.regular}>No expenses</Text>
+                  </View>
+                )}
+              </View>
             </View>
             {/* PieChart View */}
             <View
               style={{
                 backgroundColor: 'white',
-                padding: 20,
+                padding: 12,
+                borderRadius: 20,
                 //display: 'flex',
 
-                height: 300,
+                //height: 300,
                 width: '45%',
                 //justifyContent: 'center',
               }}>
@@ -207,7 +289,7 @@ const HomePage = () => {
                 pie_rad={chartRadius}
                 textColor="black"
                 data={
-                  items.length !== 0
+                  items.filter(item => item.used !== 0).length !== 0
                     ? items
                         .map((item, i) => {
                           if (item.used === 0) return null;
@@ -230,32 +312,53 @@ const HomePage = () => {
                 }
               />
               {/* Dots with names and values */}
-              {items.length !== 0
-                ? items.map((item, i) => {
-                    if (item.used === 0) return null;
+              <View style={{ marginTop: 5 }}>
+                {items.length !== 0
+                  ? items.map((item, i) => {
+                      if (item.used === 0) return null;
 
-                    return (
-                      <View key={i}>
+                      return (
                         <View
+                          key={i}
                           style={{
-                            backgroundColor: baseColors[i].hex,
-                            height: 20,
-                            width: 20,
-                            borderRadius: 34,
-                          }}
-                        />
-                        <Text style={{ backgroundColor: baseColors[i].hex }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    );
-                  })
-                : null}
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                          }}>
+                          <View
+                            style={{
+                              backgroundColor: baseColors[i].hex,
+                              height: 16,
+                              width: 16,
+                              borderRadius: 34,
+                            }}
+                          />
+                          <Text
+                            style={{
+                              ...text.regular,
+                              fontSize: 15,
+                              marginLeft: 4,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <Text
+                            style={{
+                              marginLeft: 4,
+                              ...text.moneyDark,
+                              fontSize: 15,
+                            }}>
+                            {item.used.toFixed(2)}€
+                          </Text>
+                        </View>
+                      );
+                    })
+                  : null}
+              </View>
               <View style={{ marginLeft: 20, marginTop: 20 }}></View>
             </View>
           </View>
         </View>
-        <View style={{ marginTop: 50 }} />
+        <View style={{ marginTop: 150 }} />
       </View>
     </ScrollView>
   );

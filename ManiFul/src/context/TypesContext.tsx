@@ -12,6 +12,7 @@ interface TypeContextType {
   loading: boolean;
   initialLoading: boolean; // only for first load
   error: string | null;
+  clear: () => void;
   refreshData: () => Promise<boolean>;
 }
 
@@ -21,6 +22,7 @@ const TypeContext = createContext<TypeContextType>({
   loading: false,
   initialLoading: false,
   error: null,
+  clear: () => null,
   refreshData: async () => false,
 });
 
@@ -93,6 +95,11 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user, token, isAuthenticated]);
 
+  const clear = () => {
+    setCategories([]);
+    setTypes([]);
+  };
+
   return (
     <TypeContext.Provider
       value={{
@@ -100,6 +107,7 @@ export const TypesProvider: React.FC<{ children: React.ReactNode }> = ({
         error,
         types,
         loading,
+        clear,
         initialLoading,
         refreshData: () => fetchData(false),
       }}>

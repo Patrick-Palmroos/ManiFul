@@ -4,12 +4,16 @@ import colors from '../../styles/colors';
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingRight: 10,
     paddingLeft: 10,
+    left: 0,
+    right: 0,
+    bottom: 0,
     height: 80,
-    backgroundColor: colors.highlight,
+    // backgroundColor: 'transparent',
   },
 
   middleView: {
@@ -19,6 +23,8 @@ const styles = StyleSheet.create({
 
   middleButton: {
     borderRadius: 45,
+    borderWidth: 2,
+    borderColor: colors.background,
   },
 
   middleButtonBgWrapper: {
@@ -34,7 +40,7 @@ const styles = StyleSheet.create({
 
   middleButtonBg: {
     position: 'absolute',
-    backgroundColor: colors.background,
+    // backgroundColor: colors.background,
     bottom: '0%',
     borderRadius: 100,
     width: 90,
