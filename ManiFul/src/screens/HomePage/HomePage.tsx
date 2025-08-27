@@ -53,6 +53,7 @@ const HomePage = () => {
   const { budgets } = useBudgets();
   const [items, setItems] = useState<BudgetCategoryTypeValues[]>([]);
   const [date] = useState<Date>(new Date());
+  const [largest, setLargest] = useState<{ name: string; total: number }[]>([]);
 
   const screenWidth = Dimensions.get('window').width;
   const chartRadius = screenWidth * 0.18;
@@ -73,6 +74,20 @@ const HomePage = () => {
 
     return { budget: newBudget };
   }, [transactions, categories, budgets]);
+
+  const handleLargest = (list: BudgetCategoryTypeValues[]) => {
+    const listOfAll: { name: string; total: number }[] = list
+      .flatMap(l => {
+        return l.types.map(type => {
+          return { name: type.name, total: type.total };
+        });
+      })
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5)
+      .filter(i => i.total !== 0);
+
+    setLargest(listOfAll);
+  };
 
   const handleJoiningItems = () => {
     //get all categories and their types
@@ -127,6 +142,8 @@ const HomePage = () => {
         );
       });
     }
+
+    handleLargest(list);
     setItems(list);
   };
 
@@ -226,8 +243,39 @@ const HomePage = () => {
                   backgroundColor: 'white',
                   borderRadius: 20,
                   //width: '45%',
-                  height: 150,
-                }}></View>
+                  gap: 2,
+                  padding: 12,
+                }}>
+                <Text style={text.title}>Largest expenses</Text>
+                {largest.map((item, i) => (
+                  <View
+                    key={i}
+                    style={{
+                      flexDirection: 'row',
+                      gap: 3,
+                      flexWrap: 'wrap',
+                      marginBottom: 5,
+                    }}>
+                    <Text
+                      style={{
+                        ...text.regularMedium,
+                        fontSize: 14,
+                        lineHeight: 15,
+                      }}>{`${i + 1}.`}</Text>
+                    <Text
+                      style={{ ...text.regular, fontSize: 14, lineHeight: 15 }}>
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        ...text.moneyDark,
+                        marginLeft: 2,
+                        fontSize: 14,
+                        lineHeight: 15,
+                      }}>{`${item.total.toFixed(2)}€`}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
             {/* PieChart View */}
             <View
