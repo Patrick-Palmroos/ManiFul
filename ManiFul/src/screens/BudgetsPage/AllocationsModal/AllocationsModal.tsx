@@ -91,9 +91,18 @@ export default function AllocationsModal({
     );
   }, [categoryValues]);
 
-  const toggleLock = (index: number) => {
-    const updated = [...categoryValues];
-    updated[index].locked = !updated[index].locked;
+  const toggleLock = (id: number) => {
+    const updated = categoryValues.map(category => {
+      if (category.categoryId === id) {
+        return {
+          ...category,
+          locked: true,
+        };
+      }
+
+      return category;
+    });
+
     setCategoryValues(updated);
   };
 
@@ -406,7 +415,8 @@ export default function AllocationsModal({
                       </View>
                       {/* wrapper for slider and lock */}
                       <View style={styles.sliderAndLockWrapper}>
-                        <TouchableOpacity onPress={() => toggleLock(i)}>
+                        <TouchableOpacity
+                          onPress={() => toggleLock(value.categoryId)}>
                           <MaterialIcons
                             name={value.locked ? 'lock-outline' : 'lock-open'}
                             size={25}
