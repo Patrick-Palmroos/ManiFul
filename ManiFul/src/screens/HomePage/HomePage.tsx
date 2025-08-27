@@ -134,6 +134,8 @@ const HomePage = () => {
     handleJoiningItems();
   }, [transactions, categories, budgets]);
 
+  console.log('iotems: ', items);
+
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -207,7 +209,7 @@ const HomePage = () => {
                 pie_rad={chartRadius}
                 textColor="black"
                 data={
-                  items.length !== 0
+                  items.filter(item => item.used !== 0).length !== 0
                     ? items
                         .map((item, i) => {
                           if (item.used === 0) return null;
