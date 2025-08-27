@@ -233,34 +233,44 @@ const HomePage = () => {
                   padding: 12,
                 }}>
                 <Text style={text.title}>Largest expenses</Text>
-                {largest.map((item, i) => (
-                  <View
-                    key={i}
-                    style={{
-                      flexDirection: 'row',
-                      gap: 3,
-                      flexWrap: 'wrap',
-                      marginBottom: 5,
-                    }}>
-                    <Text
+                {largest.length !== 0 ? (
+                  largest.map((item, i) => (
+                    <View
+                      key={i}
                       style={{
-                        ...text.regularMedium,
-                        fontSize: 14,
-                        lineHeight: 15,
-                      }}>{`${i + 1}.`}</Text>
-                    <Text
-                      style={{ ...text.regular, fontSize: 14, lineHeight: 15 }}>
-                      {item.name}
-                    </Text>
-                    <Text
-                      style={{
-                        ...text.moneyDark,
-                        marginLeft: 2,
-                        fontSize: 14,
-                        lineHeight: 15,
-                      }}>{`${item.total.toFixed(2)}€`}</Text>
+                        flexDirection: 'row',
+                        gap: 3,
+                        flexWrap: 'wrap',
+                        marginBottom: 5,
+                      }}>
+                      <Text
+                        style={{
+                          ...text.regularMedium,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>{`${i + 1}.`}</Text>
+                      <Text
+                        style={{
+                          ...text.regular,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>
+                        {item.name}
+                      </Text>
+                      <Text
+                        style={{
+                          ...text.moneyDark,
+                          marginLeft: 2,
+                          fontSize: 14,
+                          lineHeight: 15,
+                        }}>{`${item.total.toFixed(2)}€`}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <View>
+                    <Text style={text.regular}>No expenses</Text>
                   </View>
-                ))}
+                )}
               </View>
             </View>
             {/* PieChart View */}
