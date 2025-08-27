@@ -1,24 +1,10 @@
-import {
-  Text,
-  View,
-  Button,
-  ActivityIndicator,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { Text, View, ScrollView, Dimensions } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
-import * as Keychain from 'react-native-keychain';
 import LinearGradient from 'react-native-linear-gradient';
-import axios from 'axios';
-import { HomePageNavigationProp } from '../../types/navigation';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../context/AuthContext';
-import { UserCredentials } from 'react-native-keychain';
 import colors from '../../styles/colors';
 import styles from '../HomePage/styles';
 import text from '../../styles/text';
 import PieChart from '../../components/PieChart/PieChart';
-import ChartPointList from '../../components/ChartPointList';
 import { useBudgets } from '../../context/BudgetContext';
 import { useTypes } from '../../context/TypesContext';
 import { useTransactions } from '../../context/TransactionContext';
