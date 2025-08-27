@@ -96,7 +96,7 @@ export default function AllocationsModal({
       if (category.categoryId === id) {
         return {
           ...category,
-          locked: true,
+          locked: !category.locked,
         };
       }
 
