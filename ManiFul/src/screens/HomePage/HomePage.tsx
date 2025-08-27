@@ -176,6 +176,7 @@ const HomePage = () => {
             <View
               style={{
                 width: '45%',
+                gap: 10,
                 //height: 300,
                 justifyContent: 'space-between',
               }}>
