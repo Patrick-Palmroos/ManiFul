@@ -92,17 +92,19 @@ const CustomTabBar = ({
               {isMiddle ? (
                 <View style={styles.middleView}>
                   <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                    <LinearGradient
-                      colors={[colors.highlight, colors.gradient]}
-                      start={{ x: 0, y: 1 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.middleButton}>
-                      <MaterialIcons
-                        name={'add'}
-                        size={70}
-                        color={isFocused ? '#A8FFFE' : 'white'}
-                      />
-                    </LinearGradient>
+                    <View style={styles.middleButton}>
+                      <LinearGradient
+                        colors={[colors.highlight, colors.gradient]}
+                        start={{ x: 0, y: 1 }}
+                        end={{ x: 1, y: 0 }}
+                        style={{ borderRadius: 45 }}>
+                        <MaterialIcons
+                          name={'add'}
+                          size={70}
+                          color={isFocused ? '#A8FFFE' : 'white'}
+                        />
+                      </LinearGradient>
+                    </View>
                   </Animated.View>
                 </View>
               ) : (

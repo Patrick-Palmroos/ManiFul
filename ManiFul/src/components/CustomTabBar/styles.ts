@@ -23,6 +23,8 @@ const styles = StyleSheet.create({
 
   middleButton: {
     borderRadius: 45,
+    borderWidth: 2,
+    borderColor: colors.background,
   },
 
   middleButtonBgWrapper: {
