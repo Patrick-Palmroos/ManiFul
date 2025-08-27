@@ -9,6 +9,9 @@ import { authRes } from '../types/auth';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../types/auth';
+import { useTypes } from './TypesContext';
+import { useTransactions } from './TransactionContext';
+import { useBudgets } from './BudgetContext';
 
 import { API_URL, API_KEY } from '@env';
 
@@ -22,6 +25,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [initialized, setInitialized] = useState<boolean>(false);
+  const { clear: typeClear } = useTypes();
+  const { clear: transactionClear } = useTransactions();
+  const { clear: budgetsClear } = useBudgets();
 
   useEffect(() => {
     const loadToken = async () => {
@@ -116,6 +122,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await Keychain.resetGenericPassword();
       setUser(null);
       setIsAuthenticated(false);
+      typeClear();
+      transactionClear();
+      budgetsClear();
     } catch (error) {
       console.error('Logout failed:', error);
       throw error;
