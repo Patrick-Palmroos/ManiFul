@@ -27,6 +27,7 @@ interface BudgetContextType {
   loading: boolean;
   initialLoading: boolean; // only for first load
   error: string | null;
+  clear: () => void;
   refreshBudgets: () => Promise<void>;
   getBudgetById: (id: number) => BudgetType | undefined;
   createBudget: (data: BudgetPostType) => Promise<boolean>;
@@ -41,6 +42,7 @@ const BudgetContext = createContext<BudgetContextType>({
   loading: false,
   initialLoading: false,
   error: null,
+  clear: () => null,
   refreshBudgets: async () => {},
   getBudgetById: () => undefined,
   createBudget: async () => false,
@@ -314,6 +316,19 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [typesLoading, categories, user, authInitialized]);
 
+  const clear = () => {
+    setBudgets([]);
+    setDefaultBudget({
+      active: true,
+      budgetTotal: tempBudgetTotal,
+      month: null,
+      year: null,
+      repeating: true,
+    } as RepeatingBudget);
+    setCurrentBudget(null);
+    setInitialized(false);
+  };
+
   return (
     <BudgetContext.Provider
       value={{
@@ -322,6 +337,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         defaultBudget,
         loading,
         error,
+        clear,
         refreshBudgets: () => fetchBudgets(false),
         getBudgetById,
         createBudget,
