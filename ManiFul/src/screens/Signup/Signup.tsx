@@ -58,12 +58,20 @@ const Signup = () => {
     if (!input.username.trim()) {
       validations.push({ type: 'username', message: 'Username is required' });
     }
-    if (!validateEmail(input.email).status) {
-      validations.push({ type: 'email', message: 'Invalid email format' });
+
+    const emailValidation = validateEmail(input.email);
+    if (!emailValidation.status) {
+      validations.push({ type: 'email', message: emailValidation.message });
     }
-    if (!validatePassword(input.password).status) {
-      validations.push({ type: 'password', message: 'Password too weak' });
+
+    const passwordValidation = validatePassword(input.password);
+    if (!passwordValidation.status) {
+      validations.push({
+        type: 'password',
+        message: passwordValidation.message,
+      });
     }
+
     if (input.password !== input.repeatPassword) {
       validations.push({
         type: 'repeatPassword',
