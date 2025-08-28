@@ -30,7 +30,7 @@ const ProfilePage = () => {
         </View>
       </View>
       <Text style={{ ...text.regular, marginTop: 20 }}>
-        To delete account please contact: {'\n'}palmroos.patrick@gmail.com
+        To delete account please contact: {'\n'}maniful.feedback@gmail.com
       </Text>
     </View>
   );
