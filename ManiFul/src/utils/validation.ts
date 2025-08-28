@@ -4,8 +4,7 @@ import { validationType } from '../types/validation';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // atleast 8 chars, one uppercase, one lowercase, one number, one special char
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
 export const validateEmail = (email: string): validationType => {
   if (!email) {
