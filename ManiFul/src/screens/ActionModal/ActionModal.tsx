@@ -7,6 +7,7 @@ import {
   Alert,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {
   launchCamera,
@@ -57,7 +58,42 @@ const ActionModal = () => {
   const { types, refreshData } = useTypes();
   const { createTransaction } = useTransactions();
 
-  // console.log('cats and types: ', types);
+  const requestGalleryPermissions = async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') return true;
+
+    try {
+      if (Platform.Version >= 33) {
+        // Android 13+ only need READ_MEDIA_IMAGES for gallery
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } else {
+        // Android 12 and below need READ_EXTERNAL_STORAGE
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      }
+    } catch (err) {
+      console.warn('Gallery permission request error', err);
+      return false;
+    }
+  };
+
+  const requestCameraPermissions = async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') return true;
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn('Camera permission request error', err);
+      return false;
+    }
+  };
 
   const handleResponse = (response: ImagePickerResponse) => {
     if (response.didCancel) {
@@ -71,6 +107,16 @@ const ActionModal = () => {
   };
 
   const openScanner = async () => {
+    const hasCameraPermission = await requestCameraPermissions();
+    const hasStoragePermission = await requestGalleryPermissions();
+    if (!hasCameraPermission || !hasStoragePermission) {
+      Alert.alert(
+        'Permissions needed',
+        'Please allow camera and storage permissions to scan receipts.',
+      );
+      return;
+    }
+
     try {
       const { scannedImages } = await DocumentScanner.scanDocument({
         croppedImageQuality: 90,
