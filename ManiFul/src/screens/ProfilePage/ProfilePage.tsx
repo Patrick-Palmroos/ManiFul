@@ -29,6 +29,9 @@ const ProfilePage = () => {
           <Button title="Logout" onPress={handleLogout} />
         </View>
       </View>
+      <Text style={{ ...text.regular, marginTop: 20 }}>
+        To delete account please contact: {'\n'}palmroos.patrick@gmail.com
+      </Text>
     </View>
   );
 };
