@@ -18,7 +18,7 @@ const HistoryPage = () => {
   return (
     <ScrollView
       style={{ backgroundColor: colors.background, flex: 1, padding: 20 }}>
-      {transactions.length === 0 ? (
+      {transactions.length !== 0 ? (
         transactions.map((x, i) => (
           <View style={{ marginBottom: 15 }} key={i}>
             <HistoryItem item={x} />
