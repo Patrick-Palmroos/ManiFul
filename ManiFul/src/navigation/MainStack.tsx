@@ -10,6 +10,7 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 import CustomTabBar from '../components/CustomTabBar/CustomTabBar';
 import CustomHeader from '../components/CustomHeader/CustomHeader';
 import ProfilePage from '../screens/ProfilePage';
+import colors from '../styles/colors';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -68,7 +69,11 @@ const MainStack = () => {
       <Stack.Screen
         name="profile"
         component={ProfilePage}
-        options={{ headerShown: true, headerTitle: '' }}
+        options={{
+          headerShown: true,
+          headerTitle: '',
+          headerStyle: { backgroundColor: colors.background },
+        }}
       />
     </>
   );

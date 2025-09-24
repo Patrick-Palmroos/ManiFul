@@ -2,30 +2,17 @@ import {
   View,
   Text,
   PermissionsAndroid,
-  Button,
   Image,
   Alert,
   TouchableOpacity,
-  ActivityIndicator,
+  Platform,
 } from 'react-native';
-import {
-  launchCamera,
-  launchImageLibrary,
-  ImagePickerResponse,
-  CameraOptions,
-} from 'react-native-image-picker';
+import { CameraOptions } from 'react-native-image-picker';
 import { useState } from 'react';
 import React from 'react';
 import { parseReceipt, pingRasp } from '../../api/raspberryApi';
 import { useModalContext } from '../../context/ModalContext';
-import OptionPicker from './components/OptionPicker/OptionPicker';
 import { ImageScanType } from '../../types/raspberry';
-import { saveTransaction } from '../../api/transactionApi';
-import {
-  TransactionData,
-  transactionPost,
-  TransactionPostItem,
-} from '../../types/data';
 import Toggle from '../../components/Toggle';
 import GradientButton from '../../components/GradientButton/GradientButton';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
@@ -34,9 +21,7 @@ import colors from '../../styles/colors';
 import text from '../../styles/text';
 import ReceiptLoading from './components/ReceiptLoading';
 import DocumentScanner from 'react-native-document-scanner-plugin';
-import ImagePicker from 'react-native-image-crop-picker';
 import { useTypes } from '../../context/TypesContext';
-import { useTransactions } from '../../context/TransactionContext';
 import ReceiptContents from './components/ReceiptContents';
 import { showMessage } from 'react-native-flash-message';
 
@@ -55,22 +40,55 @@ const ActionModal = () => {
   const [saving, setSaving] = useState<boolean>(false);
   const [resData, setResData] = useState<ImageScanType | null>(null);
   const { types, refreshData } = useTypes();
-  const { createTransaction } = useTransactions();
 
-  // console.log('cats and types: ', types);
+  const requestGalleryPermissions = async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') return true;
 
-  const handleResponse = (response: ImagePickerResponse) => {
-    if (response.didCancel) {
-      console.log('cancelled');
-    } else if (response.errorCode) {
-      console.warn('Error ', response.errorMessage || 'Unknown error');
-    } else if (response.assets && response.assets.length > 0) {
-      setImageUri(response.assets[0].uri || null);
-      //closeModal('optionPicker');
+    try {
+      if (Platform.Version >= 33) {
+        // Android 13+ only need READ_MEDIA_IMAGES for gallery
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } else {
+        // Android 12 and below need READ_EXTERNAL_STORAGE
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      }
+    } catch (err) {
+      console.warn('Gallery permission request error', err);
+      return false;
+    }
+  };
+
+  const requestCameraPermissions = async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') return true;
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn('Camera permission request error', err);
+      return false;
     }
   };
 
   const openScanner = async () => {
+    const hasCameraPermission = await requestCameraPermissions();
+    const hasStoragePermission = await requestGalleryPermissions();
+    if (!hasCameraPermission || !hasStoragePermission) {
+      Alert.alert(
+        'Permissions needed',
+        'Please allow camera and storage permissions to scan receipts.',
+      );
+      return;
+    }
+
     try {
       const { scannedImages } = await DocumentScanner.scanDocument({
         croppedImageQuality: 90,
@@ -84,21 +102,6 @@ const ActionModal = () => {
       }
     } catch (err) {
       console.error('Document scan failed:', err);
-    }
-  };
-
-  const openGalleryAndCrop = async () => {
-    try {
-      const image = await ImagePicker.openPicker({
-        cropping: true, // enable cropping UI
-        freeStyleCropEnabled: true,
-        compressImageQuality: 0.8, // adjust compression if needed
-        mediaType: 'photo',
-      });
-      setImageUri(image.path);
-      closeModal('optionPicker');
-    } catch (err) {
-      console.error('Gallery pick/crop failed:', err);
     }
   };
 
@@ -148,42 +151,9 @@ const ActionModal = () => {
     }
   };
 
-  const openAndroidStyleChooser = () => {
-    openModal({
-      content: (
-        <OptionPicker camera={openScanner} gallery={openGalleryAndCrop} />
-      ),
-      id: 'optionPicker',
-    });
-  };
-
   const clearData = () => {
     setImageUri(null);
     setResData(null);
-  };
-
-  const save = async () => {
-    if (resData) {
-      setSaving(true);
-      const [day, month, year] = resData.date.split('-');
-      const data: transactionPost = {
-        total: resData.total,
-        vendor: resData.vendor,
-        date: new Date(`${year}-${month}-${day}`).toISOString(),
-        items: resData.items.map(i => {
-          return {
-            type_id: 7,
-            name: i.name,
-            total: i.price,
-          } as TransactionPostItem;
-        }),
-      };
-      const response = await saveTransaction({ data: data });
-      console.log('result is: ', response);
-      setSaving(false);
-      setResData(null);
-      setImageUri(null);
-    }
   };
 
   return (
@@ -292,23 +262,7 @@ const ActionModal = () => {
               flexDirection: 'row',
               justifyContent: 'center',
               marginTop: 30,
-            }}>
-            {/*
-            <TouchableOpacity
-              disabled={resData ? false : true}
-              onPress={save}
-              style={
-                resData
-                  ? styles.generalButton
-                  : { ...styles.generalButton, backgroundColor: '#626262' }
-              }>
-              {saving ? (
-                <ActivityIndicator size={30} color={'white'} />
-              ) : (
-                <Text style={{ ...text.regularLight, fontSize: 20 }}>Save</Text>
-              )}
-            </TouchableOpacity> */}
-          </View>
+            }}></View>
         </View>
       ) : (
         <View>
